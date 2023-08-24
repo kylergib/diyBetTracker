@@ -249,13 +249,13 @@ td {
     margin: 15px;
 }
 
-@media (max-width: 767px) { /* Bootstrap's breakpoint for small screens */
+@media (max-width: 767px) { 
     .flex-md-row {
         display: block;
     }
 }
 
-@media (min-width: 768px) { /* Bootstrap's breakpoint for medium screens */
+@media (min-width: 768px) { 
     .flex-md-row {
         display: flex;
     }

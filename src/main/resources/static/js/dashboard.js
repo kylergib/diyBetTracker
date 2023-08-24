@@ -90,6 +90,43 @@ async function setDailyWidgets() {
           },
         ],
       },
+      options: {
+        scales: {
+          xAxes: [
+            {
+              ticks: {
+                callback: function (value, index, values) {
+                  // Display only every other label
+                  if (window.innerWidth < 1200) {
+                    return index % 2 === 0 ? value : null;
+                  } else {
+                    return value;
+                  }
+                },
+              },
+            },
+          ],
+        },
+      },
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth < 1200) {
+        myChart.options.scales.xAxes[0].ticks.callback = function (
+          value,
+          index,
+          values
+        ) {
+          return index % 2 === 0 ? value : null;
+        };
+      } else {
+        myChart.options.scales.xAxes[0].ticks.callback = function (
+          value,
+          index,
+          values
+        ) {
+          return value;
+        };
+      }
     });
     document.getElementById("unitButtonDaily").addEventListener(
       "click",
@@ -181,11 +218,15 @@ function unhideAll() {
     document.getElementById("secondRow").removeAttribute("style");
   }
 }
+// function adjustCharts() {
+//   if (window.innerWidth < 1200) {
+//   } else {
+//   }
+// }
 
-window.addEventListener("resize", function () {
-  if (window.innerWidth < 500) {
-  }
-});
+// window.addEventListener("resize", function () {
+//   adjustCharts();
+// });
 
 async function allDaily(date) {
   const startAndEnd = getStartAndEndOfMonth(date);

@@ -279,15 +279,19 @@ function createBetRow(bet) {
 
   let backgroundColor = "#d9d9d9";
   let borderColor = "grey";
+  let bulkButton = "btn-outline-dark";
   if (bet.status === "won") {
     backgroundColor = "#c2ffc2";
     borderColor = "green";
+    bulkButton = "btn-outline-success";
   } else if (bet.status === "void") {
     backgroundColor = "#ffffa7";
     borderColor = "yellow";
+    bulkButton = "btn-outline-warning";
   } else if (bet.status === "lost") {
     backgroundColor = "#ff8590";
     borderColor = "red";
+    bulkButton = "btn-outline-danger";
   }
   row.style.backgroundColor = backgroundColor;
   row.style.borderColor = borderColor;
@@ -498,7 +502,7 @@ function createBetRow(bet) {
   checkbox.id = "select-" + bet.id;
 
   const label = document.createElement("label");
-  label.setAttribute("class", "btn btn-outline-dark diy-bet-btn");
+  label.setAttribute("class", "btn diy-bet-btn " + bulkButton);
   label.setAttribute("for", "select-" + bet.id);
   label.textContent = "";
 

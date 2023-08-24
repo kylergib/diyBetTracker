@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.2'
 }
+apply plugin: 'war'
 
 group = 'com.kylergib'
 version = '0.0.1-SNAPSHOT'
@@ -17,9 +18,28 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    implementation('org.springframework.boot:spring-boot-starter-data-rest')
+    implementation 'org.springframework.security:spring-security-test'
+    implementation('com.h2database:h2')
+    implementation('org.springframework.boot:spring-boot-starter-websocket')
+    implementation('jakarta.validation:jakarta.validation-api')
+    implementation('ch.qos.logback:logback-classic')
+    implementation('org.slf4j:slf4j-api')
+    implementation 'mysql:mysql-connector-java:8.0.33'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
+    implementation('org.json:json:20230618')
+
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+

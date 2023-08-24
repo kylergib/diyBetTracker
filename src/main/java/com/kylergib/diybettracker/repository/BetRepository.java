@@ -75,4 +75,7 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
     @Query("SELECT COALESCE(SUM(freeBetStake), 0.0) FROM Bet WHERE MONTH(eventDate) = :month AND YEAR(eventDate) = :year")
     Double getFreeBetStakeForMonth(int month, int year);
 
+    @Query("SELECT DISTINCT t FROM Bet b JOIN b.tags t WHERE b.myUser.id = :userId")
+    List<String> findDistinctTagsByUserId(@Param("userId") Long userId);
+
 }

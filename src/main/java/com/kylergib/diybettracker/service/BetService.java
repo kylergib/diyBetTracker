@@ -137,9 +137,7 @@ public class BetService {
     }
 
     public List<Bet> getUserBets() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        MyUser currentUser = userRepository.findByName(username);
+        MyUser currentUser = getUser();
 
         if (currentUser != null) {
             return betRepository.findByMyUser(currentUser);
@@ -171,17 +169,38 @@ public class BetService {
 
     public Bet findById(Long betId) {
         Optional<Bet> betOptional = betRepository.findById(betId);
+        if(betOptional.isPresent()) {
+            Bet bet = betOptional.get();
+            // Now you can call methods on bet
+            if (bet.getMyUser().getId() != getUser().getId()) {
+                return null;
+            }
+        }
         return betOptional.orElse(null);
     }
-    public List<String> getAllTags() {
+    public List<String> getAllSportsbooks() {
         List<Bet> allBets = getUserBets();
-        Set<String> allTags = new HashSet<>();
+        Set<String> allSportsbooks = new HashSet<>();
+        System.out.println("starting sportsbooks");
 
         for (Bet bet : allBets) {
-            allTags.addAll(bet.getTags());
+            System.out.println(bet.getSportsbook());
+            allSportsbooks.add(bet.getSportsbook());
+
         }
 
-        return new ArrayList<>(allTags);
+        return new ArrayList<>(allSportsbooks);
     }
+    public List<String> getAllTags() {
+        MyUser currentUser = getUser();
+        List<String> tags = betRepository.findDistinctTagsByUserId(currentUser.getId());
+        return tags;
+    }
+
+//    public List<String> getAllSportbooks() {
+//        MyUser currentUser = getUser();
+//        List<String> tags = betRepository.findDistinctTagsByUserId(currentUser.getId());
+//        return tags;
+//    }
 
 }

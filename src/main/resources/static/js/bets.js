@@ -458,7 +458,7 @@ function createBetRow(bet) {
               .catch((error) => {
                 console.error(error);
               });
-            // window.location.reload();
+            window.location.reload();
             break;
         }
       },
@@ -746,7 +746,7 @@ document.getElementById("saveBetButton").addEventListener(
     let betSaved = false;
     const saveBetRequest = await apiRequest(betUrl, method, bet).then(
       (result) => {
-        if (result.status != 200) {
+        if (result.status != 200 || result.status != 201) {
           createAlert("Could not save bet. Please try again.", "danger");
         } else {
           betSaved = true;
@@ -757,10 +757,11 @@ document.getElementById("saveBetButton").addEventListener(
       return;
     }
     console.log(saveBetRequest);
-    const betJson = await saveBetRequest.json();
-    console.log(betJson);
+    //removed because it is not used and patch does not return json
+    // const betJson = await saveBetRequest.json();
+    // console.log(betJson);
 
-    console.log("end of save");
+    // console.log("end of save");
     const keepSportsbook = document.getElementById(
       "keepSportsbookCheckbox"
     ).checked;
@@ -851,6 +852,7 @@ document.getElementById("clearTagsDropdown").addEventListener(
 
 function openNewBet() {
   document.getElementById("addBetDiv").style.display = "flex";
+  document.getElementById("overlay").style.display = "block";
 }
 
 document.getElementById("addBetButton").addEventListener(
@@ -865,7 +867,7 @@ document.getElementById("closeBetButton").addEventListener(
   "click",
   () => {
     document.getElementById("addBetDiv").style.display = "none";
-    //todo need to clear inputs
+    document.getElementById("overlay").style.display = "none";
     clearInputs();
   },
   false
@@ -916,3 +918,100 @@ function clearInputs(keepList = []) {
   });
 }
 main();
+let sportsbooksList = [];
+let tagsList = [];
+apiRequest(baseUrl + "bets/userTags")
+  .then((result) => {
+    return result.json();
+  })
+  .then((json) => {
+    tagsList = json;
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+apiRequest(baseUrl + "bets/userSportsbooks")
+  .then((result) => {
+    return result.json();
+  })
+  .then((json) => {
+    sportsbooksList = json;
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+const sportsbookInput = document.getElementById("sportsbookInput");
+const sportsbookSuggestionDiv = document.getElementById(
+  "sportsbookSuggestionContainer"
+);
+
+sportsbookInput.addEventListener("input", () => {
+  let filter = sportsbookInput.value.toUpperCase();
+  // let suggestionContainer = document.getElementById(
+  //   "customerSuggestionContainer"
+  // );
+  sportsbookSuggestionDiv.innerHTML = "";
+  let inputWidth = sportsbookInput.offsetWidth;
+  sportsbookSuggestionDiv.style.width = inputWidth + "px";
+
+  if (!filter) return;
+  // const productNames = products.map((product) => product.productName);
+
+  for (let i = 0; i < sportsbooksList.length; i++) {
+    if (sportsbooksList[i].toUpperCase().indexOf(filter) > -1) {
+      let div = document.createElement("div");
+      div.innerHTML = sportsbooksList[i];
+
+      div.addEventListener("click", function () {
+        sportsbookInput.value = this.innerText;
+        console.log("other child prolly", this.innerText);
+        sportsbookSuggestionDiv.innerHTML = "";
+        // const findProduct = findProductByName(products, inputBox.value);
+        // if (findProduct === -1) {
+        //   return;
+        // }
+        // console.log(findProduct);
+        // setColor(row, findProduct.colors);
+      });
+
+      sportsbookSuggestionDiv.appendChild(div);
+    }
+  }
+});
+
+const tagInput = document.getElementById("tagInput");
+const tagSuggestionDiv = document.getElementById("tagSuggestionContainer");
+
+tagInput.addEventListener("input", () => {
+  let filter = tagInput.value.toUpperCase();
+  // let suggestionContainer = document.getElementById(
+  //   "customerSuggestionContainer"
+  // );
+  tagSuggestionDiv.innerHTML = "";
+  let inputWidth = tagInput.offsetWidth;
+  tagSuggestionDiv.style.width = inputWidth + "px";
+
+  if (!filter) return;
+  // const productNames = products.map((product) => product.productName);
+
+  for (let i = 0; i < tagsList.length; i++) {
+    if (tagsList[i].toUpperCase().indexOf(filter) > -1) {
+      let div = document.createElement("div");
+      div.innerHTML = tagsList[i];
+
+      div.addEventListener("click", function () {
+        tagInput.value = this.innerText;
+        console.log("other child prolly", this.innerText);
+        tagSuggestionDiv.innerHTML = "";
+        // const findProduct = findProductByName(products, inputBox.value);
+        // if (findProduct === -1) {
+        //   return;
+        // }
+        // console.log(findProduct);
+        // setColor(row, findProduct.colors);
+      });
+
+      tagSuggestionDiv.appendChild(div);
+    }
+  }
+});

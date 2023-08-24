@@ -60,11 +60,11 @@ public class BetApiController {
         List<Bet> userBets = betService.getUserBets(betDate);
         return ResponseEntity.ok(userBets);
     }
-    @GetMapping("/tags")
-    public ResponseEntity<List<String>> getAllTags() {
-        List<String> allTags = betService.getAllTags();
-        return ResponseEntity.ok(allTags);
-    }
+//    @GetMapping("/tags")
+//    public ResponseEntity<List<String>> getAllTags() {
+//        List<String> allTags = betService.getAllTags();
+//        return ResponseEntity.ok(allTags);
+//    }
     @GetMapping("/stats")
     public ResponseEntity<Object> getBetStats(@RequestParam(name = "startDate", required = false) LocalDate startDate,
                                                       @RequestParam(name = "endDate", required = false) LocalDate endDate,
@@ -95,6 +95,41 @@ public class BetApiController {
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized request");
             }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("/userTags")
+    public ResponseEntity<?> getTags() {
+
+        try {
+            List<String> allTags = betService.getAllTags();
+//            boolean delete = betService.deleteBet(betId);
+//            if (delete) {
+            return ResponseEntity.ok(allTags);
+//            } else {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized request");
+//            }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("/userSportsbooks")
+    public ResponseEntity<?> getUserSportsbooks() {
+        try {
+            List<String> allSportsbooks = betService.getAllSportsbooks();
+            System.out.println("after getting sportsbooks");
+            System.out.println(allSportsbooks);
+//            boolean delete = betService.deleteBet(betId);
+//            if (delete) {
+            return ResponseEntity.ok(allSportsbooks);
+//            } else {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized request");
+//            }
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

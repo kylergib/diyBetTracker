@@ -3,6 +3,7 @@
 
 <head lang="en">
   <meta name="csrf-token" th:content="${_csrf.token}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>DIY Bet Tracker</title>
   <link rel="stylesheet" href="/main.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -37,7 +38,7 @@
   </div>
   <div th:insert="betTable :: betTable"></div>
 
-
+  <div id="overlay"></div>
   <div class="form-popup" id="addBetDiv">
     <div>
       <div class="row g-3 mb-3">
@@ -45,9 +46,11 @@
         <input type="hidden" id="betIdInput">
         <div class="col-auto">
           <label for="sportsbookInput" class="col-form-label">Sportsbook:</label>
+
         </div>
         <div class="col-sm-2">
           <input type="text" class="form-control" id="sportsbookInput">
+          <div class="suggestion-container" id="sportsbookSuggestionContainer"></div>
         </div>
         <div class="col-auto">
           <label for="statusSelect" class="col-form-label">Status:</label>
@@ -121,6 +124,7 @@
         <div class="col-sm-3">
           <div class="input-group">
             <input type="text" id="tagInput" class="form-control" aria-label="Edit tags dropdown">
+
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
               aria-expanded="false">Actions</button>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -129,7 +133,9 @@
               <li><a class="dropdown-item" href="#" id="clearTagsDropdown">Clear Tags</a></li>
             </ul>
 
+
           </div>
+          <div class="suggestion-container" id="tagSuggestionContainer"></div>
         </div>
         <div class="col-sm-2">
           <label id="betTags" class="col-form-label">Tags:</label>
@@ -190,25 +196,8 @@
       </div>
     </div>
   </div>
-  <div class="fixed-bottom" id="diyAlert">
-    <!-- <div class="alert alert-primary" role="alert" id="primaryAlert">
-      A simple primary alert—check it out!
-    </div>
-    <div class="alert alert-secondary" role="alert" id="secondaryAlert">
-      A simple secondary alert—check it out!
-    </div>
-    <div class="alert alert-success" role="alert" id="successAlert">
-      A simple success alert—check it out!
-    </div>
-    <div class="alert alert-danger" role="alert" id="errorAlert">
-      A simple danger alert—check it out!
-    </div>
-    <div class="alert alert-warning" role="alert" id="warningAlert">
-      A simple warning alert—check it out!
-    </div>
-    <div class="alert alert-info" role="alert" id="infoAlert">
-      A simple info alert—check it out!
-    </div> -->
+  <div class="fixed-bottom d-flex justify-content-end flex-column" id="diyAlert">
+
   </div>
 
 

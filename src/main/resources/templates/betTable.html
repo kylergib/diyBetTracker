@@ -5,19 +5,60 @@
     <title>Navigation Bar</title>
 </head>
 <div style="text-align: center" th:fragment="betTable()">
-    <table class="table" id="betTable" style="text-align: center;">
+    <table class="diy-table" id="betTable" style="text-align: center;">
         <thead id="itemHead">
             <tr>
-                <th scope="col" style="max-width: 200px">Sportsbook</th>
-                <th scope="col" style="max-width: 200px">Legs</th>
-                <th scope="col" style="max-width: 100px">Date</th>
-                <th scope="col" style="max-width: 200px">Odds</th>
-                <th scope="col" style="max-width: 100px">Stake/Free Bet</th>
-                <th scope="col" style="max-width: 200px">Profit</th>
-                <th scope="col" style="max-width: 200px">Tags</th>
-                <th scope="col" style="max-width: 200px">Status</th>
-                <th scope="col" style="max-width: 100px">Other</th>
-                <th scope="col" style="max-width: 100px">Button</th>
+                <th class="diy-table-header" scope="col" style="max-width: 200px">
+                    <div class="diy-header-text">
+                        Sportsbook
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 200px">
+                    <div class="diy-header-text">
+                        Legs
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 100px">
+                    <div class="diy-header-text">
+                        Date
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 200px">
+                    <div class="diy-header-text">
+                        Odds
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 100px">
+                    <div class="diy-header-text">
+                        Stake/Free Bet
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 200px">
+                    <div class="diy-header-text">
+                        Profit
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 200px">
+                    <div class="diy-header-text">
+                        Tags
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 200px">
+                    <div class="diy-header-text">
+                        Status
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 100px">
+                    <div class="diy-header-text">
+                        Other
+                    </div>
+                </th>
+                <th class="diy-table-header" scope="col" style="max-width: 100px">
+
+                    <div>
+                        <button class="btn btn-primary" id="addBetButton">Add Bet</button>
+                    </div>
+                </th>
                 </th>
             </tr>
         </thead>

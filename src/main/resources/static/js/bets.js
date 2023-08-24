@@ -252,9 +252,16 @@ async function getCurrentUser() {
 }
 
 function createBetRow(bet) {
-  function createColumn(row, values) {
+  function createColumn(
+    row,
+    values,
+    borderColor = "transparent",
+    cellClass = "diy-cell"
+  ) {
     const cell = row.insertCell(-1);
     cell.setAttribute("style", "text-align: center;");
+    cell.classList.add(cellClass);
+    cell.style.borderColor = borderColor;
 
     values.forEach((value) => {
       const text = document.createElement("div");
@@ -268,18 +275,25 @@ function createBetRow(bet) {
   let table = document.getElementById("betBody");
   const row = table.insertRow(-1);
   row.style.verticalAlign = "middle";
-  let backgroundColor = "white";
+  row.classList.add("diy-row");
+
+  let backgroundColor = "#d9d9d9";
+  let borderColor = "grey";
   if (bet.status === "won") {
     backgroundColor = "#c2ffc2";
+    borderColor = "green";
   } else if (bet.status === "void") {
-    backgroundColor = "#ffe9a9";
+    backgroundColor = "#ffffa7";
+    borderColor = "yellow";
   } else if (bet.status === "lost") {
     backgroundColor = "#ff8590";
+    borderColor = "red";
   }
   row.style.backgroundColor = backgroundColor;
+  row.style.borderColor = borderColor;
 
   // createColumn(row, item.id);
-  createColumn(row, [bet.sportsbook]);
+  createColumn(row, [bet.sportsbook], borderColor, "diy-cell-first");
   const legList = [];
   let currentText = "";
   bet.legs.forEach((leg) => {
@@ -300,16 +314,16 @@ function createBetRow(bet) {
     legList.push(currentText);
   }
 
-  createColumn(row, legList);
-  createColumn(row, [bet.eventDate]);
-  createColumn(row, [bet.odds]);
+  createColumn(row, legList, borderColor);
+  createColumn(row, [bet.eventDate], borderColor);
+  createColumn(row, [bet.odds], borderColor);
   const stakeList = [];
   if (bet.stake > 0) {
     stakeList.push("Stake: $" + bet.stake.toFixed(2));
   } else {
     stakeList.push("F.B. Stake: $" + bet.freeBetStake.toFixed(2));
   }
-  createColumn(row, [stakeList]); //todo: add free bet
+  createColumn(row, [stakeList], borderColor); //todo: add free bet
   // const cell = row.insertCell(-1);
   // cell.setAttribute("style", "text-align: center;");
 
@@ -319,11 +333,11 @@ function createBetRow(bet) {
 
   // cell.appendChild(text);
   if (bet.profit == 0) {
-    createColumn(row, [""]);
+    createColumn(row, [""], borderColor);
   } else {
-    createColumn(row, ["$" + bet.profit.toFixed(2)]);
+    createColumn(row, ["$" + bet.profit.toFixed(2)], borderColor);
   }
-  createColumn(row, [bet.tags]);
+  createColumn(row, [bet.tags], borderColor);
   const selectElement = document.createElement("select");
   selectElement.setAttribute("class", "form-select");
   selectElement.setAttribute("aria-label", "Default select example");
@@ -364,9 +378,13 @@ function createBetRow(bet) {
   statusCell.style.textAlign = "center";
   statusCell.style.minWidth = "125px";
   statusCell.appendChild(selectElement);
+  statusCell.classList.add("diy-cell");
+  statusCell.style.borderColor = borderColor;
 
   const dropdowncell = row.insertCell(-1);
   dropdowncell.setAttribute("style", "text-align: center;");
+  dropdowncell.classList.add("diy-cell");
+  dropdowncell.style.borderColor = borderColor;
   const dropdown = document.createElement("div");
   dropdown.className = "dropdown";
   const dropdownButton = document.createElement("button");
@@ -480,7 +498,7 @@ function createBetRow(bet) {
   checkbox.id = "select-" + bet.id;
 
   const label = document.createElement("label");
-  label.setAttribute("class", "btn btn-outline-primary");
+  label.setAttribute("class", "btn btn-outline-dark diy-bet-btn");
   label.setAttribute("for", "select-" + bet.id);
   label.textContent = "";
 
@@ -496,7 +514,10 @@ function createBetRow(bet) {
   const checkboxCell = row.insertCell(-1);
   checkboxCell.setAttribute("style", "text-align: center;");
   checkboxCell.appendChild(divTest);
+
   checkboxCell.appendChild(hiddenLabel);
+  checkboxCell.classList.add("diy-cell-last");
+  checkboxCell.style.borderColor = borderColor;
 }
 
 async function getUserBets() {

@@ -309,3 +309,55 @@ td {
     z-index: 8; 
     display: none; 
 }
+.diy-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    --bs-table-bg: transparent; 
+    --bs-table-accent-bg: transparent; 
+    --bs-table-striped-color: #212529; 
+    --bs-table-striped-bg: rgba(0, 0, 0, 0.05); 
+    --bs-table-active-color: #212529; 
+    --bs-table-active-bg: rgba(0, 0, 0, 0.1); 
+    --bs-table-hover-color: #212529; 
+    --bs-table-hover-bg: rgba(0, 0, 0, 0.075); 
+    width: 100%; 
+    margin-bottom: 1rem; 
+    color: #212529; 
+    vertical-align: top;
+    border-color: transparent;
+    margin-left: 25px;
+    margin-right: 25px;
+    padding-right: 50px;
+}
+.diy-cell {
+    border: 4px solid transparent;
+    border-left: none;
+    border-right: none;
+}
+.diy-cell-first {
+    border: 4px solid transparent;
+    border-right: none;
+    border-radius: 50px 0 0 50px;
+}
+.diy-cell-last {
+    border: 4px solid transparent;
+    border-left: none;
+    border-radius: 0 50px 50px 0;
+}
+.diy-row {
+    border: 4px solid transparent;
+    border-left: none;
+}
+
+.diy-bet-btn {
+    height: 1.5em;
+}
+/* .diy-header-text {
+    border: 3px solid #0d6efd;
+    border-radius: 50px;
+    background: #0d6efd;
+} */
+.diy-table-header {
+    border-bottom: 4px solid black;
+    
+}

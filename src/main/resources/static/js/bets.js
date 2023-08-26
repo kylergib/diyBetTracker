@@ -396,23 +396,23 @@ function createBetRow(bet) {
   row.classList.add("diy-row");
 
   // let backgroundColor = "#d9d9d9";
-  // let borderColor = "grey";
-  let bulkButton = "btn-outline-dark";
+  let textColor = "gray";
+  let bootStrapColor = "dark";
   let betClass = "diy-bet-open";
   if (bet.status === "won") {
     // backgroundColor = "#c2ffc2";
-    // borderColor = "green";
-    bulkButton = "btn-outline-success";
+    textColor = "green";
+    bootStrapColor = "success";
     betClass = "diy-bet-won";
   } else if (bet.status === "void") {
     // backgroundColor = "#ffffa7";
-    // borderColor = "#bf9f1a";
-    bulkButton = "btn-outline-warning";
+    textColor = "#bf9f1a";
+    bootStrapColor = "warning";
     betClass = "diy-bet-void";
   } else if (bet.status === "lost") {
     // backgroundColor = "#ff8590";
-    // borderColor = "red";
-    bulkButton = "btn-outline-danger";
+    textColor = "red";
+    bootStrapColor = "danger";
     betClass = "diy-bet-lost";
   }
   // row.style.color = borderColor; //TODO: change this to test
@@ -468,6 +468,13 @@ function createBetRow(bet) {
   const selectElement = document.createElement("select");
   selectElement.setAttribute("class", "form-select");
   selectElement.setAttribute("aria-label", "Default select example");
+  let imageUrl = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='${encodeURIComponent(
+    textColor
+  )}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`;
+
+  selectElement.style.backgroundImage = imageUrl;
+  selectElement.style.color = textColor;
+  selectElement.style.borderColor = textColor;
 
   const statusList = ["Open", "Lost", "Won", "Void"];
 
@@ -509,114 +516,184 @@ function createBetRow(bet) {
   statusCell.classList.add(betClass);
   // statusCell.style.borderColor = borderColor;
 
-  const dropdowncell = row.insertCell(-1);
-  dropdowncell.setAttribute("style", "text-align: center;");
-  dropdowncell.classList.add("diy-cell");
-  dropdowncell.classList.add(betClass);
-  // dropdowncell.style.borderColor = borderColor;
-  const dropdown = document.createElement("div");
-  dropdown.className = "dropdown";
-  const dropdownButton = document.createElement("button");
-  dropdownButton.className = "btn btn-secondary dropdown-toggle";
-  dropdownButton.type = "button";
-  dropdownButton.textContent = "Select Action";
-  dropdownButton.setAttribute("data-bs-toggle", "dropdown");
-  dropdownButton.setAttribute("aria-expanded", "false");
+  const actionCell = row.insertCell(-1);
+  actionCell.setAttribute("style", "text-align: center;");
+  actionCell.classList.add("diy-cell");
+  actionCell.classList.add(betClass);
 
-  dropdown.appendChild(dropdownButton);
+  const actionDiv = document.createElement("div");
+  const editButton = document.createElement("button");
+  editButton.className = "btn btn-" + bootStrapColor;
+  editButton.type = "button";
+  const editIcon = document.createElement("i");
+  editIcon.className = "fas fa-edit";
 
-  const dropdownList = document.createElement("ul");
-  dropdownList.className = "dropdown-menu";
+  editButton.appendChild(editIcon);
+  editButton.classList.add("diy-action-button");
+  editButton.addEventListener(
+    "click",
+    () => {
+      document.getElementById("betTypeInput").value = "updateBet";
+      document.getElementById("betIdInput").value = bet.id;
+      document.getElementById("sportsbookInput").value = bet.sportsbook;
+      document.getElementById("statusSelect").value = bet.status;
+      document.getElementById("oddsInput").value = bet.odds;
+      document.getElementById("stakeInput").value = bet.stake;
+      document.getElementById("freeBetStakeInput").value = bet.freeBetStake;
+      document.getElementById("profitInput").value = bet.profit;
+      document.getElementById("eventDateInput").value = bet.eventDate;
+      // document.getElementById("betTags").textContent =
+      //   "Tags: " + bet.tags;
+      betTags = bet.tags;
+      setTags();
+      document.getElementById("evPercentInput").value = bet.evPercent;
+      document.getElementById("expectedProfitInput").value = bet.expectedProfit;
+      document.getElementById("freeBetRecieved").value =
+        bet.freeBetAmountRecieved;
+      document.getElementById("freeBeReceivedCheckbox").check =
+        bet.freeBetWasRecieved;
+      console.log(bet.legs);
 
-  const actionList = ["Edit", "Cancel", "Save", "Delete"];
+      const legRow = document.getElementById("legRow");
+      const legInputs = legRow.querySelectorAll("input");
 
-  actionList.forEach((action) => {
-    const actionItem = document.createElement("li");
-    const actionA = document.createElement("a");
-    actionA.className = "dropdown-item";
-    if (action === "Save" || action === "Cancel") {
-      actionA.classList.add("disabled");
-    }
-    actionA.setAttribute("href", "#");
-    actionA.textContent = action;
-    actionA.addEventListener(
-      "click",
-      async () => {
-        console.log("clicked?!", action);
-        switch (action) {
-          case "Edit":
-            document.getElementById("betTypeInput").value = "updateBet";
-            document.getElementById("betIdInput").value = bet.id;
-            document.getElementById("sportsbookInput").value = bet.sportsbook;
-            document.getElementById("statusSelect").value = bet.status;
-            document.getElementById("oddsInput").value = bet.odds;
-            document.getElementById("stakeInput").value = bet.stake;
-            document.getElementById("freeBetStakeInput").value =
-              bet.freeBetStake;
-            document.getElementById("profitInput").value = bet.profit;
-            document.getElementById("eventDateInput").value = bet.eventDate;
-            // document.getElementById("betTags").textContent =
-            //   "Tags: " + bet.tags;
-            betTags = bet.tags;
-            setTags();
-            document.getElementById("evPercentInput").value = bet.evPercent;
-            document.getElementById("expectedProfitInput").value =
-              bet.expectedProfit;
-            document.getElementById("freeBetRecieved").value =
-              bet.freeBetAmountRecieved;
-            document.getElementById("freeBeReceivedCheckbox").check =
-              bet.freeBetWasRecieved;
-            console.log(bet.legs);
-
-            const legRow = document.getElementById("legRow");
-            const legInputs = legRow.querySelectorAll("input");
-
-            for (let i = 0; i < bet.legs.length; i++) {
-              if (i > 12) {
-                break;
-              }
-              legInputs[i].value = bet.legs[i];
-            }
-
-            openNewBet();
-
-            break;
-          case "Save":
-            // console.log("save", item.id);
-            // toggleEditRow(row);
-            // toggleDisabledActionDropdown(dropdown, action);
-            break;
-          case "Cancel":
-            // console.log("cancel", item.id);
-            // toggleEditRow(row);
-            // toggleDisabledActionDropdown(dropdown, action);
-            break;
-          case "Delete":
-            // console.log("delete", item.id);
-            await apiRequest(baseUrl + "bets/" + bet.id, "DELETE")
-              .then((result) => {
-                if (result.status != 200) {
-                  createAlert(
-                    "Could not delete bet. Please reload and try again.",
-                    "danger"
-                  );
-                }
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-            window.location.reload();
-            break;
+      for (let i = 0; i < bet.legs.length; i++) {
+        if (i > 12) {
+          break;
         }
-      },
-      false
-    );
-    actionItem.appendChild(actionA);
-    dropdownList.appendChild(actionItem);
-  });
+        legInputs[i].value = bet.legs[i];
+      }
 
-  dropdown.appendChild(dropdownList);
-  dropdowncell.appendChild(dropdown);
+      openNewBet();
+    },
+    false
+  );
+
+  actionDiv.appendChild(editButton);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "btn btn-" + bootStrapColor;
+  deleteButton.type = "button";
+  const deleteIcon = document.createElement("i");
+  deleteIcon.className = "fas fa-trash";
+
+  deleteButton.appendChild(deleteIcon);
+  deleteButton.classList.add("diy-action-button");
+  deleteButton.addEventListener(
+    "click",
+    async () => {
+      await apiRequest(baseUrl + "bets/" + bet.id, "DELETE")
+        .then((result) => {
+          if (result.status != 200) {
+            createAlert(
+              "Could not delete bet. Please reload and try again.",
+              "danger"
+            );
+          } else {
+            window.location.reload();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    false
+  );
+  actionDiv.appendChild(deleteButton);
+  actionCell.appendChild(actionDiv);
+
+  // const dropdownList = document.createElement("ul");
+  // dropdownList.className = "dropdown-menu";
+
+  // const actionList = ["Edit", "Cancel", "Save", "Delete"];
+
+  // actionList.forEach((action) => {
+  //   const actionItem = document.createElement("li");
+  //   const actionA = document.createElement("a");
+  //   actionA.className = "dropdown-item";
+  //   if (action === "Save" || action === "Cancel") {
+  //     actionA.classList.add("disabled");
+  //   }
+  //   actionA.setAttribute("href", "#");
+  //   actionA.textContent = action;
+  //   actionA.addEventListener(
+  //     "click",
+  //     async () => {
+  //       console.log("clicked?!", action);
+  //       switch (action) {
+  //         case "Edit":
+  //           document.getElementById("betTypeInput").value = "updateBet";
+  //           document.getElementById("betIdInput").value = bet.id;
+  //           document.getElementById("sportsbookInput").value = bet.sportsbook;
+  //           document.getElementById("statusSelect").value = bet.status;
+  //           document.getElementById("oddsInput").value = bet.odds;
+  //           document.getElementById("stakeInput").value = bet.stake;
+  //           document.getElementById("freeBetStakeInput").value =
+  //             bet.freeBetStake;
+  //           document.getElementById("profitInput").value = bet.profit;
+  //           document.getElementById("eventDateInput").value = bet.eventDate;
+  //           // document.getElementById("betTags").textContent =
+  //           //   "Tags: " + bet.tags;
+  //           betTags = bet.tags;
+  //           setTags();
+  //           document.getElementById("evPercentInput").value = bet.evPercent;
+  //           document.getElementById("expectedProfitInput").value =
+  //             bet.expectedProfit;
+  //           document.getElementById("freeBetRecieved").value =
+  //             bet.freeBetAmountRecieved;
+  //           document.getElementById("freeBeReceivedCheckbox").check =
+  //             bet.freeBetWasRecieved;
+  //           console.log(bet.legs);
+
+  //           const legRow = document.getElementById("legRow");
+  //           const legInputs = legRow.querySelectorAll("input");
+
+  //           for (let i = 0; i < bet.legs.length; i++) {
+  //             if (i > 12) {
+  //               break;
+  //             }
+  //             legInputs[i].value = bet.legs[i];
+  //           }
+
+  //           openNewBet();
+
+  //           break;
+  //         case "Save":
+  //           // console.log("save", item.id);
+  //           // toggleEditRow(row);
+  //           // toggleDisabledActionDropdown(dropdown, action);
+  //           break;
+  //         case "Cancel":
+  //           // console.log("cancel", item.id);
+  //           // toggleEditRow(row);
+  //           // toggleDisabledActionDropdown(dropdown, action);
+  //           break;
+  //         case "Delete":
+  //           // console.log("delete", item.id);
+  //           await apiRequest(baseUrl + "bets/" + bet.id, "DELETE")
+  //             .then((result) => {
+  //               if (result.status != 200) {
+  //                 createAlert(
+  //                   "Could not delete bet. Please reload and try again.",
+  //                   "danger"
+  //                 );
+  //               }
+  //             })
+  //             .catch((error) => {
+  //               console.error(error);
+  //             });
+  //           window.location.reload();
+  //           break;
+  //       }
+  //     },
+  //     false
+  //   );
+  //   actionItem.appendChild(actionA);
+  //   dropdownList.appendChild(actionItem);
+  // });
+
+  // dropdown.appendChild(dropdownList);
+  // dropdowncell.appendChild(dropdown);
 
   const divTest = document.createElement("div");
 
@@ -627,7 +704,7 @@ function createBetRow(bet) {
   checkbox.id = "select-" + bet.id;
 
   const label = document.createElement("label");
-  label.setAttribute("class", "btn diy-bet-btn " + bulkButton);
+  label.setAttribute("class", "btn diy-bet-btn btn-outline-" + bootStrapColor);
   label.setAttribute("for", "select-" + bet.id);
   label.textContent = "";
 

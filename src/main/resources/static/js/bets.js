@@ -407,12 +407,12 @@ function createBetRow(bet) {
   } else if (bet.status === "void") {
     // backgroundColor = "#ffffa7";
     textColor = "#bf9f1a";
-    bootStrapColor = "warning";
+    bootStrapColor = "void";
     betClass = "diy-bet-void";
   } else if (bet.status === "lost") {
     // backgroundColor = "#ff8590";
-    textColor = "red";
-    bootStrapColor = "danger";
+    textColor = "#b10000";
+    bootStrapColor = "lost";
     betClass = "diy-bet-lost";
   }
   // row.style.color = borderColor; //TODO: change this to test
@@ -523,7 +523,7 @@ function createBetRow(bet) {
 
   const actionDiv = document.createElement("div");
   const editButton = document.createElement("button");
-  editButton.className = "btn btn-" + bootStrapColor;
+  editButton.className = "btn btn-outline-" + bootStrapColor;
   editButton.type = "button";
   const editIcon = document.createElement("i");
   editIcon.className = "fas fa-edit";
@@ -572,7 +572,7 @@ function createBetRow(bet) {
   actionDiv.appendChild(editButton);
 
   const deleteButton = document.createElement("button");
-  deleteButton.className = "btn btn-" + bootStrapColor;
+  deleteButton.className = "btn btn-outline-" + bootStrapColor;
   deleteButton.type = "button";
   const deleteIcon = document.createElement("i");
   deleteIcon.className = "fas fa-trash";

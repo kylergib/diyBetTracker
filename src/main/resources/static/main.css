@@ -382,3 +382,11 @@ td {
 .diy-action-button {
     margin: 4px;
 }
+.btn-outline-void {
+    color: #bf9f1a!important;
+    border-color: #bf9f1a!important;
+}
+.btn-outline-lost {
+    color: #b10000!important;
+    border-color: #b10000!important;
+}

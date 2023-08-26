@@ -255,13 +255,14 @@ function createBetRow(bet) {
   function createColumn(
     row,
     values,
-    borderColor = "transparent",
+    betClass = "diy-bet-open",
     cellClass = "diy-cell"
   ) {
     const cell = row.insertCell(-1);
     cell.setAttribute("style", "text-align: center;");
     cell.classList.add(cellClass);
-    cell.style.borderColor = borderColor;
+    cell.classList.add(betClass);
+    // cell.style.borderColor = borderColor;
 
     values.forEach((value) => {
       const text = document.createElement("div");
@@ -277,27 +278,32 @@ function createBetRow(bet) {
   row.style.verticalAlign = "middle";
   row.classList.add("diy-row");
 
-  let backgroundColor = "#d9d9d9";
-  let borderColor = "grey";
+  // let backgroundColor = "#d9d9d9";
+  // let borderColor = "grey";
   let bulkButton = "btn-outline-dark";
+  let betClass = "diy-bet-open";
   if (bet.status === "won") {
-    backgroundColor = "#c2ffc2";
-    borderColor = "green";
+    // backgroundColor = "#c2ffc2";
+    // borderColor = "green";
     bulkButton = "btn-outline-success";
+    betClass = "diy-bet-won";
   } else if (bet.status === "void") {
-    backgroundColor = "#ffffa7";
-    borderColor = "yellow";
+    // backgroundColor = "#ffffa7";
+    // borderColor = "#bf9f1a";
     bulkButton = "btn-outline-warning";
+    betClass = "diy-bet-void";
   } else if (bet.status === "lost") {
-    backgroundColor = "#ff8590";
-    borderColor = "red";
+    // backgroundColor = "#ff8590";
+    // borderColor = "red";
     bulkButton = "btn-outline-danger";
+    betClass = "diy-bet-lost";
   }
-  row.style.backgroundColor = backgroundColor;
-  row.style.borderColor = borderColor;
+  // row.style.color = borderColor; //TODO: change this to test
+  // row.style.borderColor = borderColor;
+  row.classList.add(betClass);
 
   // createColumn(row, item.id);
-  createColumn(row, [bet.sportsbook], borderColor, "diy-cell-first");
+  createColumn(row, [bet.sportsbook], betClass, "diy-cell-first");
   const legList = [];
   let currentText = "";
   bet.legs.forEach((leg) => {
@@ -318,16 +324,16 @@ function createBetRow(bet) {
     legList.push(currentText);
   }
 
-  createColumn(row, legList, borderColor);
-  createColumn(row, [bet.eventDate], borderColor);
-  createColumn(row, [bet.odds], borderColor);
+  createColumn(row, legList, betClass);
+  createColumn(row, [bet.eventDate], betClass);
+  createColumn(row, [bet.odds], betClass);
   const stakeList = [];
   if (bet.stake > 0) {
     stakeList.push("Stake: $" + bet.stake.toFixed(2));
   } else {
     stakeList.push("F.B. Stake: $" + bet.freeBetStake.toFixed(2));
   }
-  createColumn(row, [stakeList], borderColor); //todo: add free bet
+  createColumn(row, [stakeList], betClass); //todo: add free bet
   // const cell = row.insertCell(-1);
   // cell.setAttribute("style", "text-align: center;");
 
@@ -337,11 +343,11 @@ function createBetRow(bet) {
 
   // cell.appendChild(text);
   if (bet.profit == 0) {
-    createColumn(row, [""], borderColor);
+    createColumn(row, [""], betClass);
   } else {
-    createColumn(row, ["$" + bet.profit.toFixed(2)], borderColor);
+    createColumn(row, ["$" + bet.profit.toFixed(2)], betClass);
   }
-  createColumn(row, [bet.tags], borderColor);
+  createColumn(row, [bet.tags], betClass);
   const selectElement = document.createElement("select");
   selectElement.setAttribute("class", "form-select");
   selectElement.setAttribute("aria-label", "Default select example");
@@ -383,12 +389,14 @@ function createBetRow(bet) {
   statusCell.style.minWidth = "125px";
   statusCell.appendChild(selectElement);
   statusCell.classList.add("diy-cell");
-  statusCell.style.borderColor = borderColor;
+  statusCell.classList.add(betClass);
+  // statusCell.style.borderColor = borderColor;
 
   const dropdowncell = row.insertCell(-1);
   dropdowncell.setAttribute("style", "text-align: center;");
   dropdowncell.classList.add("diy-cell");
-  dropdowncell.style.borderColor = borderColor;
+  dropdowncell.classList.add(betClass);
+  // dropdowncell.style.borderColor = borderColor;
   const dropdown = document.createElement("div");
   dropdown.className = "dropdown";
   const dropdownButton = document.createElement("button");
@@ -521,7 +529,8 @@ function createBetRow(bet) {
 
   checkboxCell.appendChild(hiddenLabel);
   checkboxCell.classList.add("diy-cell-last");
-  checkboxCell.style.borderColor = borderColor;
+  checkboxCell.classList.add(betClass);
+  // checkboxCell.style.borderColor = borderColor;
 }
 
 async function getUserBets() {
@@ -565,8 +574,8 @@ async function main() {
     sortBetsAndAdd(await getAllUserBetsDate(getDateString(todaysDate)));
     setPendingRequest(false);
   }
-  const stats = await getAllUserStats();
-  console.log(stats);
+  // const stats = await getAllUserStats();
+  // console.log(stats);
 }
 function sortBetsAndAdd(bets) {
   if (bets.length == 0) {
@@ -596,8 +605,10 @@ function sortBetsAndAdd(bets) {
   bets.forEach((bet) => {
     createBetRow(bet);
   });
+  document.getElementById("betTable").style.display = "";
 }
 function clearTable() {
+  document.getElementById("betTable").style.display = "none";
   let table = document.getElementById("betBody");
   table.querySelectorAll("tr").forEach((row) => {
     row.remove();

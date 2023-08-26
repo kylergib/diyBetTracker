@@ -1083,6 +1083,7 @@ document.getElementById("clearTagsDropdown").addEventListener(
 function openNewBet() {
   document.getElementById("addBetDiv").style.display = "flex";
   document.getElementById("overlay").style.display = "block";
+  document.getElementById("sportsbookInput").focus();
 }
 
 document.getElementById("addBetButton").addEventListener(

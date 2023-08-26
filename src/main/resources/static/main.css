@@ -114,11 +114,14 @@ td {
 .form-popup {
     display: none;
     position: fixed;
-    top: 100px;
+    top: 35%;
     right: 15px;
     border: 3px solid #f1f1f1;
     z-index: 9;
     background-color: rgb(255, 255, 255);
+    left: 15px;
+    border-radius: 10px;
+    border: 3px solid transparent;
 }
 .form-popup > div {
     flex: 1
@@ -389,4 +392,11 @@ td {
 .btn-outline-lost {
     color: #b10000!important;
     border-color: #b10000!important;
+}
+.diy-end-buttons {
+    justify-content: right;
+    margin-right: 20px!important;
+}
+.diy-row-bet {
+    margin-left: 20px!important;
 }

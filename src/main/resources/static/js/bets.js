@@ -36,9 +36,11 @@ function setPendingRequest(value) {
     document.getElementById("dayListItem"),
     document.getElementById("weekListItem"),
     document.getElementById("monthListItem"),
-    document.getElementById("previousListItem"),
-    document.getElementById("nextListItem"),
   ];
+  if (betFilterStatus !== "custom") {
+    itemList.push(document.getElementById("previousListItem"));
+    itemList.push(document.getElementById("nextListItem"));
+  }
   // const dayItem =
   // const weekItem =
   // const monthItem =
@@ -61,6 +63,106 @@ setBetFilterText(formatDateOnly(startFilter));
 function setBetFilterText(text) {
   document.getElementById("currentDateFilter").textContent = text;
 }
+
+{
+  /* <script>
+        
+      </script> */
+}
+
+// document.getElementById("currentDateFilter").addEventListener(
+//   "click",
+//   () => {
+//     $('a[id="currentDateFilter"]').daterangepicker(
+//       {
+//         opens: "left",
+//       },
+//       function (start, end, label) {
+//         console.log(
+//           "A new date selection was made: " +
+//             start.format("YYYY-MM-DD") +
+//             " to " +
+//             end.format("YYYY-MM-DD")
+//         );
+//       }
+//     );
+//   },
+//   false
+// );
+
+// let text;
+// let startDate;
+// let endDate;
+// if (betFilterStatus === "day") {
+//   startFilter.setDate(startFilter.getDate() + changeAmount);
+//   endFilter.setDate(endFilter.getDate() + changeAmount);
+//   text = formatDateOnly(startFilter);
+
+//   endDate = null;
+// } else if (betFilterStatus === "week") {
+//   changeAmount *= 7;
+//   startFilter.setDate(startFilter.getDate() + changeAmount);
+//   endFilter.setDate(endFilter.getDate() + changeAmount);
+//   text = `${formatDateOnly(startFilter)} - ${formatDateOnly(endFilter)}`;
+//   endDate = getDateString(endFilter);
+// } else if (betFilterStatus === "month") {
+//   startFilter.setMonth(startFilter.getMonth() + changeAmount);
+//   endFilter = new Date(
+//     startFilter.getFullYear(),
+//     startFilter.getMonth() + 1,
+//     0
+//   );
+
+//   text = `${formatDateOnly(startFilter)} - ${formatDateOnly(endFilter)}`;
+//   endDate = getDateString(endFilter);
+// }
+// startDate = getDateString(startFilter);
+// setBetFilterText(text);
+// clearTable();
+// sortBetsAndAdd(await getAllUserBetsDate(startDate, endDate));
+
+$(function () {
+  $('a[id="currentDateFilter"]').daterangepicker(
+    {
+      opens: "left",
+    },
+    async function (start, end, label) {
+      console.log(
+        "A new date selection was made: " +
+          start.format("YYYY-MM-DD") +
+          " to " +
+          end.format("YYYY-MM-DD")
+      );
+      setPendingRequest(true);
+      let text;
+      let filterStatus;
+
+      startFilter = new Date(start);
+      endFilter = new Date(end);
+      let endDate = null;
+      if (start.format("YYYY-MM-DD") == end.format("YYYY-MM-DD")) {
+        text = `${formatDateOnly(startFilter)}`;
+        filterStatus = "day";
+        // set filter to day
+      } else {
+        text = `${formatDateOnly(startFilter)} - ${formatDateOnly(endFilter)}`;
+        endDate = getDateString(endFilter);
+        filterStatus = "custom";
+      }
+      console.log("startfilter", startFilter);
+      console.log("start format", start.format("YYYY-MM-DD"));
+      console.log("enddate", endDate);
+      console.log();
+      changeFilterStatus(filterStatus);
+      setBetFilterText(text);
+      clearTable();
+      sortBetsAndAdd(
+        await getAllUserBetsDate(getDateString(startFilter), endDate)
+      );
+      setPendingRequest(false);
+    }
+  );
+});
 
 document.getElementById("previousFilter").addEventListener(
   "click",
@@ -158,21 +260,36 @@ function changeFilterStatus(filter) {
   const dayItem = document.getElementById("dayListItem");
   const weekItem = document.getElementById("weekListItem");
   const monthItem = document.getElementById("monthListItem");
+  const previousItem = document.getElementById("previousListItem");
+  const nextItem = document.getElementById("nextListItem");
   if (filter === "day") {
     dayItem.classList.add("active");
     weekItem.classList.remove("active");
     monthItem.classList.remove("active");
+    previousItem.classList.remove("disabled");
+    nextItem.classList.remove("disabled");
     betFilterStatus = "day";
   } else if (filter === "week") {
     dayItem.classList.remove("active");
     weekItem.classList.add("active");
     monthItem.classList.remove("active");
+    previousItem.classList.remove("disabled");
+    nextItem.classList.remove("disabled");
     betFilterStatus = "week";
   } else if (filter === "month") {
     dayItem.classList.remove("active");
     weekItem.classList.remove("active");
     monthItem.classList.add("active");
+    previousItem.classList.remove("disabled");
+    nextItem.classList.remove("disabled");
     betFilterStatus = "month";
+  } else if (filter === "custom") {
+    dayItem.classList.remove("active");
+    weekItem.classList.remove("active");
+    monthItem.classList.remove("active");
+    previousItem.classList.add("disabled");
+    nextItem.classList.add("disabled");
+    betFilterStatus = "custom";
   }
 }
 async function changeFilteredBet(changeAmount) {

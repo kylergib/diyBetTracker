@@ -30,16 +30,51 @@ public class BetApiController {
 
     @GetMapping
     public ResponseEntity<List<Bet>> getUserBets(@RequestParam(name = "startDate", required = false) LocalDate startDate,
-                                                 @RequestParam(name = "endDate", required = false) LocalDate endDate) {
+                                                 @RequestParam(name = "endDate", required = false) LocalDate endDate,
+                                                 @RequestParam(name="tags", required = false) List<String> tags,
+                                                 @RequestParam(name="sportsbooks", required = false) List<String> sportsbooks,
+                                                 @RequestParam(name="statusList", required = false) List<String> statusList,
+                                                 @RequestParam(name="maxOdds", required = false) Integer maxOdds,
+                                                 @RequestParam(name="minOdds", required = false) Integer minOdds,
+                                                 @RequestParam(name="maxStake", required = false) Integer maxStake,
+                                                 @RequestParam(name="minStake", required = false) Integer minStake,
+                                                 @RequestParam(name="freeBetMaxStake", required = false) Integer freeBetMaxStake,
+                                                 @RequestParam(name="freeBetMinStake", required = false) Integer freeBetMinStake) {
         List<Bet> userBets;
+//        boolean hasStartDate = startDate != null;
+//        boolean hasEndDate = endDate != null;
+//        boolean hasTags = tags != null;
+//        boolean hasSportsbooks = sportsbooks != null;
+//        boolean hasMaxOdds = maxOdds != null;
+//        boolean hasMinOdds = minOdds != null;
+//        boolean hasMaxStake = maxStake != null;
+//        boolean hasMinStake = minStake != null;
+        userBets = betService.getUserBets(startDate, endDate,
+                tags, sportsbooks, statusList,maxOdds, minOdds, maxStake, minStake,
+                freeBetMaxStake, freeBetMinStake);
 
-        if (startDate != null && endDate != null) {
-            userBets = betService.getUserBets(startDate, endDate);
-        } else if (startDate != null) {
-            userBets = betService.getUserBets(startDate);
-        } else {
-            userBets = betService.getUserBets();
-        }
+//        if (!hasTags && !hasSportsbooks) {
+//            userBets = betService.getUserBets(startDate, endDate);
+//        } else if (hasTags && !hasSportsbooks) {
+//
+//        } else if (!hasTags && !hasSportsbooks) {
+//
+//        } else if (hasTags && hasSportsbooks) {
+//            userBets =
+//        }
+
+
+
+//        if (hasStartDate && hasEndDate && !hasTags) {
+//            userBets = betService.getUserBets(startDate, endDate);
+//        } else if (hasStartDate && !hasTags) {
+//            userBets = betService.getUserBets(startDate);
+//        } else if (hasTags) {
+//            userBets = betService.getBetsWithParams(startDate,endDate,tags);
+//        }else {
+//            //everything is null
+//            userBets = betService.getUserBets();
+//        }
 
 
 

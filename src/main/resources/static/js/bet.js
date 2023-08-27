@@ -54,10 +54,41 @@ export function createBet(betJson) {
     betJson.freeBetWon
   );
 }
-export async function getAllUserBetsDate(startDate, endDate = null) {
+export async function getAllUserBetsDate(
+  startDate,
+  endDate = null,
+  tags = [],
+  sportsbooks = [],
+  statusList = [],
+  maxOdds = "",
+  minOdds = "",
+  maxStake = "",
+  minStake = "",
+  freeBetMaxStake = "",
+  freeBetMinStake = ""
+) {
   const bets = [];
-  const startUrl = baseUrl + "bets?startDate=" + startDate;
-  const url = endDate == null ? startUrl : startUrl + "&endDate=" + endDate;
+  let url = baseUrl + "bets?startDate=" + startDate;
+  url =
+    endDate == null || endDate == startDate ? url : url + "&endDate=" + endDate;
+  url = tags.length == 0 || tags == null ? url : url + "&tags=" + tags;
+  url =
+    sportsbooks.length == 0 || sportsbooks == null
+      ? url
+      : url + "&sportsbooks=" + sportsbooks;
+  url =
+    statusList.length == 0 || statusList == null
+      ? url
+      : url + "&statusList=" + statusList;
+  url = maxOdds == "" ? url : url + "&maxOdds=" + maxOdds;
+  url = minOdds == "" ? url : url + "&minOdds=" + minOdds;
+  url = maxStake == "" ? url : url + "&maxStake=" + maxStake;
+  url = minStake == "" ? url : url + "&minStake=" + minStake;
+  url =
+    freeBetMaxStake == "" ? url : url + "&freeBetMaxStake=" + freeBetMaxStake;
+  url =
+    freeBetMinStake == "" ? url : url + "&freeBetMinStake=" + freeBetMinStake;
+
   await apiRequest(url)
     .then((result) => {
       console.log(result);

@@ -22,7 +22,7 @@ row.classList.add("flex-nowrap");
 calendarWidget.appendChild(row);
 
 async function getDailyProfits(startDate, endDate) {
-  await apiRequest(
+  return await apiRequest(
     baseUrl +
       "bets/stats?startDate=" +
       getDateString(startDate) +

@@ -26,7 +26,14 @@ let betFilterStatus = "day";
 let startFilter = new Date();
 let endFilter = new Date();
 let previousRequestPending = false;
-
+let filterShown = false;
+let appliedTagFilters = [];
+let appliedSportsbookFilters = [];
+let appliedStatusFilters = [];
+let appliedMaxOdds;
+let appliedMinOdds;
+let appliedMaxStake;
+let appliedMinStake;
 document.getElementById("eventDateInput").value = getDateString(todaysDate);
 
 function setPendingRequest(value) {
@@ -397,7 +404,7 @@ function createBetRow(bet) {
 
   // let backgroundColor = "#d9d9d9";
   let textColor = "gray";
-  let bootStrapColor = "dark";
+  let bootStrapColor = "open";
   let betClass = "diy-bet-open";
   if (bet.status === "won") {
     // backgroundColor = "#c2ffc2";
@@ -1210,6 +1217,236 @@ sportsbookInput.addEventListener("input", () => {
   }
 });
 
+const filterButton = document.getElementById("filterButton");
+const filterContainer = document.getElementById("filterContainer");
+const tagFilters = document.getElementById("tagFilters");
+const sportsbookFilters = document.getElementById("sportsbookFilters");
+document.querySelector("body").addEventListener("click", (event) => {
+  // let filterDo = document.getElementById('myDiv');
+  console.log(event);
+  let inFilterContainer = filterContainer.contains(event.target);
+  let inFilterButton = filterButton.contains(event.target);
+  let inTagFilters = tagFilters.contains(event.target);
+
+  if (!inFilterButton && !inFilterContainer && !inTagFilters && filterShown) {
+    console.log("You clicked outside the div!");
+    filterContainer.style.display = "none";
+    filterShown = false;
+  }
+});
+function setFilterTags() {
+  for (let i = 0; i < tagsList.length; i++) {
+    const thisTag = tagsList[i];
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "input-group mb-3";
+    const inputGroupText = document.createElement("div");
+    inputGroupText.className = "input-group-text";
+    const inputCheckbox = document.createElement("input");
+    inputCheckbox.setAttribute("type", "checkbox");
+    inputCheckbox.className = "form-check-input mt-0";
+    inputCheckbox.addEventListener("click", () => {
+      console.log(thisTag);
+    });
+    inputGroupText.appendChild(inputCheckbox);
+
+    const spanText = document.createElement("span");
+    spanText.className = "input-group-text";
+    spanText.style.flexGrow = "1";
+    spanText.textContent = thisTag;
+
+    groupDiv.appendChild(inputGroupText);
+    groupDiv.appendChild(spanText);
+
+    // div.innerHTML = tagsList[i];
+    tagFilters.appendChild(groupDiv);
+  }
+}
+function setFilterSportsbooks() {
+  for (let i = 0; i < sportsbooksList.length; i++) {
+    const thisTag = sportsbooksList[i];
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "input-group mb-3";
+    const inputGroupText = document.createElement("div");
+    inputGroupText.className = "input-group-text";
+    const inputCheckbox = document.createElement("input");
+    inputCheckbox.setAttribute("type", "checkbox");
+    inputCheckbox.className = "form-check-input mt-0";
+    inputCheckbox.addEventListener("click", () => {
+      console.log(thisTag);
+    });
+    inputGroupText.appendChild(inputCheckbox);
+
+    const spanText = document.createElement("span");
+    spanText.className = "input-group-text";
+    spanText.style.flexGrow = "1";
+    spanText.textContent = thisTag;
+
+    groupDiv.appendChild(inputGroupText);
+    groupDiv.appendChild(spanText);
+
+    // div.innerHTML = tagsList[i];
+    sportsbookFilters.appendChild(groupDiv);
+  }
+}
+
+filterButton.addEventListener(
+  "click",
+  () => {
+    filterContainer.style.display = "block";
+    filterShown = true;
+    //todo: can move these to the function that retrieves the list, so it doesnt have to wait on the click
+
+    setFilterTags();
+    setFilterSportsbooks();
+  },
+  false
+);
+function getAppliedTagFilters() {
+  appliedTagFilters = [];
+  tagFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {
+    const inputChecked = group.querySelector("input").checked;
+    const spanText = group.querySelector("span").textContent;
+    console.log(inputChecked, spanText);
+    if (inputChecked) {
+      appliedTagFilters.push(spanText);
+    }
+  });
+}
+function getAppliedSportsbookFilters() {
+  appliedSportsbookFilters = [];
+  sportsbookFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {
+    const inputChecked = group.querySelector("input").checked;
+    const spanText = group.querySelector("span").textContent;
+    console.log(inputChecked, spanText);
+    if (inputChecked) {
+      appliedSportsbookFilters.push(spanText);
+    }
+  });
+}
+function getAppliedStatusFilters() {
+  appliedStatusFilters = [];
+  document
+    .getElementById("statusFilters")
+    .querySelectorAll(".input-group.mb-3")
+    .forEach((group) => {
+      const inputChecked = group.querySelector("input").checked;
+      const spanText = group.querySelector("span").textContent;
+      console.log(inputChecked, spanText);
+      if (inputChecked) {
+        appliedStatusFilters.push(spanText);
+      }
+    });
+}
+function clearTagFilters() {
+  appliedTagFilters = [];
+  tagFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {
+    group.querySelector("input").checked = false;
+  });
+}
+function clearSportsbookFilters() {
+  appliedSportsbookFilters = [];
+  sportsbookFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {
+    group.querySelector("input").checked = false;
+  });
+}
+function clearStatusFilters() {
+  appliedStatusFilters = [];
+  document
+    .getElementById("statusFilters")
+    .querySelectorAll(".input-group.mb-3")
+    .forEach((group) => {
+      group.querySelector("input").checked = false;
+    });
+}
+async function getFilteredBets() {
+  let text;
+  let filterStatus;
+
+  // startFilter = new Date(start);
+  // endFilter = new Date(end);
+  // let endDate = null;
+  // if (start.format("YYYY-MM-DD") == end.format("YYYY-MM-DD")) {
+  //   text = `${formatDateOnly(startFilter)}`;
+  //   filterStatus = "day";
+  //   // set filter to day
+  // } else {
+  //   text = `${formatDateOnly(startFilter)} - ${formatDateOnly(endFilter)}`;
+  //   endDate = getDateString(endFilter);
+  //   filterStatus = "custom";
+  // }
+  // console.log("startfilter", startFilter);
+  // console.log("start format", start.format("YYYY-MM-DD"));
+  // console.log("enddate", endDate);
+  // console.log();
+  // changeFilterStatus(filterStatus);
+  // setBetFilterText(text);
+}
+
+document.getElementById("applyFilterButton").addEventListener(
+  "click",
+  async () => {
+    getAppliedTagFilters();
+    getAppliedSportsbookFilters();
+    getAppliedStatusFilters();
+    appliedMaxOdds = document.getElementById("maxOddsFilter").value;
+    appliedMinOdds = document.getElementById("minOddsFilter").value;
+    appliedMaxStake = document.getElementById("maxStakeFilter").value;
+    appliedMinStake = document.getElementById("minStakeFilter").value;
+    console.log(appliedTagFilters);
+    console.log(appliedSportsbookFilters);
+    console.log(appliedStatusFilters);
+    console.log(appliedMaxOdds);
+    console.log(appliedMinOdds);
+    console.log(appliedMaxStake);
+    console.log(appliedMinStake);
+    setPendingRequest(true);
+    clearTable();
+    sortBetsAndAdd(
+      await getAllUserBetsDate(
+        getDateString(startFilter),
+        getDateString(endFilter),
+        appliedTagFilters,
+        appliedSportsbookFilters,
+        appliedStatusFilters,
+        appliedMaxOdds,
+        appliedMinOdds,
+        appliedMaxStake,
+        appliedMinStake
+      )
+    );
+    setPendingRequest(false);
+  },
+  false
+);
+
+document.getElementById("clearFilterButton").addEventListener(
+  "click",
+  () => {
+    // appliedStatusFilters = [];
+    // appliedStatusFilters = [];
+    // appliedSportsbookFilters = [];
+    clearTagFilters();
+    clearSportsbookFilters();
+    clearStatusFilters();
+    document.getElementById("maxOddsFilter").value = "";
+    document.getElementById("minOddsFilter").value = "";
+    document.getElementById("maxStakeFilter").value = "";
+    document.getElementById("minStakeFilter").value = "";
+    appliedMaxOdds = "";
+    appliedMinOdds = "";
+    appliedMaxStake = "";
+    appliedMinStake = "";
+    console.log(appliedTagFilters);
+    console.log(appliedSportsbookFilters);
+    console.log(appliedStatusFilters);
+    console.log(appliedMaxOdds);
+    console.log(appliedMinOdds);
+    console.log(appliedMaxStake);
+    console.log(appliedMinStake);
+  },
+  false
+);
+
 const tagInput = document.getElementById("tagInput");
 const tagSuggestionDiv = document.getElementById("tagSuggestionContainer");
 
@@ -1246,3 +1483,17 @@ tagInput.addEventListener("input", () => {
     }
   }
 });
+
+// await apiRequest(
+//   baseUrl + "bets?startDate=2023-08-26&endDate=2023-08-27&tags=Sam,Token"
+// )
+//   .then((result) => {
+//     console.log(result);
+//     if (result.status == 200) {
+//       console.log("successfull?");
+//       return result.json();
+//     }
+//   })
+//   .then((json) => {
+//     console.log(json);
+//   });

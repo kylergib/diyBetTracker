@@ -1,0 +1,143 @@
+/* green  */
+/* red "#b10000" */
+/* td, th {
+    border: 1px solid #999; */
+
+
+
+.modalDialog {
+    background: rgba(0,0,0,0.8);
+}
+
+.modalDialog > div {
+    background: #fff;
+    background: -moz-linear-gradient(#fff, #999);
+    background: -webkit-linear-gradient(#fff, #999);
+    background: -o-linear-gradient(#fff, #999);
+}
+.close {
+    background: #606061;
+    color: #FFFFFF;
+    -moz-box-shadow: 1px 1px 3px #000;
+    -webkit-box-shadow: 1px 1px 3px #000;
+    box-shadow: 1px 1px 3px #000;
+}
+
+.close:hover { background: #00d9ff; }
+
+.open-button {
+    background-color: #555;
+    color: white;
+}
+/* .form-control-cust {
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+} */
+
+.form-popup {
+    border: 3px solid #f1f1f1;
+    background-color: rgb(255, 255, 255);
+    border: 3px solid transparent;
+}
+.form-container {
+    background-color: white;
+}
+.form-container input[type=text], .form-container input[type=password] {
+    background: #f1f1f1;
+}
+
+.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+
+.form-container .btn {
+    background-color: #04AA6D;
+    color: white;
+}
+.form-container .cancel {
+    background-color: red;
+}
+
+.suggestion-container { 
+    border: 1px solid #d4d4d4;
+    background-color: #ffffff;
+}
+.suggestion-container div {
+    background-color: #fff; 
+    border-bottom: 1px solid #d4d4d4; 
+}
+.suggestion-container div:hover {
+    background-color: #e9e9e9;
+}
+.filter-container {
+    background-color: #ffffff;
+    border: 1px solid #d4d4d4;
+}
+.filter-container div {
+    background-color: #fff; 
+}
+#overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.diy-table {
+    --bs-table-accent-bg: transparent; 
+    --bs-table-striped-color: #212529; 
+    --bs-table-striped-bg: rgba(0, 0, 0, 0.05); 
+    --bs-table-active-color: #212529; 
+    --bs-table-active-bg: rgba(0, 0, 0, 0.1); 
+    --bs-table-hover-color: #212529; 
+    --bs-table-hover-bg: rgba(0, 0, 0, 0.075); 
+    color: #212529; 
+}
+.diy-table-header {
+    border-bottom: 4px solid black;
+    
+}
+.diy-bet-won {
+    /* background-color: "#c2ffc2"; */
+    border-color:  green;
+    color: green;
+}
+.diy-bet-lost {
+    /* background-color: "#ff8590"; */
+    border-color:  #b10000;
+    color: #b10000;
+}
+.diy-bet-void {
+    /* background-color: "#ffffa7"; */
+    border-color:  #bf9f1a;
+    color: #bf9f1a;
+}
+.diy-bet-open {
+    /* background-color: "#d9d9d9"; */
+    border-color:  grey;
+    color: grey;
+}
+.btn-outline-void {
+    color: #bf9f1a!important;
+    border-color: #bf9f1a!important;
+}
+.btn-outline-open {
+    color: gray!important;
+    border-color: gray!important;
+}
+.btn-outline-lost {
+    color: #b10000!important;
+    border-color: #b10000!important;
+}
+.diy-bg-won {
+    background-color: green;
+}
+.diy-bg-lost {
+    background-color: red;
+}
+.diy-bg-void {
+    background-color: #bf9f1a;
+}
+.diy-bg-open {
+    background-color: grey;
+}

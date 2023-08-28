@@ -594,16 +594,21 @@ function createBetRow(bet) {
   deleteButton.addEventListener(
     "click",
     async () => {
-      await apiRequest(baseUrl + "bets/" + bet.id, "DELETE")
+      apiRequest(baseUrl + "bets/" + bet.id, "DELETE")
         .then((result) => {
-          if (result.status != 200) {
+          console.log(result.status);
+          console.log(result.status != 200 || result.status != 201);
+          if (result.status != 200 && result.status != 201) {
             createAlert(
               "Could not delete bet. Please reload and try again.",
               "danger"
             );
-          } else {
-            window.location.reload();
           }
+        })
+        .then(() => {
+          console.log("betDelete successfully");
+          createAlert("Bet deleted.", "success");
+          row.remove();
         })
         .catch((error) => {
           console.error(error);

@@ -235,3 +235,91 @@ body {
     background-color: #0d6efd;
     border-color: #424549;
 }
+.page-link {
+    color: black;
+}
+.daterangepicker {
+    background-color: #1e2124;
+    border: 1px solid rgb(193, 193, 193);
+}
+.daterangepicker:before, .daterangepicker:after {
+
+    border-bottom-color: green;
+}
+.daterangepicker:before {
+    border-bottom: 7px solid yellow;
+}
+.daterangepicker.drop-up:before {
+    border-top: 7px solid yellow;
+}
+.daterangepicker.drop-up:after {
+    border-top: 6px solid #282b30;
+  }
+.daterangepicker .calendar-table .next span, .daterangepicker .calendar-table .prev span {
+    color: #282b30;
+    border: solid black;
+}
+.daterangepicker .calendar-table {
+    border: 1px solid #282b30;
+    background-color: #282b30;
+  }
+.daterangepicker td.available:hover, .daterangepicker th.available:hover {
+    background-color: 	#424549;
+}
+.daterangepicker td.week, .daterangepicker th.week {
+    color: yellow;
+  }
+  .daterangepicker td.off, .daterangepicker td.off.in-range, .daterangepicker td.off.start-date, .daterangepicker td.off.end-date {
+    background-color: #282b30;
+    color: #424549;
+  }
+  .daterangepicker td.in-range {
+    background-color: #ebf4f8;
+    color: #000;
+  }
+  .daterangepicker td.active, .daterangepicker td.active:hover {
+    background-color: #357ebd;
+    color: #282b30;
+  }
+  .daterangepicker td.disabled, .daterangepicker option.disabled {
+    color: #424549;
+  }
+  .daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {
+    background: 	#424549;
+    border: 1px solid 	#424549;
+  }
+  .daterangepicker .calendar-time select.disabled {
+    color: yellow;
+  }
+  .daterangepicker .drp-buttons {
+    border-top: 1px solid rgb(193, 193, 193);
+  }
+  .daterangepicker.show-ranges.single.rtl .drp-calendar.left {
+    border-right: 1px solid rgb(193, 193, 193);
+  }
+  .daterangepicker.show-ranges.single.ltr .drp-calendar.left {
+    border-left: 1px solid rgb(193, 193, 193);
+  }
+  
+  .daterangepicker.show-ranges.rtl .drp-calendar.right {
+    border-right: 1px solid rgb(193, 193, 193);
+  }
+  
+  .daterangepicker.show-ranges.ltr .drp-calendar.left {
+    border-left: 1px solid rgb(193, 193, 193);
+  }
+  .daterangepicker .ranges li:hover {
+    background-color: 	#424549;
+  }
+  
+  .daterangepicker .ranges li.active {
+    background-color: #08c;
+    color: #282b30;
+  }
+  .btn-default {
+    color: white!important;
+  }
+  .daterangepicker .calendar-table .next span, .daterangepicker .calendar-table .prev span {
+    color: white;
+    border-color: white;
+  }

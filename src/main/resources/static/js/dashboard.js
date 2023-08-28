@@ -6,7 +6,9 @@ import {
   apiRequest,
 } from "./util.js";
 //sets navbar stats
-
+let theme = document
+  .querySelector('meta[name="theme"]')
+  .getAttribute("content");
 let yearJson;
 
 let dailyMap;
@@ -54,7 +56,7 @@ async function setDailyWidgets() {
       spanDay.textContent = day;
       // spanDay.classList.add("col-fixed-width");
       col.appendChild(spanDay);
-      col.style.borderColor = "black";
+      col.style.borderColor = theme == "dark" ? "white" : "black";
     }
     // profit = 99999;
     let profitExtension = "";
@@ -82,11 +84,11 @@ async function setDailyWidgets() {
       // spanProfit.classList.add("col-fixed-width");
       col.appendChild(spanProfit);
       if (profit > 0) {
-        spanProfit.style.color = "green";
-        col.style.borderColor = "green";
+        spanProfit.style.color = theme == "dark" ? "#00ff00" : "green";
+        col.style.borderColor = theme == "dark" ? "#00ff00" : "green";
       } else if (profit < 0) {
-        spanProfit.style.color = "red";
-        col.style.borderColor = "red";
+        spanProfit.style.color = theme == "dark" ? "#ff4343" : "red";
+        col.style.borderColor = theme == "dark" ? "#ff4343" : "red";
       }
     }
   }
@@ -101,6 +103,7 @@ async function setDailyWidgets() {
     monthProfitUnitDataSet.push(monthUnits);
   }
   function setDailyChartData() {
+    let fontColor = theme == "dark" ? "white" : "black";
     let ctx = document.getElementById("monthProfitChart").getContext("2d");
     let myChart = new Chart(ctx, {
       type: "line",
@@ -120,10 +123,16 @@ async function setDailyWidgets() {
         ],
       },
       options: {
+        legend: {
+          labels: {
+            fontColor: fontColor,
+          },
+        },
         scales: {
           xAxes: [
             {
               ticks: {
+                fontColor: fontColor,
                 callback: function (value, index, values) {
                   // Display only every other label
                   if (window.innerWidth < 1200) {
@@ -132,6 +141,13 @@ async function setDailyWidgets() {
                     return value;
                   }
                 },
+              },
+            },
+          ],
+          yAxes: [
+            {
+              ticks: {
+                fontColor: fontColor, // Change this color as needed for y-axis values
               },
             },
           ],
@@ -308,6 +324,8 @@ function setYearChart(yearJson) {
   }
 
   let ctx = document.getElementById("yearProfitChart").getContext("2d");
+  let fontColor = theme == "dark" ? "white" : "black";
+
   let myChart = new Chart(ctx, {
     type: "line",
     data: {
@@ -324,6 +342,29 @@ function setYearChart(yearJson) {
           backgroundColor: "rgba(3, 244, 252,0.6)",
         },
       ],
+    },
+    options: {
+      legend: {
+        labels: {
+          fontColor: fontColor,
+        },
+      },
+      scales: {
+        xAxes: [
+          {
+            ticks: {
+              fontColor: fontColor,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            ticks: {
+              fontColor: fontColor,
+            },
+          },
+        ],
+      },
     },
   });
   document.getElementById("unitButtonMonthly").addEventListener(
@@ -417,9 +458,9 @@ function createTagProfitBadge(tag, elementId, profit = 0.0) {
   const badgeSpan = document.createElement("span");
   badgeSpan.className = "badge";
   if (profit > 0) {
-    badgeSpan.style.backgroundColor = "green";
+    badgeSpan.style.backgroundColor = theme == "dark" ? "green" : "green";
   } else if (profit < 0) {
-    badgeSpan.style.backgroundColor = "red";
+    badgeSpan.style.backgroundColor = theme == "dark" ? "red" : "red";
   } else {
     badgeSpan.classList.add("bg-secondary");
   }

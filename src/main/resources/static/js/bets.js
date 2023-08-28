@@ -17,7 +17,10 @@ import { setStats } from "./navbar.js";
 import { createAlert } from "./diyAlerts.js";
 
 // export const baseUrl = "http://" + window.location.host + "/api/";
-let styleMode = "dark";
+
+let styleMode = document
+  .querySelector('meta[name="theme"]')
+  .getAttribute("content");
 let currentUser;
 const bets = [];
 let betTags = [];
@@ -787,7 +790,7 @@ function sortBetsAndAdd(bets) {
     row.style.verticalAlign = "middle";
     const cell = row.insertCell(-1);
     cell.setAttribute("style", "text-align: center;");
-    cell.setAttribute("colspan", "9");
+    cell.setAttribute("colspan", "10");
 
     const text = document.createElement("div");
     text.textContent = "No bets found for this date.";
@@ -1176,6 +1179,8 @@ apiRequest(baseUrl + "bets/userSportsbooks")
   })
   .then((json) => {
     sportsbooksList = json;
+    setFilterTags();
+    setFilterSportsbooks();
   })
   .catch((error) => {
     console.error(error);
@@ -1223,7 +1228,7 @@ const filterButton = document.getElementById("filterButton");
 const filterContainer = document.getElementById("filterContainer");
 const tagFilters = document.getElementById("tagFilters");
 const sportsbookFilters = document.getElementById("sportsbookFilters");
-document.querySelector("body").addEventListener("click", (event) => {
+document.addEventListener("click", (event) => {
   // let filterDo = document.getElementById('myDiv');
   console.log(event);
   let inFilterContainer = filterContainer.contains(event.target);
@@ -1296,10 +1301,6 @@ filterButton.addEventListener(
   () => {
     filterContainer.style.display = "block";
     filterShown = true;
-    //todo: can move these to the function that retrieves the list, so it doesnt have to wait on the click
-
-    setFilterTags();
-    setFilterSportsbooks();
   },
   false
 );

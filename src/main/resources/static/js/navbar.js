@@ -5,6 +5,10 @@ import {
 } from "./setStats.js";
 import { getAllUserStats } from "./util.js";
 
+let theme = document
+  .querySelector('meta[name="theme"]')
+  .getAttribute("content");
+
 export async function setStats() {
   let total;
   let today;
@@ -25,35 +29,35 @@ export async function setStats() {
     }
   });
   let totalProfit = total.profit.toFixed(2);
-  let totalColor = "grey";
+  let totalColor = theme == "dark" ? "#dbdbdb" : "grey";
 
   if (totalProfit > 0) {
-    totalColor = "green";
+    totalColor = theme == "dark" ? "#00ff00" : "green";
   } else if (totalProfit < 0) {
-    totalColor = "red";
+    totalColor = theme == "dark" ? "#ff4343" : "red";
   }
   const totalNav = document.getElementById("totalProfit");
   totalNav.style.color = totalColor;
   totalNav.textContent = `Total Profit: $${totalProfit}`;
   let monthProfit = month.profit.toFixed(2);
-  let monthColor = "grey";
+  let monthColor = theme == "dark" ? "#dbdbdb" : "grey";
 
   if (monthProfit > 0) {
-    monthColor = "green";
+    monthColor = theme == "dark" ? "#00ff00" : "green";
   } else if (monthProfit < 0) {
-    monthColor = "red";
+    monthColor = theme == "dark" ? "#ff4343" : "red";
   }
   const monthNav = document.getElementById("monthProfit");
   monthNav.style.color = monthColor;
   monthNav.textContent = `Month's Profit: $${monthProfit}`;
 
   let todayProfit = today.profit.toFixed(2);
-  let todayColor = "grey";
+  let todayColor = theme == "dark" ? "#dbdbdb" : "grey";
 
   if (todayProfit > 0) {
-    todayColor = "green";
+    todayColor = theme == "dark" ? "#00ff00" : "green";
   } else if (todayProfit < 0) {
-    todayColor = "red";
+    todayColor = theme == "dark" ? "#ff4343" : "red";
   }
 
   const todayNav = document.getElementById("todayProfit");

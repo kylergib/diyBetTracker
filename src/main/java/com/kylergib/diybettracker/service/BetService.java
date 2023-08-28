@@ -3,6 +3,7 @@ package com.kylergib.diybettracker.service;
 import com.kylergib.diybettracker.entity.Bet;
 import com.kylergib.diybettracker.entity.BetStats;
 import com.kylergib.diybettracker.entity.MyUser;
+import com.kylergib.diybettracker.entity.Role;
 import com.kylergib.diybettracker.repository.BetRepository;
 import com.kylergib.diybettracker.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -38,7 +39,14 @@ public class BetService {
     public boolean deleteBet(Long betId) {
         Bet bet = findById(betId);
         MyUser currentUser = getUser();
-//        if (currentUser.getRoles().contains("test")) {
+        System.out.println(currentUser.getRoles());
+        for (Role role: getUser().getRoles()) {
+            System.out.println(role.getName());
+            if (role.getName().equals("TEST")) {
+                return false;
+            }
+        }
+//        if (currentUser.getRoles().contains("TEST")) {
 //            return false;
 //        }
         if (bet.getMyUser().getId() == currentUser.getId()) {
@@ -308,8 +316,13 @@ public class BetService {
     }
 
     public Bet saveBet(Bet bet) {
+        for (Role role: getUser().getRoles()) {
+            if (role.getName().equals("TEST")) {
+                return new Bet();
+            }
+        }
 //        if (getUser().getRoles().contains("test")) {
-//            return new Bet();
+//
 //        }
         if (bet.getMyUser().getId() != null) {
             System.out.println();
@@ -426,6 +439,11 @@ public class BetService {
     }
 
     public Bet findById(Long betId) {
+        for (Role role: getUser().getRoles()) {
+            if (role.getName().equals("TEST")) {
+                return new Bet();
+            }
+        }
 //        if (getUser().getRoles().contains("test")) {
 //            return new Bet();
 //        }

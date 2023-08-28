@@ -6,6 +6,7 @@ import com.kylergib.diybettracker.repository.BetRepository;
 import com.kylergib.diybettracker.repository.UserRepository;
 import com.kylergib.diybettracker.service.BetService;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,17 @@ public class BetApiController {
         List<Bet> userBets;
 //        boolean hasStartDate = startDate != null;
 //        boolean hasEndDate = endDate != null;
+
+//        if (hasStartDate && hasEndDate && !hasTags) {
+//            userBets = betService.getUserBets(startDate, endDate);
+//        } else if (hasStartDate && !hasTags) {
+//            userBets = betService.getUserBets(startDate);
+//        } else if (hasTags) {
+//            userBets = betService.getBetsWithParams(startDate,endDate,tags);
+//        }else {
+//            //everything is null
+//            userBets = betService.getUserBets();
+//        }
 //        boolean hasTags = tags != null;
 //        boolean hasSportsbooks = sportsbooks != null;
 //        boolean hasMaxOdds = maxOdds != null;
@@ -101,25 +113,40 @@ public class BetApiController {
 //        return ResponseEntity.ok(allTags);
 //    }
     @GetMapping("/stats")
-    public ResponseEntity<Object> getBetStats(@RequestParam(name = "startDate", required = false) LocalDate startDate,
+    public ResponseEntity<?> getBetStats(@RequestParam(name = "startDate", required = false) LocalDate startDate,
                                                       @RequestParam(name = "endDate", required = false) LocalDate endDate,
-                                              @RequestParam(name = "year", required = false) Integer year) {
-        System.out.println("startDate");
-        System.out.println(startDate);
-        System.out.println(endDate);
-        System.out.println(year);
+                                              @RequestParam(name = "year", required = false) Integer year,
+                                              @RequestParam(name="tags", required = false) List<String> tags,
+                                              @RequestParam(name="sportsbooks", required = false) List<String> sportsbooks,
+                                              @RequestParam(name="statusList", required = false) List<String> statusList,
+                                              @RequestParam(name="maxOdds", required = false) Integer maxOdds,
+                                              @RequestParam(name="minOdds", required = false) Integer minOdds) {
 
+        boolean extrasNull = tags == null && sportsbooks == null && statusList == null && maxOdds == null && minOdds == null;
         Object betStats;
-        if ((startDate == null || endDate == null) && year == null) {
+        if ((startDate == null || endDate == null) && year == null && extrasNull) {
             betStats = betService.getBetStats();
-        } else if (year == null) {
+        } else if (year == null && extrasNull) {
             betStats = betService.getDailyBetStats(startDate,endDate);
-        } else {
+        } else if (extrasNull) {
             betStats = betService.getMonthlyBetStats(year);
+        } else { //extras are included
+            return ResponseEntity.notFound().build();
+//            betStats = betService.getMonthlyBetStats(year);
+            //todo: finish later
+//            betStats = betService.getDashboardBetStats(startDate, endDate,
+//                    tags, sportsbooks, statusList,maxOdds, minOdds);
         }
 
         return ResponseEntity.ok(betStats);
     }
+    @GetMapping("/stats/dashboard")
+    public  ResponseEntity<Object> getDashboardStats(@RequestParam(name = "date", required = false) LocalDate date,
+                                                     @RequestParam(name="tags", required = false) List<String> tags,
+                                                     @RequestParam(name="sportsbooks", required = false) List<String> sportsbooks){
+        return ResponseEntity.ok(betService.getDashboardStats(date, tags, sportsbooks));
+    }
+
     @DeleteMapping("/{betId}")
     public ResponseEntity<?> deleteBet(@PathVariable Long betId) {
 

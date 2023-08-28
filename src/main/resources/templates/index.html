@@ -7,6 +7,7 @@
 
     <title>DIY Bet Tracker</title>
     <link rel="stylesheet" href="/main.css" />
+    <link rel="stylesheet" href="/diy-light.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -16,86 +17,471 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
 </head>
 
-<body>
+<body style="margin: 5px">
     <div th:insert="navbar :: navbar"></div>
-    <h2>Home</h2>
-    <div class="flex-md-row text-center" style="display:none;" id="topRow">
-        <div class="text-center col-sm-12 col-md-6" id="calendarWidget">
-            <div class="row flex-nowrap">
-                <div class="col col-fixed-width">
-                    <div class="col-fixed-width" style="font-weight: bold">
-                        S
+    <div class="row diy-flex-md-row text-center mx-1" style="display:none; " id="topRow">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-5 mt-3" style="display: flex; justify-content: center;">
+
+
+            <div class="text-center card"
+                style="display: block; justify-content: center; max-width: fit-content; padding: 15px; word-wrap: normal;"
+                id="calendarWidget">
+                <div class="row flex-nowrap">
+                    <div class="col col-fixed-width">
+                        <div class="col-fixed-width" style="font-weight: bold">
+                            S
+                        </div>
+                    </div>
+                    <div class="col col-fixed-width">
+                        <div class="col-fixed-width" style="font-weight: bold">
+                            M
+                        </div>
+                    </div>
+                    <div class="col col-fixed-width">
+                        <div class="col-fixed-width" style="font-weight: bold">
+                            T
+                        </div>
+                    </div>
+                    <div class="col col-fixed-width">
+                        <div class="col-fixed-width" style="font-weight: bold">
+                            W
+                        </div>
+                    </div>
+                    <div class="col col-fixed-width">
+                        <div class="col-fixed-width" style="font-weight: bold">
+                            T
+                        </div>
+                    </div>
+                    <div class="col col-fixed-width">
+                        <div class="col-fixed-width" style="font-weight: bold">
+                            F
+                        </div>
+                    </div>
+                    <div class="col col-fixed-width">
+                        <div class="col-fixed-width" style="font-weight: bold">
+                            S
+                        </div>
                     </div>
                 </div>
-                <div class="col col-fixed-width">
-                    <div class="col-fixed-width" style="font-weight: bold">
-                        M
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-3 mt-3">
+            <div class="card" style="padding: 5px; padding: 5px; height: 100%; display: grid; ">
+                <div style="display: flex; margin-top: 5px">
+
+                    <div class="diy-card-badge">
+                        <span class="badge bg-secondary" id="pendingBadge"
+                            style="width: 100%; font-size: 1.2em; display: flex;">
+
+                            <div>Pending</div>
+                            <div style="flex: 1; text-align: right;" id="pendingStake"></div>
+                        </span>
                     </div>
                 </div>
-                <div class="col col-fixed-width">
-                    <div class="col-fixed-width" style="font-weight: bold">
-                        T
+                <div style="display: flex; margin-top: 5px">
+
+                    <div class="diy-card-badge">
+                        <span class="badge bg-secondary" id="todayBadge"
+                            style="width: 100%; font-size: 1.2em; display: flex;">
+                            <div>Today Open</div>
+                            <div style="flex: 1; text-align: right;" id="todayOpen"></div>
+                        </span>
                     </div>
                 </div>
-                <div class="col col-fixed-width">
-                    <div class="col-fixed-width" style="font-weight: bold">
-                        W
+                <div style="display: flex; margin-top: 5px">
+
+                    <div class="diy-card-badge">
+                        <span class="badge bg-secondary" id="weekBadge"
+                            style="width: 100%; font-size: 1.2em; display: flex;">
+                            <div>Week Open</div>
+                            <div style="flex: 1; text-align: right;" id="weekOpen"></div>
+                        </span>
                     </div>
                 </div>
-                <div class="col col-fixed-width">
-                    <div class="col-fixed-width" style="font-weight: bold">
-                        T
+                <div style="display: flex; margin-top: 5px">
+
+                    <div class="diy-card-badge">
+                        <span class="badge bg-secondary" id="monthBadge"
+                            style="width: 100%; font-size: 1.2em; display: flex;">
+                            <div>Month Open</div>
+                            <div style="flex: 1; text-align: right;" id="monthOpen"></div>
+                        </span>
                     </div>
                 </div>
-                <div class="col col-fixed-width">
-                    <div class="col-fixed-width" style="font-weight: bold">
-                        F
+                <div style="display: flex; margin-top: 5px">
+
+                    <div class="diy-card-badge">
+                        <span class="badge bg-secondary" id="totalBadge"
+                            style="width: 100%; font-size: 1.2em; display: flex;">
+                            <div>All Open</div>
+                            <div style="flex: 1; text-align: right;" id="totalOpen"></div>
+                        </span>
                     </div>
                 </div>
-                <div class="col col-fixed-width">
-                    <div class="col-fixed-width" style="font-weight: bold">
-                        S
+
+            </div>
+        </div>
+        <div class="col-6 col-md-6 col-lg-2 mt-3">
+            <div class="scrollable-div card diy-card" id="tagProfit" style="padding: 5px;">
+
+            </div>
+        </div>
+        <div class="col-6 col-lg-2 mt-3">
+            <div class="scrollable-div card diy-card" id="sportsbookProfit" style="padding: 5px;">
+
+
+            </div>
+        </div>
+    </div>
+    <div class="row diy-flex-md-row text-center mx-1" style="display:none;" id="secondRow">
+
+        <div class="text-center col-6 col-sm-6 col-md-4 col-lg-2 mt-3">
+            <div class="card diy-card" style="width: 100%;">
+                <div class="list-group-item">
+                    <div style="display: flex; justify-content: center;">
+                        <h4>Today</h4>
                     </div>
+                    <div style="display: flex">
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Profit</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="todayProfitBadge">$20.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Stake</span>
+                            <span class="diy-badge-header">Free Bet</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="todayStakeBadge">$30.00</span><br>
+                            <span class="badge bg-secondary" id="todayFreeBetStakeBadge">$40.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header"><span class="diy-badge-header">ROI</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="todayROIBadge">4.93%</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+                        <div class="diy-badge-header"><span class="diy-badge-header">Rec</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="todayRecordBadge">10-13-1</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="text-center col-6 col-sm-6 col-md-4 col-lg-2 mt-3">
+            <div class="card diy-card" style="width: 100%;">
+                <div class="list-group-item">
+                    <div style="display: flex; justify-content: center;">
+                        <h4>Yesterday</h4>
+                    </div>
+                    <div style="display: flex">
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Profit</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="yesterdayProfitBadge">$20.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Stake</span>
+                            <span class="diy-badge-header">Free Bet</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="yesterdayStakeBadge">$30.00</span><br>
+                            <span class="badge bg-secondary" id="yesterdayFreeBetStakeBadge">$40.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header"><span class="diy-badge-header">ROI</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="yesterdayROIBadge">4.93%</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+                        <div class="diy-badge-header"><span class="diy-badge-header">Rec</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="yesterdayRecordBadge">10-13-1</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="text-center col-6 col-sm-6 col-md-4 col-lg-2 mt-3">
+            <div class="card diy-card" style="width: 100%;">
+                <div class="list-group-item">
+                    <div style="display: flex; justify-content: center;">
+                        <h4>Week</h4>
+                    </div>
+                    <div style="display: flex">
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Profit</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="weekProfitBadge">$20.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Stake</span>
+                            <span class="diy-badge-header">Free Bet</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="weekStakeBadge">$30.00</span><br>
+                            <span class="badge bg-secondary" id="weekFreeBetStakeBadge">$40.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header"><span class="diy-badge-header">ROI</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="weekROIBadge">4.93%</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+                        <div class="diy-badge-header"><span class="diy-badge-header">Rec</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="weekRecordBadge">10-13-1</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="text-center col-6 col-sm-6 col-md-4 col-lg-2 mt-3">
+            <div class="card diy-card" style="width: 100%;">
+                <div class="list-group-item">
+                    <div style="display: flex; justify-content: center;">
+                        <h4>Month</h4>
+                    </div>
+                    <div style="display: flex">
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Profit</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="monthProfitBadge">$20.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Stake</span>
+                            <span class="diy-badge-header">Free Bet</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="monthStakeBadge">$30.00</span><br>
+                            <span class="badge bg-secondary" id="monthFreeBetStakeBadge">$40.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header"><span class="diy-badge-header">ROI</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="monthROIBadge">4.93%</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+                        <div class="diy-badge-header"><span class="diy-badge-header">Rec</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="monthRecordBadge">10-13-1</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="text-center col-6 col-sm-6 col-md-4 col-lg-2 mt-3">
+            <div class="card diy-card" style="width: 100%;">
+                <div class="list-group-item">
+                    <div style="display: flex; justify-content: center;">
+                        <h4>Year</h4>
+                    </div>
+                    <div style="display: flex">
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Profit</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="yearProfitBadge">$20.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Stake</span>
+                            <span class="diy-badge-header">Free Bet</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="yearStakeBadge">$30.00</span><br>
+                            <span class="badge bg-secondary" id="yearFreeBetStakeBadge">$40.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header"><span class="diy-badge-header">ROI</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="yearROIBadge">4.93%</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+                        <div class="diy-badge-header"><span class="diy-badge-header">Rec</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="yearRecordBadge">10-13-1</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="text-center col-6 col-sm-6 col-md-4 col-lg-2 mt-3">
+            <div class="card diy-card" style="width: 100%;">
+                <div class="list-group-item">
+                    <div style="display: flex; justify-content: center;">
+                        <h4>Total</h4>
+                    </div>
+                    <div style="display: flex">
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Profit</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="totalProfitBadge">$20.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header">
+                            <span class="diy-badge-header">Stake</span>
+                            <span class="diy-badge-header">Free Bet</span>
+                        </div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="totalStakeBadge">$30.00</span><br>
+                            <span class="badge bg-secondary" id="totalFreeBetStakeBadge">$40.00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+
+
+                        <div class="diy-badge-header"><span class="diy-badge-header">ROI</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="totalROIBadge">4.93%</span>
+                        </div>
+                    </div>
+                    <div style="display: flex">
+                        <div class="diy-badge-header"><span class="diy-badge-header">Rec</span></div>
+
+                        <div class="diy-card-badge">
+                            <span class="badge bg-secondary" id="totalRecordBadge">10-13-1</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+    <div class="row" style="justify-content: center; display:none;" id="thirdRow">
+        <!-- <div class="diy-chart text-center"> -->
+        <div class="text-center col-sm-12 col-lg-6 mt-3" style="max-height: 475px;">
+            <div class="card">
+
+
+                <h2>Month Profits</h2>
+                <nav aria-label="...">
+                    <ul class="pagination diy-pagination justify-content-center">
+                        <li class="page-item diy-page-item disabled" id="USDButtonDailyItem">
+                            <a class="page-link" href="#" id="USDButtonDaily">USD</a>
+                        </li>
+                        <li class="page-item diy-page-item" id="unitButtonDailyItem">
+                            <a class="page-link" href="#" id="unitButtonDaily">Unit</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div>
+                    <canvas id="monthProfitChart" class="dashboardChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="text-center col-sm-12 col-lg-6 mt-3" style="max-height: 475px;">
+            <div class="card">
+                <h2>Year Profits</h2>
+                <nav aria-label="...">
+                    <ul class="pagination diy-pagination justify-content-center">
+                        <li class="page-item diy-page-item disabled" id="USDButtonMonthlyItem">
+                            <a class="page-link" href="#" id="USDButtonMonthly">USD</a>
+                        </li>
+                        <li class="page-item diy-page-item" id="unitButtonMonthlyItem">
+                            <a class="page-link" href="#" id="unitButtonMonthly">Unit</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div>
+                    <canvas id="yearProfitChart" class="dashboardChart"></canvas>
                 </div>
             </div>
         </div>
 
+        <!-- </div> -->
     </div>
-    <div class="flex-md-row text-center" style="display:none;" id="secondRow">
-        <div class="text-center col-sm-12 col-md-6" style="max-height: 475px;">
-            <h2>Month Profits</h2>
-            <nav aria-label="...">
-                <ul class="pagination diy-pagination justify-content-center">
-                    <li class="page-item diy-page-item disabled" id="USDButtonDailyItem">
-                        <a class="page-link" href="#" id="USDButtonDaily">USD</a>
-                    </li>
-                    <li class="page-item diy-page-item" id="unitButtonDailyItem">
-                        <a class="page-link" href="#" id="unitButtonDaily">Unit</a>
-                    </li>
-                </ul>
-            </nav>
-            <div>
-                <canvas id="monthProfitChart"></canvas>
-            </div>
-        </div>
-        <div class="text-center col-sm-12 col-md-6" style="max-height: 475px;">
-            <h2>Year Profits</h2>
-            <nav aria-label="...">
-                <ul class="pagination diy-pagination justify-content-center">
-                    <li class="page-item diy-page-item disabled" id="USDButtonMonthlyItem">
-                        <a class="page-link" href="#" id="USDButtonMonthly">USD</a>
-                    </li>
-                    <li class="page-item diy-page-item" id="unitButtonMonthlyItem">
-                        <a class="page-link" href="#" id="unitButtonMonthly">Unit</a>
-                    </li>
-                </ul>
-            </nav>
 
-            <div>
-                <canvas id="yearProfitChart"></canvas>
-            </div>
-        </div>
-    </div>
 
 
 

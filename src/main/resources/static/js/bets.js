@@ -17,7 +17,7 @@ import { setStats } from "./navbar.js";
 import { createAlert } from "./diyAlerts.js";
 
 // export const baseUrl = "http://" + window.location.host + "/api/";
-
+let styleMode = "dark";
 let currentUser;
 const bets = [];
 let betTags = [];
@@ -400,25 +400,25 @@ function createBetRow(bet) {
   let table = document.getElementById("betBody");
   const row = table.insertRow(-1);
   row.style.verticalAlign = "middle";
-  row.classList.add("diy-row");
+  row.classList.add("diy-bet-row");
 
   // let backgroundColor = "#d9d9d9";
-  let textColor = "gray";
+  let textColor = styleMode == "dark" ? "#dbdbdb" : "grey";
   let bootStrapColor = "open";
   let betClass = "diy-bet-open";
   if (bet.status === "won") {
     // backgroundColor = "#c2ffc2";
-    textColor = "green";
-    bootStrapColor = "success";
+    textColor = styleMode == "dark" ? "#00ff00" : "green";
+    bootStrapColor = "won";
     betClass = "diy-bet-won";
   } else if (bet.status === "void") {
     // backgroundColor = "#ffffa7";
-    textColor = "#bf9f1a";
+    textColor = styleMode == "dark" ? "#ffe783" : "#bf9f1a";
     bootStrapColor = "void";
     betClass = "diy-bet-void";
   } else if (bet.status === "lost") {
     // backgroundColor = "#ff8590";
-    textColor = "#b10000";
+    textColor = styleMode == "dark" ? "#ff4343" : "#b10000";
     bootStrapColor = "lost";
     betClass = "diy-bet-lost";
   }
@@ -475,13 +475,15 @@ function createBetRow(bet) {
   const selectElement = document.createElement("select");
   selectElement.setAttribute("class", "form-select");
   selectElement.setAttribute("aria-label", "Default select example");
+  selectElement.style.backgroundColor = styleMode == "dark" ? "#1e2124" : "";
   let imageUrl = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='${encodeURIComponent(
     textColor
   )}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`;
 
   selectElement.style.backgroundImage = imageUrl;
-  selectElement.style.color = textColor;
-  selectElement.style.borderColor = textColor;
+  selectElement.classList.add(betClass);
+  // selectElement.style.color = textColor;
+  // selectElement.style.borderColor = textColor;
 
   const statusList = ["Open", "Lost", "Won", "Void"];
 

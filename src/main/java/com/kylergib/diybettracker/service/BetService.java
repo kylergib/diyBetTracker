@@ -13,7 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 
@@ -67,6 +69,127 @@ public class BetService {
         }
 
         return map;
+    }
+
+    public Map<String, Object> getDashboardStats(LocalDate date,
+                                                 List<String> tags, List<String> sportsbooks) {
+
+        MyUser currentUser = getUser();
+        Map<String, Object> map = new HashMap<>();
+        if (currentUser == null) {
+            return map;
+        }
+        LocalDate now = LocalDate.now();
+//        Double sumStake;
+//        Double sumProfit;
+
+//        map.put("totalOpenBets", betRepository.getTotalStatusCount("open",currentUser));
+//        map.put("todayOpenBets", betRepository.getTodayStatusCount(now,"open",currentUser));
+//        map.put("monthOpenBets", betRepository.getMonthStatusCount(now.getMonthValue(), now.getYear(),"open",currentUser));
+        map.put("pendingStake", betRepository.findStakeOfBets(null,null,null,null,currentUser));
+        for (String tag : tags) {
+            map.put(tag,betRepository.findProfitOfBets(null,null,null,null,List.of(tag),currentUser));
+        }
+        for (String sportsbook : sportsbooks) {
+            map.put(sportsbook,betRepository.findProfitOfBets(null,null,List.of(sportsbook),null,null,currentUser));
+        }
+
+        LocalDate startOfWeek = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate endOfWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        map.put("weekStats", betweenDateStats(startOfWeek,endOfWeek,currentUser));
+        map.put("yearStats", betweenDateStats(LocalDate.of(now.getYear(),1,1),LocalDate.of(now.getYear(),12,31),currentUser));
+        map.put("totalStats", totalStats(currentUser));
+        map.put("monthStats", monthStats(now,currentUser));
+        map.put("todayStats", dayStats(now,currentUser));
+        map.put("yesterdayStats", dayStats(now.plusDays(-1),currentUser));
+
+
+
+        return map;
+    }
+
+    public Map<String, Object> getExtraBetStats(LocalDate startDate, LocalDate endDate,
+                                           List<String> tags, List<String> sportsbooks, List<String> statusList,
+                                           Integer maxOdds, Integer minOdds, List<String> types) {
+        //types are for what data you want
+        // open bets
+        //
+        MyUser currentUser = getUser();
+        Map<String, Object> map = new HashMap<>();
+        if (currentUser == null) {
+            return map;
+        }
+        LocalDate now = LocalDate.now();
+        Double sumStake;
+        Double sumProfit;
+        if (types.contains("openBets")) {
+            //todo: this needs to be fixed, to account for filters
+            int todayOpenBets = betRepository.getTodayStatusCount(now,"open",currentUser);
+            int monthOpenBets = betRepository.getMonthStatusCount(now.getMonthValue(), now.getYear(),"open",currentUser);
+            //TODO: add week open bets
+            int totalOpenBets = betRepository.getTotalStatusCount("open",currentUser);
+            map.put("totalOpenBets", totalOpenBets);
+            map.put("todayOpenBets", todayOpenBets);
+            map.put("monthOpenBets", monthOpenBets);
+        }
+
+
+
+
+
+
+        if (tags != null && sportsbooks != null && statusList != null) { //all three not null
+            sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate, tags, sportsbooks,
+                    maxOdds, minOdds, statusList, currentUser);
+            sumProfit = types.contains("sumProfit") ? null : betRepository.findProfitOfBets(startDate, endDate, tags, sportsbooks,
+                    maxOdds, minOdds, statusList, currentUser);
+
+        } else if (tags != null && statusList != null) { //tags and status not null, sportsbook is null
+            sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate,
+                    maxOdds, minOdds, tags,  statusList, currentUser);
+            sumProfit = types.contains("sumProfit") ? null : betRepository.findProfitOfBets(startDate, endDate,
+                    maxOdds, minOdds, tags,  statusList, currentUser);
+        }else if (tags !=null && sportsbooks != null) { //tags and sportsbook not null, but status is
+            sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate, tags, sportsbooks,
+                    maxOdds, minOdds, currentUser);
+            sumProfit = types.contains("sumProfit") ? null : betRepository.findProfitOfBets(startDate, endDate, tags, sportsbooks,
+                    maxOdds, minOdds, currentUser);
+        } else if (sportsbooks != null && statusList != null) { //sportsbook and status list not null
+            sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate, sportsbooks,
+                    maxOdds, minOdds, statusList, currentUser);
+            sumProfit = types.contains("sumProfit") ? null : betRepository.findProfitOfBets(startDate, endDate, sportsbooks,
+                    maxOdds, minOdds, statusList, currentUser);
+        } else if (tags != null) { //tags not null, but the other two are null
+            sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate,
+                    maxOdds,minOdds, tags, currentUser);
+            sumProfit = types.contains("sumProfit") ? null : betRepository.findProfitOfBets(startDate, endDate,
+                    maxOdds,minOdds, tags, currentUser);
+        } else if (sportsbooks != null) {
+            sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate,sportsbooks,
+                    maxOdds,minOdds,currentUser);
+            sumProfit = types.contains("sumProfit") ? null : betRepository.findProfitOfBets(startDate, endDate,sportsbooks,
+                    maxOdds,minOdds,currentUser);
+        } else if (statusList != null) {
+            sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate,
+                    maxOdds, minOdds, currentUser, statusList);
+            sumProfit = types.contains("sumProfit") ? null : betRepository.findProfitOfBets(startDate, endDate,
+                    maxOdds, minOdds, currentUser, statusList);
+        } else {
+            sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate,
+                    maxOdds,minOdds,currentUser);
+            sumProfit = types.contains("sumProfit") ? null : betRepository.findProfitOfBets(startDate, endDate,
+                    maxOdds,minOdds,currentUser);
+        }
+        if (sumStake != null) {
+            map.put("stake", sumStake);
+        }
+        if (sumProfit != null) {
+            map.put("profit", sumProfit);
+        }
+
+        return map;
+
     }
 
     public List<BetStats> getBetStats() {
@@ -123,6 +246,62 @@ public class BetService {
                 monthOpenBets,monthWonBets,monthLostBets,monthVoidBets);
         stats.add(monthStats);
         return stats;
+    }
+    public BetStats betweenDateStats(LocalDate startDate, LocalDate endDate, MyUser currentUser) {
+        return new BetStats("between", betRepository.getProfitBetweenDate(startDate,endDate,currentUser),
+                betRepository.getStakeBetweenDate(startDate,endDate,currentUser), betRepository.getFreeBetStakeBetweenDate(startDate,endDate,currentUser),
+                0.00, betRepository.getStatusCountBetweenDate(startDate,endDate,"open",currentUser),
+                betRepository.getStatusCountBetweenDate(startDate,endDate,"won",currentUser),
+                betRepository.getStatusCountBetweenDate(startDate,endDate,"lost",currentUser),
+                betRepository.getStatusCountBetweenDate(startDate,endDate,"void",currentUser));
+    }
+
+    public BetStats totalStats(MyUser currentUser) {
+        double totalProfit = betRepository.getTotalProfit(currentUser);
+        double totalStake = betRepository.getTotalStake(currentUser);
+        double totalFreeBetStake = betRepository.getTotalFreeBetStake(currentUser);
+
+        //TODO: add roi
+        double totalROI = 0.00;
+        int openBets = betRepository.getTotalStatusCount("open",currentUser);
+        int wonBets = betRepository.getTotalStatusCount("won",currentUser);
+        int lostBets = betRepository.getTotalStatusCount("lost",currentUser);
+        int voidBets = betRepository.getTotalStatusCount("void",currentUser);
+
+        return new BetStats("Total",totalProfit,totalStake,totalFreeBetStake,totalROI,
+                openBets,wonBets,lostBets,voidBets);
+    }
+
+    public BetStats dayStats(LocalDate date, MyUser currentUser) {
+        double todayProfit = betRepository.getProfitForDate(date,currentUser);
+        double todayStake = betRepository.getStakeForDate(date,currentUser);
+        double todayFreeBetStake = betRepository.getFreeBetStakeForDate(date,currentUser);
+
+        //TODO: add roi
+        double todayROI = 0.00;
+        int todayOpenBets = betRepository.getTodayStatusCount(date,"open",currentUser);
+        int todayWonBets = betRepository.getTodayStatusCount(date,"won",currentUser);
+        int todayLostBets = betRepository.getTodayStatusCount(date,"lost",currentUser);
+        int todayVoidBets = betRepository.getTodayStatusCount(date,"void",currentUser);
+
+        return new BetStats("Day",todayProfit,todayStake,todayFreeBetStake,todayROI,
+                todayOpenBets,todayWonBets,todayLostBets,todayVoidBets);
+    }
+
+    public BetStats monthStats(LocalDate date, MyUser currentUser) {
+        double monthProfit = betRepository.getProfitForMonth(date.getMonthValue(), date.getYear(), currentUser);
+        double monthStake = betRepository.getStakeForMonth(date.getMonthValue(), date.getYear(), currentUser);
+        double monthFreeBetStake = betRepository.getFreeBetStakeForMonth(date.getMonthValue(), date.getYear(), currentUser);
+
+        //TODO: add roi
+        double monthROI = 0.00;
+        int monthOpenBets = betRepository.getMonthStatusCount(date.getMonthValue(), date.getYear(),"open",currentUser);
+        int monthWonBets = betRepository.getMonthStatusCount(date.getMonthValue(), date.getYear(),"won",currentUser);
+        int monthLostBets = betRepository.getMonthStatusCount(date.getMonthValue(), date.getYear(),"lost",currentUser);
+        int monthVoidBets = betRepository.getMonthStatusCount(date.getMonthValue(), date.getYear(),"void",currentUser);
+
+        return new BetStats("Month",monthProfit,monthStake,monthFreeBetStake,monthROI,
+                monthOpenBets,monthWonBets,monthLostBets,monthVoidBets);
     }
 
     public Bet saveBet(Bet bet) {
@@ -196,8 +375,24 @@ public class BetService {
             return betRepository.findBetsWithParams(startDate, endDate,
                     maxOdds, minOdds, maxStake, minStake, freeBetMaxStake, freeBetMinStake, currentUser, statusList);
         }else {
-            return betRepository.findBetsWithParams(startDate, endDate,
-                    maxOdds,minOdds,maxStake,minStake,freeBetMaxStake,freeBetMinStake,currentUser);
+
+            boolean hasStartDate = startDate != null;
+            boolean hasEndDate = endDate != null;
+
+            if (hasStartDate && hasEndDate) {
+                return  betRepository.findBetsByMyUserAndEventDateBetween(currentUser, startDate, endDate);
+            } else if (hasStartDate) {
+                return  betRepository.findBetsByMyUserAndEventDate(currentUser, startDate);
+            }else {
+                return betRepository.findBetsWithParams(startDate, endDate,
+                        maxOdds,minOdds,maxStake,minStake,freeBetMaxStake,freeBetMinStake,currentUser);
+            }
+
+
+
+
+
+
         }
 
     }

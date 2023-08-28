@@ -39,25 +39,54 @@ async function setDailyWidgets() {
   let monthProfitUnitDataSet = [];
   let monthProfit = 0;
   function createCalendarColumn(row, day = null, profit = null) {
+    // const insideDiv = document.createElement("div");
+    // insideDiv.appendChild(insideDiv);
+
     const col = document.createElement("div");
     col.classList.add("col");
     col.classList.add("col-fixed-width");
+    col.classList.add("diy-calendar-day");
     row.appendChild(col);
+    // const insideDiv = document.createElement("div");
+    // col.appendChild(insideDiv);
     if (day) {
       const spanDay = document.createElement("div");
       spanDay.textContent = day;
-      spanDay.classList.add("col-fixed-width");
+      // spanDay.classList.add("col-fixed-width");
       col.appendChild(spanDay);
+      col.style.borderColor = "black";
     }
+    // profit = 99999;
+    let profitExtension = "";
+    let fixedNumbers = 0;
+    if (profit > 99999) {
+      profit = profit / 1000000;
+      fixedNumbers = 1;
+      profitExtension = "M";
+    } else if (profit > 9999) {
+      profit = profit / 1000;
+      fixedNumbers = 0;
+      profitExtension = "K";
+    } else if (profit > 999) {
+      profit = profit / 1000;
+      fixedNumbers = 1;
+      profitExtension = "K";
+    }
+
     if (profit != null) {
       const spanProfit = document.createElement("div");
-      spanProfit.textContent = "$" + profit.toFixed(0);
-      spanProfit.classList.add("col-fixed-width");
+      spanProfit.textContent =
+        "$" + profit.toFixed(fixedNumbers) + profitExtension;
+      spanProfit.style.display = "flex";
+      spanProfit.style.justifyContent = "center";
+      // spanProfit.classList.add("col-fixed-width");
       col.appendChild(spanProfit);
       if (profit > 0) {
         spanProfit.style.color = "green";
+        col.style.borderColor = "green";
       } else if (profit < 0) {
         spanProfit.style.color = "red";
+        col.style.borderColor = "red";
       }
     }
   }
@@ -194,9 +223,10 @@ async function setDailyWidgets() {
     }
   }
   while (columnNum < 7) {
-    const col = document.createElement("div");
-    col.classList.add("col");
-    row.appendChild(col);
+    // const col = document.createElement("div");
+    // col.classList.add("col");
+    // row.appendChild(col);
+    createCalendarColumn(row);
     columnNum++;
   }
   setDailyChartData();
@@ -216,6 +246,7 @@ function unhideAll() {
     console.log("all done will unhide.");
     document.getElementById("topRow").removeAttribute("style");
     document.getElementById("secondRow").removeAttribute("style");
+    document.getElementById("thirdRow").removeAttribute("style");
   }
 }
 // function adjustCharts() {
@@ -327,4 +358,182 @@ function setYearChart(yearJson) {
     },
     false
   );
+}
+let sportsbooksList = [];
+let tagsList = [];
+let receivedSportbooks = false;
+let receivedTags = false;
+apiRequest(baseUrl + "bets/userTags")
+  .then((result) => {
+    return result.json();
+  })
+  .then((json) => {
+    tagsList = json;
+    console.log(tagsList);
+  })
+  .then(() => {
+    receivedTags = true;
+    getDashboardStats();
+    // tagsList.forEach((tag) => {
+    //   createTagProfitBadge(tag, "tagProfit");
+    // });
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+apiRequest(baseUrl + "bets/userSportsbooks")
+  .then((result) => {
+    return result.json();
+  })
+  .then((json) => {
+    sportsbooksList = json;
+    receivedSportbooks = true;
+  })
+  .then(() => {
+    getDashboardStats();
+    // sportsbooksList.forEach((sportsbook) => {
+    //   createTagProfitBadge(sportsbook, "sportsbookProfit");
+    // });
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+function createTagProfitBadge(tag, elementId, profit = 0.0) {
+  const div = document.createElement("div");
+  div.style.display = "flex";
+
+  const header = document.createElement("div");
+  header.className = "diy-badge-header";
+  const headerSpan = document.createElement("span");
+  headerSpan.className = "diy-badge-header";
+  headerSpan.textContent = tag;
+  header.appendChild(headerSpan);
+  div.appendChild(header);
+
+  const badgeDiv = document.createElement("div");
+  badgeDiv.className = "diy-card-badge";
+
+  const badgeSpan = document.createElement("span");
+  badgeSpan.className = "badge";
+  if (profit > 0) {
+    badgeSpan.style.backgroundColor = "green";
+  } else if (profit < 0) {
+    badgeSpan.style.backgroundColor = "red";
+  } else {
+    badgeSpan.classList.add("bg-secondary");
+  }
+  badgeSpan.textContent = `$${parseFloat(profit).toFixed(2)}`;
+  badgeDiv.appendChild(badgeSpan);
+  div.appendChild(badgeDiv);
+  document.getElementById(elementId).appendChild(div);
+}
+async function getDashboardStats() {
+  if (sportsbooksList.length == 0 || tagsList.length == 0) {
+    console.log("did not receive sportsbooks or tags yet.");
+    return;
+  }
+  console.log("got both");
+  let newTags = [];
+  tagsList.forEach((tag) => {
+    newTags.push(encodeURIComponent(tag));
+  });
+  let newSportsbooks = [];
+  sportsbooksList.forEach((sportsbook) => {
+    newSportsbooks.push(encodeURIComponent(sportsbook));
+  });
+  let url =
+    baseUrl +
+    "bets/stats/dashboard?" +
+    "tags=" +
+    newTags +
+    "&sportsbooks=" +
+    newSportsbooks;
+
+  apiRequest(url)
+    .then((result) => {
+      return result.json();
+    })
+    .then((json) => {
+      console.log(json);
+      sportsbooksList.forEach((sportsbook) => {
+        createTagProfitBadge(sportsbook, "sportsbookProfit", json[sportsbook]);
+      });
+      tagsList.forEach((tag) => {
+        createTagProfitBadge(tag, "tagProfit", json[tag]);
+      });
+      // const pendingBadge = document.getElementById("pendingBadge");
+      const pendingAmount = parseFloat(json["pendingStake"]);
+      // if (pendingAmount > 0) {
+      //   pendingBadge.style.backgroundColor = "green";
+      // } else if (pendingAmount < 0) {
+      //   pendingBadge.style.backgroundColor = "red";
+      // }
+      document.getElementById(
+        "pendingStake"
+      ).textContent = `$${pendingAmount.toFixed(2)}`;
+      //setting badges for top row
+
+      let todayStats = json["todayStats"];
+      let yesterdayStats = json["yesterdayStats"];
+      let weekStats = json["weekStats"];
+      let monthStats = json["monthStats"];
+      let yearStats = json["yearStats"];
+      let totalStats = json["totalStats"];
+      document.getElementById("todayOpen").textContent = todayStats["openBets"];
+      document.getElementById("totalOpen").textContent = totalStats["openBets"];
+      document.getElementById("monthOpen").textContent = monthStats["openBets"];
+      document.getElementById("weekOpen").textContent = weekStats["openBets"];
+      setBadge("today", todayStats);
+      setBadge("yesterday", yesterdayStats);
+      setBadge("week", weekStats);
+      setBadge("month", monthStats);
+      setBadge("year", yearStats);
+      setBadge("total", totalStats);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+function setBadge(type, json) {
+  const profit = parseFloat(json["profit"]);
+  const profitBadge = document.getElementById(type + "ProfitBadge");
+  profitBadge.textContent = `$${profit.toFixed(2)}`;
+  if (profit > 0) {
+    profitBadge.style.backgroundColor = "green";
+    profitBadge.classList.remove("bg-secondary");
+  } else if (profit < 0) {
+    profitBadge.style.backgroundColor = "red";
+    profitBadge.classList.remove("bg-secondary");
+  }
+
+  const stake = parseFloat(json["stake"]);
+  const stakeBadge = document.getElementById(type + "StakeBadge");
+  stakeBadge.textContent = `$${stake.toFixed(2)}`;
+
+  let freeBetStake = parseFloat(json["freeBetStake"]);
+  const freeBetStakeBadge = document.getElementById(type + "FreeBetStakeBadge");
+  freeBetStakeBadge.textContent = `$${freeBetStake.toFixed(2)}`;
+
+  let ROI = 0;
+  if (profit != 0 && stake != 0) {
+    ROI = (profit / stake) * 100;
+  }
+
+  const ROIBadge = document.getElementById(type + "ROIBadge");
+  ROIBadge.textContent = `${ROI.toFixed(2)}%`;
+  if (ROI > 0) {
+    ROIBadge.style.backgroundColor = "green";
+    ROIBadge.classList.remove("bg-secondary");
+  } else if (ROI < 0) {
+    ROIBadge.style.backgroundColor = "red";
+    ROIBadge.classList.remove("bg-secondary");
+  }
+  let wins = json["wonBets"];
+  let losses = json["lostBets"];
+  let voids = json["voidBets"];
+  document.getElementById(
+    type + "RecordBadge"
+  ).textContent = `${wins}-${losses}-${voids}`;
 }

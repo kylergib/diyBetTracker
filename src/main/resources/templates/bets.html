@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>DIY Bet Tracker</title>
   <link rel="stylesheet" href="/main.css" />
+  <link rel="stylesheet" href="/diy-dark.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.x.x/dist/js/bootstrap.bundle.min.js"></script>
@@ -130,7 +131,7 @@
           <label for="statusSelect" class="col-form-label">Status:</label>
         </div>
         <div class="col-sm-2">
-          <select class="form-select" id="statusSelect" aria-label="Default select example">
+          <select class="form-select add-bet-form-select" id="statusSelect" aria-label="Default select example">
             <option selected value="open">Open</option>
             <option value="lost">Lost</option>
             <option value="won">Won</option>
@@ -143,15 +144,15 @@
         <div class="col-auto">
           <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
             <input type="checkbox" class="btn-check" id="keepSportsbookCheckbox" autocomplete="off" tabindex="-1">
-            <label class="btn btn-outline-primary" for="keepSportsbookCheckbox">Keep Sportsbook</label>
+            <label class="btn btn-outline-primary diy-form-btn" for="keepSportsbookCheckbox">Keep Sportsbook</label>
 
             <input type="checkbox" class="btn-check" id="keepDateCheckbox" autocomplete="off" tabindex="-1">
-            <label class="btn btn-outline-primary" for="keepDateCheckbox">Keep Date</label>
+            <label class="btn btn-outline-primary diy-form-btn" for="keepDateCheckbox">Keep Date</label>
 
             <input type="checkbox" class="btn-check" id="keepStatusCheckbox" autocomplete="off" tabindex="-1">
-            <label class="btn btn-outline-primary" for="keepStatusCheckbox">Keep Status</label>
+            <label class="btn btn-outline-primary diy-form-btn" for="keepStatusCheckbox">Keep Status</label>
             <input type="checkbox" class="btn-check" id="keepTagsCheckbox" autocomplete="off" tabindex="-1">
-            <label class="btn btn-outline-primary" for="keepTagsCheckbox">Keep Tags</label>
+            <label class="btn btn-outline-primary diy-form-btn" for="keepTagsCheckbox">Keep Tags</label>
           </div>
         </div>
 
@@ -194,7 +195,7 @@
           <div class="input-group">
             <input type="text" id="tagInput" class="form-control" aria-label="Edit tags dropdown">
 
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            <button class="btn btn-outline-open diy-form-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
               aria-expanded="false">Actions</button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="#" id="addTagDropdown">Add Tag</a></li>
@@ -230,7 +231,7 @@
           <div class="input-group">
 
             <input type="number" step="0.01" class="form-control" id="freeBetRecieved">
-            <div class="input-group-text">
+            <div class="input-group-text input-group-check">
               <input class="form-check-input mt-0" type="checkbox" id="freeBeReceivedCheckbox" value=""
                 aria-label="Checkbox for free bet was received">
             </div>
@@ -238,21 +239,21 @@
         </div>
         <div class="row g-3 mb-3" id="legRow">
           <div class="input-group">
-            <span class="input-group-text">Legs</span>
+            <span class="input-group-text diy-legs">Legs</span>
             <input type="text" aria-label="Leg 1" class="form-control">
             <input type="text" aria-label="Leg 2" class="form-control">
             <input type="text" aria-label="Leg 3" class="form-control">
             <input type="text" aria-label="Leg 4" class="form-control">
           </div>
           <div class="input-group">
-            <span class="input-group-text">Legs</span>
+            <span class="input-group-text diy-legs">Legs</span>
             <input type="text" aria-label="Leg 5" class="form-control">
             <input type="text" aria-label="Leg 6" class="form-control">
             <input type="text" aria-label="Leg 7" class="form-control">
             <input type="text" aria-label="Leg 8" class="form-control">
           </div>
           <div class="input-group">
-            <span class="input-group-text">Legs</span>
+            <span class="input-group-text diy-legs">Legs</span>
             <input type="text" aria-label="Leg 9" class="form-control">
             <input type="text" aria-label="Leg 10" class="form-control">
             <input type="text" aria-label="Leg 11" class="form-control">

@@ -255,6 +255,9 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
     @Query("SELECT COALESCE(SUM(profit), 0.0) FROM Bet WHERE eventDate = :date AND myUser = :myUser")
     Double getProfitForDate(LocalDate date, MyUser myUser);
 
+//    @Query("SELECT COALESCE(SUM(profit), 0.0) FROM Bet WHERE eventDate = :date AND myUser = :myUser")
+//    Double getProfitForDateAndTag(LocalDate date, MyUser myUser);
+
     @Query("SELECT COALESCE(SUM(stake), 0.0) FROM Bet WHERE eventDate = :date AND myUser = :myUser")
     Double getStakeForDate(LocalDate date, MyUser myUser);
 
@@ -272,5 +275,278 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
 
     @Query("SELECT DISTINCT t FROM Bet b JOIN b.tags t WHERE b.myUser.id = :userId")
     List<String> findDistinctTagsByUserId(@Param("userId") Long userId);
+
+    //trying stuff
+    @Query("SELECT COALESCE(SUM(b.profit), 0.0) FROM Bet b WHERE " +
+        "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate)  AND b.myUser = :myUser")
+    Double getProfitBetweenDate(LocalDate startDate, LocalDate endDate, MyUser myUser);
+
+    @Query("SELECT COALESCE(SUM(b.stake), 0.0) FROM Bet b WHERE " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate)  AND b.myUser = :myUser")
+    Double getStakeBetweenDate(LocalDate startDate, LocalDate endDate, MyUser myUser);
+
+    @Query("SELECT COALESCE(SUM(b.freeBetStake), 0.0) FROM Bet b WHERE " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate)  AND b.myUser = :myUser")
+    Double getFreeBetStakeBetweenDate(LocalDate startDate, LocalDate endDate, MyUser myUser);
+
+//    @Query("SELECT COALESCE(COUNT(*), 0) FROM Bet WHERE MONTH(eventDate) = :month AND YEAR(eventDate) = :year AND status = :status AND myUser = :myUser")
+    @Query("SELECT COALESCE(SUM(b.profit), 0.0) FROM Bet b WHERE " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate)  " +
+            "AND b.status = :status AND b.myUser = :myUser")
+    Integer getStatusCountBetweenDate(LocalDate startDate, LocalDate endDate, String status, MyUser myUser);
+
+    //TODO: leftoff
+
+
+
+
+
+    //below is used if sportsbook list, status list and tags list have data
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "LEFT JOIN b.tags tag " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(tag IN :tags) AND b.sportsbook IN :sportsbooks AND b.status IN :statusList AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findStakeOfBets(@Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate,
+                                 @Param("tags") List<String> tags,
+                                 @Param("sportsbooks") List<String> sportsbooks,
+                                 @Param("maxOdds") Integer maxOdds,
+                                 @Param("minOdds") Integer minOdds,
+                                 @Param("statusList") List<String> statusList,
+                                 @Param("myUser") MyUser myUser);
+    //below is used if sportsbook list and status list null, but not tags list
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "LEFT JOIN b.tags tag " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(tag IN :tags) AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findStakeOfBets(@Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate,
+                                 @Param("maxOdds") Integer maxOdds,
+                                 @Param("minOdds") Integer minOdds,
+                                 @Param("tags") List<String> tags,
+                                 @Param("myUser") MyUser myUser);
+    //the below is used if tags list and status list are null but not sportsbook list
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "b.sportsbook IN :sportsbooks AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findStakeOfBets(@Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate,
+                                 @Param("sportsbooks") List<String> sportsbooks,
+                                 @Param("maxOdds") Integer maxOdds,
+                                 @Param("minOdds") Integer minOdds,
+                                 @Param("myUser") MyUser myUser);
+    //the below is used if sportsbook list, status list and tags list are null
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findStakeOfBets(@Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate,
+                                 @Param("maxOdds") Integer maxOdds,
+                                 @Param("minOdds") Integer minOdds,
+                                 @Param("myUser") MyUser myUser);
+
+    //below is used if sportsbook list and tags list are null but not status list
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "b.status IN :statusList AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findStakeOfBets(@Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate,
+                                 @Param("maxOdds") Integer maxOdds,
+                                 @Param("minOdds") Integer minOdds,
+                                 @Param("myUser") MyUser myUser,
+                                 @Param("statusList") List<String> statusList);
+    //status list and sportsbook list are not null, but tag list is null
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "b.sportsbook IN :sportsbooks AND b.status IN :statusList AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findStakeOfBets(@Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate,
+                                 @Param("sportsbooks") List<String> sportsbooks,
+                                 @Param("maxOdds") Integer maxOdds,
+                                 @Param("minOdds") Integer minOdds,
+                                 @Param("statusList") List<String> statusList,
+                                 @Param("myUser") MyUser myUser);
+    //status list and tag list are not null, but sportsbook list is null
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "LEFT JOIN b.tags tag " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(tag IN :tags) AND b.status IN :statusList AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findStakeOfBets(@Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate,
+                                 @Param("maxOdds") Integer maxOdds,
+                                 @Param("minOdds") Integer minOdds,
+                                 @Param("tags") List<String> tags,
+                                 @Param("statusList") List<String> statusList,
+                                 @Param("myUser") MyUser myUser);
+
+    //below is used if sportsbook list and tags list are not null, but status list is null
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "LEFT JOIN b.tags tag " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(tag IN :tags) AND b.sportsbook IN :sportsbooks AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findStakeOfBets(@Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate,
+                                 @Param("tags") List<String> tags,
+                                 @Param("sportsbooks") List<String> sportsbooks,
+                                 @Param("maxOdds") Integer maxOdds,
+                                 @Param("minOdds") Integer minOdds,
+                                 @Param("myUser") MyUser myUser);
+    //////
+
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "LEFT JOIN b.tags tag " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(tag IN :tags) AND b.sportsbook IN :sportsbooks AND b.status IN :statusList AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findProfitOfBets(@Param("startDate") LocalDate startDate,
+                           @Param("endDate") LocalDate endDate,
+                           @Param("tags") List<String> tags,
+                           @Param("sportsbooks") List<String> sportsbooks,
+                           @Param("maxOdds") Integer maxOdds,
+                           @Param("minOdds") Integer minOdds,
+                           @Param("statusList") List<String> statusList,
+                           @Param("myUser") MyUser myUser);
+    //below is used if sportsbook list and status list null, but not tags list
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "LEFT JOIN b.tags tag " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(tag IN :tags) AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findProfitOfBets(@Param("startDate") LocalDate startDate,
+                           @Param("endDate") LocalDate endDate,
+                           @Param("maxOdds") Integer maxOdds,
+                           @Param("minOdds") Integer minOdds,
+                           @Param("tags") List<String> tags,
+                           @Param("myUser") MyUser myUser);
+    //the below is used if tags list and status list are null but not sportsbook list
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "b.sportsbook IN :sportsbooks AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findProfitOfBets(@Param("startDate") LocalDate startDate,
+                           @Param("endDate") LocalDate endDate,
+                           @Param("sportsbooks") List<String> sportsbooks,
+                           @Param("maxOdds") Integer maxOdds,
+                           @Param("minOdds") Integer minOdds,
+                           @Param("myUser") MyUser myUser);
+    //the below is used if sportsbook list, status list and tags list are null
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findProfitOfBets(@Param("startDate") LocalDate startDate,
+                           @Param("endDate") LocalDate endDate,
+                           @Param("maxOdds") Integer maxOdds,
+                           @Param("minOdds") Integer minOdds,
+                           @Param("myUser") MyUser myUser);
+
+    //below is used if sportsbook list and tags list are null but not status list
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "b.status IN :statusList AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findProfitOfBets(@Param("startDate") LocalDate startDate,
+                           @Param("endDate") LocalDate endDate,
+                           @Param("maxOdds") Integer maxOdds,
+                           @Param("minOdds") Integer minOdds,
+                           @Param("myUser") MyUser myUser,
+                           @Param("statusList") List<String> statusList);
+    //status list and sportsbook list are not null, but tag list is null
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "b.sportsbook IN :sportsbooks AND b.status IN :statusList AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findProfitOfBets(@Param("startDate") LocalDate startDate,
+                           @Param("endDate") LocalDate endDate,
+                           @Param("sportsbooks") List<String> sportsbooks,
+                           @Param("maxOdds") Integer maxOdds,
+                           @Param("minOdds") Integer minOdds,
+                           @Param("statusList") List<String> statusList,
+                           @Param("myUser") MyUser myUser);
+    //status list and tag list are not null, but sportsbook list is null
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "LEFT JOIN b.tags tag " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(tag IN :tags) AND b.status IN :statusList AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findProfitOfBets(@Param("startDate") LocalDate startDate,
+                           @Param("endDate") LocalDate endDate,
+                           @Param("maxOdds") Integer maxOdds,
+                           @Param("minOdds") Integer minOdds,
+                           @Param("tags") List<String> tags,
+                           @Param("statusList") List<String> statusList,
+                           @Param("myUser") MyUser myUser);
+
+    //below is used if sportsbook list and tags list are not null, but status list is null
+    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+            "LEFT JOIN b.tags tag " +
+            "WHERE b.myUser = :myUser AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
+            "(tag IN :tags) AND b.sportsbook IN :sportsbooks AND " +
+            "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +
+            "(COALESCE(:maxOdds, NULL) IS NULL OR b.odds <= :maxOdds)")
+    Double findProfitOfBets(@Param("startDate") LocalDate startDate,
+                           @Param("endDate") LocalDate endDate,
+                           @Param("tags") List<String> tags,
+                           @Param("sportsbooks") List<String> sportsbooks,
+                           @Param("maxOdds") Integer maxOdds,
+                           @Param("minOdds") Integer minOdds,
+                           @Param("myUser") MyUser myUser);
 
 }

@@ -293,7 +293,7 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
     Double getFreeBetStakeBetweenDate(LocalDate startDate, LocalDate endDate, MyUser myUser);
 
 //    @Query("SELECT COALESCE(COUNT(*), 0) FROM Bet WHERE MONTH(eventDate) = :month AND YEAR(eventDate) = :year AND status = :status AND myUser = :myUser")
-    @Query("SELECT COALESCE(SUM(b.profit), 0.0) FROM Bet b WHERE " +
+    @Query("SELECT COALESCE(COUNT(*), 0) FROM Bet b WHERE " +
             "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
             "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate)  " +
             "AND b.status = :status AND b.myUser = :myUser")

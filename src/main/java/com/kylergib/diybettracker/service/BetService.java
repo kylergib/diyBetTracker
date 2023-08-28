@@ -38,6 +38,9 @@ public class BetService {
     public boolean deleteBet(Long betId) {
         Bet bet = findById(betId);
         MyUser currentUser = getUser();
+//        if (currentUser.getRoles().contains("test")) {
+//            return false;
+//        }
         if (bet.getMyUser().getId() == currentUser.getId()) {
             betRepository.deleteById(betId);
             return true;
@@ -305,6 +308,9 @@ public class BetService {
     }
 
     public Bet saveBet(Bet bet) {
+//        if (getUser().getRoles().contains("test")) {
+//            return new Bet();
+//        }
         if (bet.getMyUser().getId() != null) {
             System.out.println();
 
@@ -420,6 +426,9 @@ public class BetService {
     }
 
     public Bet findById(Long betId) {
+//        if (getUser().getRoles().contains("test")) {
+//            return new Bet();
+//        }
         Optional<Bet> betOptional = betRepository.findById(betId);
         if(betOptional.isPresent()) {
             Bet bet = betOptional.get();

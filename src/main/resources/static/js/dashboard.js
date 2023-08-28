@@ -574,7 +574,7 @@ function setBadge(type, json) {
   let wins = json["wonBets"];
   let losses = json["lostBets"];
   let voids = json["voidBets"];
-  document.getElementById(
-    type + "RecordBadge"
-  ).textContent = `${wins}-${losses}-${voids}`;
+  console.log(wins + "-" + losses + "-" + voids);
+  document.getElementById(type + "RecordBadge").textContent =
+    wins + "-" + losses + "-" + voids;
 }

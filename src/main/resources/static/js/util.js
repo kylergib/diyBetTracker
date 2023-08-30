@@ -1,6 +1,4 @@
-import { createBet } from "./bet.js";
-
-export const baseUrl = "http://" + window.location.host + "/api/";
+export const baseUrl = "https://" + window.location.host + "/api/";
 const csrfToken = document
   .querySelector('meta[name="csrf-token"]')
   .getAttribute("content");
@@ -11,7 +9,6 @@ export async function apiRequest(
   body = null,
   contentType = "application/json"
 ) {
-  console.log("calling request");
   let params = {
     method: method,
     headers: {
@@ -49,40 +46,26 @@ export function getCurrentDateTimeString() {
   let now = new Date();
   return now.toISOString().slice(0, 19);
 }
-
 export async function getCurrentUser() {
-  return await apiRequest(baseUrl + "current_user").then((result) => {
-    console.log(result);
-    if (result.status == 200) {
-      console.log("successfull?");
-      return result.json();
-    }
-  });
-  // saveBet();
+  return await apiRequest(baseUrl + "current_user")
+    .then((result) => {
+      if (result.status == 200) {
+        return result.json();
+      }
+    })
+    .then((json) => {
+      return {
+        currentUser: json["currentUser"],
+        userSettings: json["settings"],
+      };
+    })
+    .catch((error) => {
+      console.error("Error getting current user:", error);
+    });
 }
-// export async function getAllUserBets() {
-//   const bets = [];
-//   await apiRequest(baseUrl + "bets")
-//     .then((result) => {
-//       console.log(result);
-//       if (result.status == 200) {
-//         console.log("successfull?");
-//         return result.json();
-//       }
-//     })
-//     .then((json) => {
-//       json.forEach((bet) => {
-//         bets.push(createBet(bet));
-//       });
-//     });
-//   return bets;
-// }
-
 export async function getAllUserStats() {
   return await apiRequest(baseUrl + "bets/stats").then((result) => {
-    console.log(result);
     if (result.status == 200) {
-      console.log("successfull?");
       return result.json();
     }
   });

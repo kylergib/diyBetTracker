@@ -1,4 +1,4 @@
-export function createAlert(text, type = "primary") {
+export async function createAlert(text, type = "primary") {
   //   switch (type) {
   //     case "primary":
   //       break;

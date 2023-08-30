@@ -1,5 +1,6 @@
 package com.kylergib.diybettracker.config;
 
+
 import com.kylergib.diybettracker.entity.Bet;
 import com.kylergib.diybettracker.entity.MyUser;
 import org.springframework.context.annotation.Configuration;

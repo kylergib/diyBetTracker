@@ -4,10 +4,17 @@ import {
   getDateString,
   baseUrl,
   apiRequest,
+  getCurrentUser,
 } from "./util.js";
-//sets navbar stats
+import { createUser } from "./myUser.js";
+import { setTheme } from "./theme.js";
+import { getTrackersProfit } from "./tracker.js";
 
+let theme;
 let yearJson;
+
+let currentUser;
+let userSettings;
 
 let dailyMap;
 let monthStartDate;
@@ -23,9 +30,7 @@ async function getDailyProfits(startDate, endDate) {
       "&endDate=" +
       getDateString(endDate)
   ).then((result) => {
-    console.log(result);
     if (result.status == 200) {
-      console.log("successfull?");
       return result.json();
     }
   });
@@ -42,22 +47,45 @@ async function setDailyWidgets() {
     const col = document.createElement("div");
     col.classList.add("col");
     col.classList.add("col-fixed-width");
+    col.classList.add("diy-calendar-day");
     row.appendChild(col);
     if (day) {
       const spanDay = document.createElement("div");
       spanDay.textContent = day;
-      spanDay.classList.add("col-fixed-width");
+
       col.appendChild(spanDay);
+      col.style.borderColor = theme == "dark" ? "white" : "black";
     }
+
+    let profitExtension = "";
+    let fixedNumbers = 0;
+    if (profit > 99999) {
+      profit = profit / 1000000;
+      fixedNumbers = 1;
+      profitExtension = "M";
+    } else if (profit > 9999) {
+      profit = profit / 1000;
+      fixedNumbers = 0;
+      profitExtension = "K";
+    } else if (profit > 999) {
+      profit = profit / 1000;
+      fixedNumbers = 1;
+      profitExtension = "K";
+    }
+
     if (profit != null) {
       const spanProfit = document.createElement("div");
-      spanProfit.textContent = "$" + profit.toFixed(0);
-      spanProfit.classList.add("col-fixed-width");
+      spanProfit.textContent =
+        "$" + profit.toFixed(fixedNumbers) + profitExtension;
+      spanProfit.style.display = "flex";
+      spanProfit.style.justifyContent = "center";
       col.appendChild(spanProfit);
       if (profit > 0) {
-        spanProfit.style.color = "green";
+        spanProfit.style.color = theme == "dark" ? "#00ff00" : "green";
+        col.style.borderColor = theme == "dark" ? "#00ff00" : "green";
       } else if (profit < 0) {
-        spanProfit.style.color = "red";
+        spanProfit.style.color = theme == "dark" ? "#ff4343" : "red";
+        col.style.borderColor = theme == "dark" ? "#ff4343" : "red";
       }
     }
   }
@@ -72,6 +100,7 @@ async function setDailyWidgets() {
     monthProfitUnitDataSet.push(monthUnits);
   }
   function setDailyChartData() {
+    let fontColor = theme == "dark" ? "white" : "black";
     let ctx = document.getElementById("monthProfitChart").getContext("2d");
     let myChart = new Chart(ctx, {
       type: "line",
@@ -90,6 +119,56 @@ async function setDailyWidgets() {
           },
         ],
       },
+      options: {
+        legend: {
+          labels: {
+            fontColor: fontColor,
+          },
+        },
+        scales: {
+          xAxes: [
+            {
+              ticks: {
+                fontColor: fontColor,
+                callback: function (value, index, values) {
+                  // Display only every other label
+                  if (window.innerWidth < 1200) {
+                    return index % 2 === 0 ? value : null;
+                  } else {
+                    return value;
+                  }
+                },
+              },
+            },
+          ],
+          yAxes: [
+            {
+              ticks: {
+                fontColor: fontColor,
+              },
+            },
+          ],
+        },
+      },
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth < 1200) {
+        myChart.options.scales.xAxes[0].ticks.callback = function (
+          value,
+          index,
+          values
+        ) {
+          return index % 2 === 0 ? value : null;
+        };
+      } else {
+        myChart.options.scales.xAxes[0].ticks.callback = function (
+          value,
+          index,
+          values
+        ) {
+          return value;
+        };
+      }
     });
     document.getElementById("unitButtonDaily").addEventListener(
       "click",
@@ -157,16 +236,19 @@ async function setDailyWidgets() {
     }
   }
   while (columnNum < 7) {
-    const col = document.createElement("div");
-    col.classList.add("col");
-    row.appendChild(col);
+    createCalendarColumn(row);
     columnNum++;
   }
   setDailyChartData();
 }
 
 async function main() {
-  setStats();
+  let temp = await getCurrentUser();
+  userSettings = temp["userSettings"];
+  currentUser = createUser(temp["currentUser"]);
+  theme = userSettings["theme"];
+  setTheme(theme);
+  setStats(theme);
   let date = new Date();
   allDaily(date);
   allYear(date);
@@ -176,16 +258,12 @@ main();
 
 function unhideAll() {
   if (yearlyDone && dailyDone) {
-    console.log("all done will unhide.");
+    document.getElementById("veryTopRow").removeAttribute("style");
     document.getElementById("topRow").removeAttribute("style");
     document.getElementById("secondRow").removeAttribute("style");
+    document.getElementById("thirdRow").removeAttribute("style");
   }
 }
-
-window.addEventListener("resize", function () {
-  if (window.innerWidth < 500) {
-  }
-});
 
 async function allDaily(date) {
   const startAndEnd = getStartAndEndOfMonth(date);
@@ -207,9 +285,7 @@ async function allYear(date) {
 async function getMonthlyProfits(year) {
   return await apiRequest(baseUrl + "bets/stats?year=" + year).then(
     (result) => {
-      console.log(result);
       if (result.status == 200) {
-        console.log("successfull?");
         return result.json();
       }
     }
@@ -236,6 +312,8 @@ function setYearChart(yearJson) {
   }
 
   let ctx = document.getElementById("yearProfitChart").getContext("2d");
+  let fontColor = theme == "dark" ? "white" : "black";
+
   let myChart = new Chart(ctx, {
     type: "line",
     data: {
@@ -252,6 +330,29 @@ function setYearChart(yearJson) {
           backgroundColor: "rgba(3, 244, 252,0.6)",
         },
       ],
+    },
+    options: {
+      legend: {
+        labels: {
+          fontColor: fontColor,
+        },
+      },
+      scales: {
+        xAxes: [
+          {
+            ticks: {
+              fontColor: fontColor,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            ticks: {
+              fontColor: fontColor,
+            },
+          },
+        ],
+      },
     },
   });
   document.getElementById("unitButtonMonthly").addEventListener(
@@ -286,4 +387,233 @@ function setYearChart(yearJson) {
     },
     false
   );
+}
+let sportsbooksList = [];
+let tagsList = [];
+let receivedSportbooks = false;
+let receivedTags = false;
+apiRequest(baseUrl + "bets/userTags")
+  .then((result) => {
+    return result.json();
+  })
+  .then((json) => {
+    tagsList = json;
+  })
+  .then(() => {
+    receivedTags = true;
+    getDashboardStats();
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+apiRequest(baseUrl + "bets/userSportsbooks")
+  .then((result) => {
+    return result.json();
+  })
+  .then((json) => {
+    sportsbooksList = json;
+    receivedSportbooks = true;
+  })
+  .then(() => {
+    getDashboardStats();
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+function createTagProfitBadge(tag, elementId, profit = 0.0) {
+  const div = document.createElement("div");
+  div.style.display = "flex";
+
+  const header = document.createElement("div");
+  header.className = "diy-badge-header";
+  const headerSpan = document.createElement("span");
+  headerSpan.className = "diy-badge-header";
+  headerSpan.textContent = tag;
+  header.appendChild(headerSpan);
+  div.appendChild(header);
+
+  const badgeDiv = document.createElement("div");
+  badgeDiv.className = "diy-card-badge";
+
+  const badgeSpan = document.createElement("span");
+  badgeSpan.className = "badge";
+  if (profit > 0) {
+    badgeSpan.style.backgroundColor = theme == "dark" ? "green" : "green";
+  } else if (profit < 0) {
+    badgeSpan.style.backgroundColor = theme == "dark" ? "red" : "red";
+  } else {
+    badgeSpan.classList.add("bg-secondary");
+  }
+  badgeSpan.textContent = `$${parseFloat(profit).toFixed(2)}`;
+  badgeDiv.appendChild(badgeSpan);
+  div.appendChild(badgeDiv);
+  document.getElementById(elementId).appendChild(div);
+}
+async function getDashboardStats() {
+  if (sportsbooksList.length == 0 || tagsList.length == 0) {
+    console.log("did not receive sportsbooks or tags yet.");
+    return;
+  }
+  let newTags = [];
+  tagsList.forEach((tag) => {
+    newTags.push(encodeURIComponent(tag));
+  });
+  let newSportsbooks = [];
+  sportsbooksList.forEach((sportsbook) => {
+    newSportsbooks.push(encodeURIComponent(sportsbook));
+  });
+  let url =
+    baseUrl +
+    "bets/stats/dashboard?" +
+    "tags=" +
+    newTags +
+    "&sportsbooks=" +
+    newSportsbooks;
+
+  apiRequest(url)
+    .then((result) => {
+      return result.json();
+    })
+    .then((json) => {
+      sportsbooksList.forEach((sportsbook) => {
+        createTagProfitBadge(sportsbook, "sportsbookProfit", json[sportsbook]);
+      });
+      tagsList.forEach((tag) => {
+        createTagProfitBadge(tag, "tagProfit", json[tag]);
+      });
+      const pendingAmount = parseFloat(json["pendingStake"]);
+      document.getElementById(
+        "pendingStake"
+      ).textContent = `$${pendingAmount.toFixed(2)}`;
+
+      let todayStats = json["todayStats"];
+      let yesterdayStats = json["yesterdayStats"];
+      let weekStats = json["weekStats"];
+      let monthStats = json["monthStats"];
+      let yearStats = json["yearStats"];
+      let totalStats = json["totalStats"];
+      document.getElementById("todayOpen").textContent = todayStats["openBets"];
+      document.getElementById("totalOpen").textContent = totalStats["openBets"];
+      document.getElementById("monthOpen").textContent = monthStats["openBets"];
+      document.getElementById("weekOpen").textContent = weekStats["openBets"];
+      setBadge("today", todayStats);
+      setBadge("yesterday", yesterdayStats);
+      setBadge("week", weekStats);
+      setBadge("month", monthStats);
+      setBadge("year", yearStats);
+      setBadge("total", totalStats);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+function setBadge(type, json) {
+  const profit = parseFloat(json["profit"]);
+  const profitBadge = document.getElementById(type + "ProfitBadge");
+  profitBadge.textContent = `$${profit.toFixed(2)}`;
+  if (profit > 0) {
+    profitBadge.style.backgroundColor = "green";
+    profitBadge.classList.remove("bg-secondary");
+  } else if (profit < 0) {
+    profitBadge.style.backgroundColor = "red";
+    profitBadge.classList.remove("bg-secondary");
+  }
+
+  const stake = parseFloat(json["stake"]);
+  const stakeBadge = document.getElementById(type + "StakeBadge");
+  stakeBadge.textContent = `$${stake.toFixed(2)}`;
+
+  let freeBetStake = parseFloat(json["freeBetStake"]);
+  const freeBetStakeBadge = document.getElementById(type + "FreeBetStakeBadge");
+  freeBetStakeBadge.textContent = `$${freeBetStake.toFixed(2)}`;
+
+  let ROI = 0;
+  if (profit != 0 && stake != 0) {
+    ROI = (profit / stake) * 100;
+  }
+
+  const ROIBadge = document.getElementById(type + "ROIBadge");
+  ROIBadge.textContent = `${ROI.toFixed(2)}%`;
+  if (ROI > 0) {
+    ROIBadge.style.backgroundColor = "green";
+    ROIBadge.classList.remove("bg-secondary");
+  } else if (ROI < 0) {
+    ROIBadge.style.backgroundColor = "red";
+    ROIBadge.classList.remove("bg-secondary");
+  }
+  let wins = json["wonBets"];
+  let losses = json["lostBets"];
+  let voids = json["voidBets"];
+  document.getElementById(type + "RecordBadge").textContent =
+    wins + "-" + losses + "-" + voids;
+}
+let trackers = await getTrackersProfit();
+trackers.forEach((tracker) => {
+  createTagTrackerBadge(tracker["tags"], tracker["profit"]);
+});
+document.getElementById("tagTracker").style.display = "";
+function createTagTrackerBadge(tags, profit) {
+  function addBadge(text, type = "tag") {
+    const header = document.createElement("div");
+
+    const headerSpan = document.createElement("span");
+    headerSpan.className = "badge mx-1";
+    headerSpan.textContent = text;
+    let bgColor = "white";
+    if (type === "tag") {
+      bgColor = "#FF6600";
+    } else if (type === "sportsbook") {
+      bgColor = "#0d6efd";
+    } else if (type === "won") {
+      bgColor = "green";
+    } else if (type === "lost") {
+      bgColor = "red";
+    } else if (type === "void") {
+      bgColor = "#ffe783";
+      headerSpan.style.color = "black";
+    } else {
+      headerSpan.style.color = "black";
+    }
+    headerSpan.style.backgroundColor = bgColor;
+    header.appendChild(headerSpan);
+    trackerDiv.appendChild(header);
+  }
+  const tagTracker = document.getElementById("tagTracker");
+
+  const div = document.createElement("div");
+  div.className = "diy-tracker-card card mx-1";
+  const trackerDiv = document.createElement("div");
+  trackerDiv.classList.add("diy-tracker");
+  let characterCount = 0;
+  tags.forEach((tag) => {
+    addBadge(tag);
+    characterCount += tag.length;
+  });
+  let charCountMultiplier = Math.ceil(characterCount / 20);
+  let numItemsMultiplier = Math.ceil(tags.length / 2);
+  let finalMulti =
+    numItemsMultiplier > charCountMultiplier
+      ? numItemsMultiplier
+      : charCountMultiplier;
+  div.style.width = finalMulti * 80 + "px";
+  const badgeDiv = document.createElement("div");
+  badgeDiv.className = "diy-tracker-badge";
+
+  const badgeSpan = document.createElement("span");
+  badgeSpan.className = "badge";
+  if (profit > 0) {
+    badgeSpan.style.backgroundColor = theme == "dark" ? "green" : "green";
+  } else if (profit < 0) {
+    badgeSpan.style.backgroundColor = theme == "dark" ? "red" : "red";
+  } else {
+    badgeSpan.classList.add("bg-secondary");
+  }
+  badgeSpan.textContent = `$${parseFloat(profit).toFixed(2)}`;
+  badgeDiv.appendChild(badgeSpan);
+  div.appendChild(trackerDiv);
+  div.appendChild(badgeDiv);
+
+  tagTracker.appendChild(div);
 }

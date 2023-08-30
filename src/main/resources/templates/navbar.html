@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>Navigation Bar</title>
 </head>
-<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="navbar()">
+<nav class="navbar navbar-expand-lg" th:class="${navClass}" id="topNavBar" th:fragment="navbar()">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Diy Bet Tracker</a>
+        <a class="navbar-brand" href="#">DIY Bet Tracker</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
             aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -20,81 +20,19 @@
                     <a class="nav-link" th:href="@{/bets}">Bets</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Customers</a>
+                    <a class="nav-link" th:href="@{/settings}">Settings</a>
                 </li>
             </ul>
 
-
-
-
-
-            <div class="diy-stats-div">
-                <span class="diy-nav-text-header">
-                    Total
-                </span>
-                <div>
-                    <span class="diy-nav-text" id="totalProfit">
-                        Profit:
-                    </span>
-                    <span class="diy-nav-text" id="totalStake">
-                        Stake:
-                    </span>
-                    <span class="diy-nav-text" id="totalFreebetStake">
-                        F.B:
-                    </span>
-                    <span class="diy-nav-text" id="totalROI">
-                        ROI:
-                    </span>
-                    <span class="diy-nav-text" id="totalRecord">
-                        Record:
-                    </span>
+            <div class="diy-stats-div" id="diy-stats-div" style="display: none;">
+                <div class="diy-nav-text" id="totalProfit">
+                    Profit:
                 </div>
-            </div>
-            <div class="diy-stats-div">
-                <span class="diy-nav-text-header">
-                    Month
-                </span>
-                <div>
-                    <span class="diy-nav-text" id="monthProfit">
-                        Profit:
-                    </span>
-                    <span class="diy-nav-text" id="monthStake">
-                        Stake:
-                    </span>
-                    <span class="diy-nav-text" id="monthFreebetStake">
-                        F.B:
-                    </span>
-                    <span class="diy-nav-text" id="monthROI">
-                        ROI:
-                    </span>
-                    <span class="diy-nav-text" id="monthRecord">
-                        Record:
-                    </span>
+                <div class="diy-nav-text" id="monthProfit">
+                    Profit:
                 </div>
-
-
-
-            </div>
-            <div class="diy-stats-div">
-                <span class="diy-nav-text-header">
-                    Today
-                </span>
-                <div>
-                    <span class="diy-nav-text" id="todayProfit">
-                        Profit:
-                    </span>
-                    <span class="diy-nav-text" id="todayStake">
-                        Stake:
-                    </span>
-                    <span class="diy-nav-text" id="todayFreebetStake">
-                        F.B:
-                    </span>
-                    <span class="diy-nav-text" id="todayROI">
-                        ROI:
-                    </span>
-                    <span class="diy-nav-text" id="todayRecord">
-                        Record:
-                    </span>
+                <div class="diy-nav-text" id="todayProfit">
+                    Profit:
                 </div>
             </div>
 
@@ -109,7 +47,5 @@
         </div>
     </div>
 </nav>
-
-
 
 </html>

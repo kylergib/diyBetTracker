@@ -1,9 +1,6 @@
 package com.kylergib.diybettracker.controller;
 
 import com.kylergib.diybettracker.entity.Bet;
-import com.kylergib.diybettracker.entity.BetStats;
-import com.kylergib.diybettracker.repository.BetRepository;
-import com.kylergib.diybettracker.repository.UserRepository;
 import com.kylergib.diybettracker.service.BetService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,27 +19,23 @@ public class BetApiController {
 
     @Autowired
     private BetService betService;
-    @Autowired
-    private BetRepository betRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<Bet>> getUserBets(@RequestParam(name = "startDate", required = false) LocalDate startDate,
-                                                 @RequestParam(name = "endDate", required = false) LocalDate endDate) {
+                                                 @RequestParam(name = "endDate", required = false) LocalDate endDate,
+                                                 @RequestParam(name="tags", required = false) List<String> tags,
+                                                 @RequestParam(name="sportsbooks", required = false) List<String> sportsbooks,
+                                                 @RequestParam(name="statusList", required = false) List<String> statusList,
+                                                 @RequestParam(name="maxOdds", required = false) Integer maxOdds,
+                                                 @RequestParam(name="minOdds", required = false) Integer minOdds,
+                                                 @RequestParam(name="maxStake", required = false) Integer maxStake,
+                                                 @RequestParam(name="minStake", required = false) Integer minStake,
+                                                 @RequestParam(name="freeBetMaxStake", required = false) Integer freeBetMaxStake,
+                                                 @RequestParam(name="freeBetMinStake", required = false) Integer freeBetMinStake) {
         List<Bet> userBets;
-
-        if (startDate != null && endDate != null) {
-            userBets = betService.getUserBets(startDate, endDate);
-        } else if (startDate != null) {
-            userBets = betService.getUserBets(startDate);
-        } else {
-            userBets = betService.getUserBets();
-        }
-
-
-
+        userBets = betService.getUserBets(startDate, endDate,
+                tags, sportsbooks, statusList,maxOdds, minOdds, maxStake, minStake,
+                freeBetMaxStake, freeBetMinStake);
 
         return ResponseEntity.ok(userBets);
     }
@@ -60,31 +53,37 @@ public class BetApiController {
         List<Bet> userBets = betService.getUserBets(betDate);
         return ResponseEntity.ok(userBets);
     }
-    @GetMapping("/tags")
-    public ResponseEntity<List<String>> getAllTags() {
-        List<String> allTags = betService.getAllTags();
-        return ResponseEntity.ok(allTags);
-    }
     @GetMapping("/stats")
-    public ResponseEntity<Object> getBetStats(@RequestParam(name = "startDate", required = false) LocalDate startDate,
+    public ResponseEntity<?> getBetStats(@RequestParam(name = "startDate", required = false) LocalDate startDate,
                                                       @RequestParam(name = "endDate", required = false) LocalDate endDate,
-                                              @RequestParam(name = "year", required = false) Integer year) {
-        System.out.println("startDate");
-        System.out.println(startDate);
-        System.out.println(endDate);
-        System.out.println(year);
+                                              @RequestParam(name = "year", required = false) Integer year,
+                                              @RequestParam(name="tags", required = false) List<String> tags,
+                                              @RequestParam(name="sportsbooks", required = false) List<String> sportsbooks,
+                                              @RequestParam(name="statusList", required = false) List<String> statusList,
+                                              @RequestParam(name="maxOdds", required = false) Integer maxOdds,
+                                              @RequestParam(name="minOdds", required = false) Integer minOdds) {
 
+        boolean extrasNull = tags == null && sportsbooks == null && statusList == null && maxOdds == null && minOdds == null;
         Object betStats;
-        if ((startDate == null || endDate == null) && year == null) {
+        if ((startDate == null || endDate == null) && year == null && extrasNull) {
             betStats = betService.getBetStats();
-        } else if (year == null) {
+        } else if (year == null && extrasNull) {
             betStats = betService.getDailyBetStats(startDate,endDate);
-        } else {
+        } else if (extrasNull) {
             betStats = betService.getMonthlyBetStats(year);
+        } else {
+            return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(betStats);
     }
+    @GetMapping("/stats/dashboard")
+    public  ResponseEntity<Object> getDashboardStats(@RequestParam(name = "date", required = false) LocalDate date,
+                                                     @RequestParam(name="tags", required = false) List<String> tags,
+                                                     @RequestParam(name="sportsbooks", required = false) List<String> sportsbooks){
+        return ResponseEntity.ok(betService.getDashboardStats(date, tags, sportsbooks));
+    }
+
     @DeleteMapping("/{betId}")
     public ResponseEntity<?> deleteBet(@PathVariable Long betId) {
 
@@ -95,6 +94,31 @@ public class BetApiController {
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized request");
             }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("/userTags")
+    public ResponseEntity<?> getTags() {
+
+        try {
+            List<String> allTags = betService.getAllTags();
+            return ResponseEntity.ok(allTags);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("/userSportsbooks")
+    public ResponseEntity<?> getUserSportsbooks() {
+        try {
+            List<String> allSportsbooks = betService.getAllSportsbooks();
+            System.out.println("after getting sportsbooks");
+            System.out.println(allSportsbooks);
+            return ResponseEntity.ok(allSportsbooks);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

@@ -2,6 +2,8 @@
 ###  Backend was created using Java (Springboot) and frontend is JavaScript, HTML, CSS  
 Welcome to the Bet Profit and Loss Tracker! This application is designed to help you effortlessly keep track of your betting activities, providing a clear overview of your profits and losses. This app simplifies the process of managing your bets and evaluating your performance.
 
+## If you would like to login to the website to see if for yourself, I am hosting it here: https://bets.gibsonkyle.com - the user is "test" and the password is "testUser123?!"
+
 ## Features
 
 - **Track Bets**: Easily input details of each bet you place, including the event, amount wagered, odds, and outcome.

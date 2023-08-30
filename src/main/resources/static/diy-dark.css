@@ -52,11 +52,7 @@ body {
 .input-group-check {
     background-color: #282b30!important;
 }
-.add-bet-form-select {
-    color: white!important;
-    background-color: rgb(30, 33, 36)!important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23dbdbdb' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")!important;
-}
+
 .form-control {
     background-color: #424549!important;
     color: white!important;
@@ -323,3 +319,19 @@ body {
     color: white;
     border-color: white;
   }
+  .diy-cell .form-select, .add-bet-form-select {
+    color: white!important;
+    background-color: rgb(30, 33, 36)!important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23dbdbdb' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")!important;
+}
+
+.diy-tracker-even {
+    border: 2px solid white;
+}
+.diy-tracker-odd {
+    border: 2px solid white;
+}
+.diy-tracker-clicked {
+    background-color: #000;
+    border-color: #357ebd;
+}

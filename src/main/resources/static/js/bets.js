@@ -12,16 +12,14 @@ import {
   apiRequest,
   baseUrl,
   getAllUserStats,
+  getCurrentUser,
 } from "./util.js";
 import { setStats } from "./navbar.js";
 import { createAlert } from "./diyAlerts.js";
+import { setTheme } from "./theme.js";
 
 // export const baseUrl = "http://" + window.location.host + "/api/";
 
-let styleMode = document
-  .querySelector('meta[name="theme"]')
-  .getAttribute("content");
-let currentUser;
 const bets = [];
 let betTags = [];
 let todaysDate = new Date();
@@ -37,6 +35,16 @@ let appliedMaxOdds;
 let appliedMinOdds;
 let appliedMaxStake;
 let appliedMinStake;
+
+let styleMode;
+let currentUser;
+let userSettings;
+let temp = await getCurrentUser();
+userSettings = temp["userSettings"];
+currentUser = createUser(temp["currentUser"]);
+styleMode = userSettings["theme"];
+setTheme(styleMode);
+setStats(styleMode);
 document.getElementById("eventDateInput").value = getDateString(todaysDate);
 
 function setPendingRequest(value) {
@@ -335,48 +343,29 @@ async function changeFilteredBet(changeAmount) {
   sortBetsAndAdd(await getAllUserBetsDate(startDate, endDate));
 }
 
-// export async function apiRequest(
-//   url,
-//   method = "GET",
-//   body = null,
-//   contentType = "application/json"
-// ) {
-//   console.log("calling request");
-//   let params = {
-//     method: method,
-//     headers: {
-//       "Content-Type": contentType,
-//     },
-//   };
-//   if (body !== null) {
-//     params.body = JSON.stringify(body);
-//   }
-//   try {
-//     return await fetch(url, params); // Return the parsed JSON data
-//   } catch (error) {
-//     // Handle error here
-//     console.error("Error:", error);
-//     return;
-//   }
+// async function getCurrentUser() {
+//   return await apiRequest(baseUrl + "current_user")
+//     .then((result) => {
+//       console.log(result);
+//       if (result.status == 200) {
+//         console.log("successfull?");
+//         return result.json();
+//       }
+//     })
+//     .then((json) => {
+//       console.log(json);
+//       // currentUser = createUser(json["currentUser"]);
+//       // userSettings = json["settings"];
+//       // styleMode = userSettings["theme"];
+//       return {
+//         userSettings: createUser(json["currentUser"]),
+//         currentUser: json["settings"],
+//       };
+//     })
+//     .catch((error) => {
+//       console.error("Error getting current user:", error);
+//     });
 // }
-
-async function getCurrentUser() {
-  await apiRequest(baseUrl + "current_user")
-    .then((result) => {
-      console.log(result);
-      if (result.status == 200) {
-        console.log("successfull?");
-        return result.json();
-      }
-    })
-    .then((json) => {
-      console.log(json);
-      currentUser = createUser(json);
-    })
-    .catch((error) => {
-      console.error("Error getting current user:", error);
-    });
-}
 
 function createBetRow(bet) {
   function createColumn(
@@ -619,99 +608,6 @@ function createBetRow(bet) {
   actionDiv.appendChild(deleteButton);
   actionCell.appendChild(actionDiv);
 
-  // const dropdownList = document.createElement("ul");
-  // dropdownList.className = "dropdown-menu";
-
-  // const actionList = ["Edit", "Cancel", "Save", "Delete"];
-
-  // actionList.forEach((action) => {
-  //   const actionItem = document.createElement("li");
-  //   const actionA = document.createElement("a");
-  //   actionA.className = "dropdown-item";
-  //   if (action === "Save" || action === "Cancel") {
-  //     actionA.classList.add("disabled");
-  //   }
-  //   actionA.setAttribute("href", "#");
-  //   actionA.textContent = action;
-  //   actionA.addEventListener(
-  //     "click",
-  //     async () => {
-  //       console.log("clicked?!", action);
-  //       switch (action) {
-  //         case "Edit":
-  //           document.getElementById("betTypeInput").value = "updateBet";
-  //           document.getElementById("betIdInput").value = bet.id;
-  //           document.getElementById("sportsbookInput").value = bet.sportsbook;
-  //           document.getElementById("statusSelect").value = bet.status;
-  //           document.getElementById("oddsInput").value = bet.odds;
-  //           document.getElementById("stakeInput").value = bet.stake;
-  //           document.getElementById("freeBetStakeInput").value =
-  //             bet.freeBetStake;
-  //           document.getElementById("profitInput").value = bet.profit;
-  //           document.getElementById("eventDateInput").value = bet.eventDate;
-  //           // document.getElementById("betTags").textContent =
-  //           //   "Tags: " + bet.tags;
-  //           betTags = bet.tags;
-  //           setTags();
-  //           document.getElementById("evPercentInput").value = bet.evPercent;
-  //           document.getElementById("expectedProfitInput").value =
-  //             bet.expectedProfit;
-  //           document.getElementById("freeBetRecieved").value =
-  //             bet.freeBetAmountRecieved;
-  //           document.getElementById("freeBeReceivedCheckbox").check =
-  //             bet.freeBetWasRecieved;
-  //           console.log(bet.legs);
-
-  //           const legRow = document.getElementById("legRow");
-  //           const legInputs = legRow.querySelectorAll("input");
-
-  //           for (let i = 0; i < bet.legs.length; i++) {
-  //             if (i > 12) {
-  //               break;
-  //             }
-  //             legInputs[i].value = bet.legs[i];
-  //           }
-
-  //           openNewBet();
-
-  //           break;
-  //         case "Save":
-  //           // console.log("save", item.id);
-  //           // toggleEditRow(row);
-  //           // toggleDisabledActionDropdown(dropdown, action);
-  //           break;
-  //         case "Cancel":
-  //           // console.log("cancel", item.id);
-  //           // toggleEditRow(row);
-  //           // toggleDisabledActionDropdown(dropdown, action);
-  //           break;
-  //         case "Delete":
-  //           // console.log("delete", item.id);
-  //           await apiRequest(baseUrl + "bets/" + bet.id, "DELETE")
-  //             .then((result) => {
-  //               if (result.status != 200) {
-  //                 createAlert(
-  //                   "Could not delete bet. Please reload and try again.",
-  //                   "danger"
-  //                 );
-  //               }
-  //             })
-  //             .catch((error) => {
-  //               console.error(error);
-  //             });
-  //           window.location.reload();
-  //           break;
-  //       }
-  //     },
-  //     false
-  //   );
-  //   actionItem.appendChild(actionA);
-  //   dropdownList.appendChild(actionItem);
-  // });
-
-  // dropdown.appendChild(dropdownList);
-  // dropdowncell.appendChild(dropdown);
-
   const divTest = document.createElement("div");
 
   const checkbox = document.createElement("input");
@@ -778,15 +674,11 @@ async function getUserBets() {
 }
 
 async function main() {
-  setStats();
-  await getCurrentUser();
   if (previousRequestPending == false) {
     setPendingRequest(true);
     sortBetsAndAdd(await getAllUserBetsDate(getDateString(todaysDate)));
     setPendingRequest(false);
   }
-  // const stats = await getAllUserStats();
-  // console.log(stats);
 }
 function sortBetsAndAdd(bets) {
   if (bets.length == 0) {
@@ -993,7 +885,7 @@ document.getElementById("saveBetButton").addEventListener(
     let betSaved = false;
     const saveBetRequest = await apiRequest(betUrl, method, bet).then(
       (result) => {
-        if (result.status != 200 || result.status != 201) {
+        if (result.status != 200 && result.status != 201) {
           createAlert("Could not save bet. Please try again.", "danger");
         } else {
           betSaved = true;

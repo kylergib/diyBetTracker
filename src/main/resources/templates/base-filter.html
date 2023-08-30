@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Navigation Bar class="scrollable-div card diy-card"</title>
+</head>
+
+<body>
+
+    <div id="filterContainer" th:fragment="filterContainer()">
+        <link rel="stylesheet" th:href="${cssSheet}" />
+        <div id="tagFilters">
+            <h5>Tags:</h5>
+        </div>
+        <div id="sportsbookFilters">
+            <h5>Sportsbooks:</h5>
+        </div>
+        <div id="statusFilters">
+            <h5>Status:</h5>
+            <div class="input-group mb-3">
+                <div class="input-group-text"><input type="checkbox" class="form-check-input mt-0"></div><span
+                    class="input-group-text" style="flex-grow: 1;">Lost</span>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-text"><input type="checkbox" class="form-check-input mt-0"></div><span
+                    class="input-group-text" style="flex-grow: 1;">Open</span>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-text"><input type="checkbox" class="form-check-input mt-0"></div><span
+                    class="input-group-text" style="flex-grow: 1;">Won</span>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-text"><input type="checkbox" class="form-check-input mt-0"></div><span
+                    class="input-group-text" style="flex-grow: 1;">Void</span>
+            </div>
+        </div>
+        <div id="oddsRange">
+            <h5>Odds range:</h5>
+            <div class="input-group mb-3" style="width: 180px; padding: 0px;">
+                <input type="text" class="form-control" id="minOddsFilter" placeholder="Min" aria-label="Min Odds">
+                <span class="input-group-text">-</span>
+                <input type="text" class="form-control" id="maxOddsFilter" placeholder="Max" aria-label="Max Odds">
+            </div>
+        </div>
+        <div id="stakeRange">
+            <h5>Stake range:</h5>
+            <div class="input-group mb-3" style="width: 180px; padding: 0px;">
+                <input type="text" class="form-control" id="minStakeFilter" placeholder="Min" aria-label="Min Odds">
+                <span class="input-group-text">-</span>
+                <input type="text" class="form-control" id="maxStakeFilter" placeholder="Max" aria-label="Max Odds">
+            </div>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" id="clearFilterButton">Clear</button>
+
+            <button type="button" class="btn btn-primary" id="applyFilterButton">Apply</button>
+        </div>
+        <script type="module" src="/js/base-filter.js"></script>
+    </div>
+
+</body>
+
+</html>

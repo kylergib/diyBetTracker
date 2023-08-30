@@ -50,16 +50,16 @@ export function getCurrentDateTimeString() {
   return now.toISOString().slice(0, 19);
 }
 
-export async function getCurrentUser() {
-  return await apiRequest(baseUrl + "current_user").then((result) => {
-    console.log(result);
-    if (result.status == 200) {
-      console.log("successfull?");
-      return result.json();
-    }
-  });
-  // saveBet();
-}
+// export async function getCurrentUser() {
+//   return await apiRequest(baseUrl + "current_user").then((result) => {
+//     console.log(result);
+//     if (result.status == 200) {
+//       console.log("successfull?");
+//       return result.json();
+//     }
+//   });
+// saveBet();
+// }
 // export async function getAllUserBets() {
 //   const bets = [];
 //   await apiRequest(baseUrl + "bets")
@@ -77,7 +77,29 @@ export async function getCurrentUser() {
 //     });
 //   return bets;
 // }
-
+export async function getCurrentUser() {
+  return await apiRequest(baseUrl + "current_user")
+    .then((result) => {
+      console.log(result);
+      if (result.status == 200) {
+        console.log("successfull?");
+        return result.json();
+      }
+    })
+    .then((json) => {
+      console.log(json);
+      // currentUser = createUser(json["currentUser"]);
+      // userSettings = json["settings"];
+      // styleMode = userSettings["theme"];
+      return {
+        currentUser: json["currentUser"],
+        userSettings: json["settings"],
+      };
+    })
+    .catch((error) => {
+      console.error("Error getting current user:", error);
+    });
+}
 export async function getAllUserStats() {
   return await apiRequest(baseUrl + "bets/stats").then((result) => {
     console.log(result);

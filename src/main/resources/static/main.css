@@ -488,7 +488,14 @@ td {
 
 .scrollable-div {
     height: 100%; 
+
     overflow-y: auto;
+    /* border: 1px solid #ccc;  */
+}
+.scrollable-div-x {
+    /* height: 100%;  */
+    width: 100%;
+    overflow-x: auto;
     /* border: 1px solid #ccc;  */
 }
 .list-group-item {
@@ -507,4 +514,43 @@ td {
     border: 1px solid transparent;
     border-radius: 10px;
     margin: 5px;
+}
+.diy-tracker {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    justify-content: center;
+    padding-bottom: 5px;
+}
+
+.diy-tracker-card {
+    /* background-color: red; */
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.diy-tracker-badge {
+    /* background-color: blue; */
+    display: flex;
+    flex: 1;
+    align-items: end;
+    justify-content: center;
+}
+.diy-tracker-nav {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    min-width: 0;
+    word-wrap: break-word;
+    white-space: nowrap;
+    max-height: 100px;
+    justify-content: center;
+}
+.diy-container {
+    display: flex;
+    padding-bottom: 10px;
 }

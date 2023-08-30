@@ -4,12 +4,19 @@ import {
   getDateString,
   baseUrl,
   apiRequest,
+  getCurrentUser,
 } from "./util.js";
+import { createUser } from "./myUser.js";
+import { setTheme } from "./theme.js";
+import { getTrackersProfit } from "./tracker.js";
 //sets navbar stats
-let theme = document
-  .querySelector('meta[name="theme"]')
-  .getAttribute("content");
+let theme;
 let yearJson;
+
+let currentUser;
+let userSettings;
+
+// setStats();
 
 let dailyMap;
 let monthStartDate;
@@ -103,6 +110,7 @@ async function setDailyWidgets() {
     monthProfitUnitDataSet.push(monthUnits);
   }
   function setDailyChartData() {
+    console.log(theme, "THEME");
     let fontColor = theme == "dark" ? "white" : "black";
     let ctx = document.getElementById("monthProfitChart").getContext("2d");
     let myChart = new Chart(ctx, {
@@ -249,7 +257,13 @@ async function setDailyWidgets() {
 }
 
 async function main() {
-  setStats();
+  let temp = await getCurrentUser();
+  userSettings = temp["userSettings"];
+  currentUser = createUser(temp["currentUser"]);
+  theme = userSettings["theme"];
+  // console.log("theme1", theme, userSettings["theme"], temp);
+  setTheme(theme);
+  setStats(theme);
   let date = new Date();
   allDaily(date);
   allYear(date);
@@ -577,4 +591,74 @@ function setBadge(type, json) {
   console.log(wins + "-" + losses + "-" + voids);
   document.getElementById(type + "RecordBadge").textContent =
     wins + "-" + losses + "-" + voids;
+}
+let trackers = await getTrackersProfit();
+trackers.forEach((tracker) => {
+  createTagTrackerBadge(tracker["tags"], tracker["profit"]);
+});
+document.getElementById("tagTracker").style.display = "";
+function createTagTrackerBadge(tags, profit) {
+  console.log(tags);
+  function addBadge(text, type = "tag") {
+    const header = document.createElement("div");
+
+    const headerSpan = document.createElement("span");
+    headerSpan.className = "badge mx-1";
+    headerSpan.textContent = text;
+    let bgColor = "white";
+    if (type === "tag") {
+      bgColor = "#FF6600";
+    } else if (type === "sportsbook") {
+      bgColor = "#0d6efd";
+    } else if (type === "won") {
+      bgColor = "green";
+    } else if (type === "lost") {
+      bgColor = "red";
+    } else if (type === "void") {
+      bgColor = "#ffe783";
+      headerSpan.style.color = "black";
+    } else {
+      headerSpan.style.color = "black";
+    }
+    headerSpan.style.backgroundColor = bgColor;
+    header.appendChild(headerSpan);
+    trackerDiv.appendChild(header);
+  }
+  const tagTracker = document.getElementById("tagTracker");
+
+  const div = document.createElement("div");
+  div.className = "diy-tracker-card card mx-1";
+  const trackerDiv = document.createElement("div");
+  trackerDiv.classList.add("diy-tracker");
+  let characterCount = 0;
+  tags.forEach((tag) => {
+    addBadge(tag);
+    characterCount += tag.length;
+  });
+  console.log(characterCount, tags); //every 20 the card should be 80
+  let charCountMultiplier = Math.ceil(characterCount / 20);
+  let numItemsMultiplier = Math.ceil(tags.length / 2);
+  let finalMulti =
+    numItemsMultiplier > charCountMultiplier
+      ? numItemsMultiplier
+      : charCountMultiplier;
+  div.style.width = finalMulti * 80 + "px";
+  const badgeDiv = document.createElement("div");
+  badgeDiv.className = "diy-tracker-badge";
+
+  const badgeSpan = document.createElement("span");
+  badgeSpan.className = "badge";
+  if (profit > 0) {
+    badgeSpan.style.backgroundColor = theme == "dark" ? "green" : "green";
+  } else if (profit < 0) {
+    badgeSpan.style.backgroundColor = theme == "dark" ? "red" : "red";
+  } else {
+    badgeSpan.classList.add("bg-secondary");
+  }
+  badgeSpan.textContent = `$${parseFloat(profit).toFixed(2)}`;
+  badgeDiv.appendChild(badgeSpan);
+  div.appendChild(trackerDiv);
+  div.appendChild(badgeDiv);
+
+  tagTracker.appendChild(div);
 }

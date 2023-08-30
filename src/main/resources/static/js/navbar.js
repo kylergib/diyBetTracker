@@ -5,11 +5,7 @@ import {
 } from "./setStats.js";
 import { getAllUserStats } from "./util.js";
 
-let theme = document
-  .querySelector('meta[name="theme"]')
-  .getAttribute("content");
-
-export async function setStats() {
+export async function setStats(theme) {
   let total;
   let today;
   let month;
@@ -63,5 +59,6 @@ export async function setStats() {
   const todayNav = document.getElementById("todayProfit");
   todayNav.textContent = `Today's Profit: $${todayProfit}`;
   todayNav.style.color = todayColor;
+
   document.getElementById("diy-stats-div").removeAttribute("style");
 }

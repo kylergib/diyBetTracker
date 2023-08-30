@@ -22,7 +22,8 @@ import java.util.*;
 
 @Service
 public class BetService {
-
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
     @Autowired
     private BetRepository betRepository;
 
@@ -316,21 +317,20 @@ public class BetService {
     }
 
     public Bet saveBet(Bet bet) {
-        for (Role role: getUser().getRoles()) {
+        MyUser myUser = myUserDetailsService.getUser();
+        for (Role role: myUser.getRoles()) {
             if (role.getName().equals("TEST")) {
                 return new Bet();
             }
         }
-//        if (getUser().getRoles().contains("test")) {
-//
-//        }
+
         if (bet.getMyUser().getId() != null) {
             System.out.println();
-
-            MyUser user = userRepository.findById(bet.getMyUser().getId());
-            if (user != null) {
-                bet.setMyUser(user);
+            if (myUser.getId() != bet.getMyUser().getId()) {
+                return null;
             }
+
+            bet.setMyUser(myUser);
         }
 
         return betRepository.save(bet);
@@ -474,6 +474,12 @@ public class BetService {
         MyUser currentUser = getUser();
         List<String> tags = betRepository.findDistinctTagsByUserId(currentUser.getId());
         return tags;
+    }
+    public Double getProfitOfTags(List<String> tags, List<String> sportsbooks,
+                                  List<String> statuses) {
+        MyUser myUser = myUserDetailsService.getUser();
+
+        return betRepository.findProfitAllTags(tags,tags.size(), myUser);
     }
 
 //    public List<String> getAllSportbooks() {

@@ -48,6 +48,29 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
 //                       @Param("status") String status,
 //                        @Param("myUser") MyUser myUser);
 
+    @Query("SELECT DISTINCT b FROM Bet b " +
+            "JOIN b.tags bt " +
+            "WHERE b.myUser = :myUser AND  bt IN :tags AND " +
+            "b.sportsbook IN :sportsbooks AND b.status IN :statuses " +
+            "GROUP BY b " +
+            "HAVING COUNT(DISTINCT bt) = :tagCount")
+    List<Bet> findBetsByAllTags(@Param("tags") List<String> tags, @Param("sportsbooks") List<String> sportsbooks,
+                                @Param("statuses") List<String> statuses,@Param("tagCount") Long tagCount,
+                                @Param("myUser") MyUser myUser);
+
+    @Query("SELECT COALESCE(SUM(b.profit), 0.0) FROM Bet b " +
+            "WHERE b.id IN (" +
+            "   SELECT b2.id FROM Bet b2 JOIN b2.tags tag2 " +
+            "   WHERE tag2 IN :tags " +
+            "   GROUP BY b2.id HAVING COUNT(DISTINCT tag2) = :tagCount" +
+            ") " +
+            "AND b.myUser = :myUser")
+    Double findProfitAllTags(@Param("tags") List<String> tags,@Param("tagCount") int tagCount,
+                             @Param("myUser") MyUser myUser);
+
+
+
+
     //below is used if sportsbook list, status list and tags list have data
     @Query("SELECT DISTINCT b FROM Bet b " +
             "LEFT JOIN b.tags tag " +

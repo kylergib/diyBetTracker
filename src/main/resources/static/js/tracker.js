@@ -1,16 +1,4 @@
-import {
-  formatDateOnly,
-  formatDateAndTime,
-  getCurrentDateString,
-  getCurrentDateTimeString,
-  getStartAndEndOfWeek,
-  getStartAndEndOfMonth,
-  getDateString,
-  apiRequest,
-  baseUrl,
-  getAllUserStats,
-  getCurrentUser,
-} from "./util.js";
+import { apiRequest, baseUrl } from "./util.js";
 
 export async function saveTracker(tracker) {
   await apiRequest(baseUrl + "currentUser/tracker/add", "POST", tracker).then(

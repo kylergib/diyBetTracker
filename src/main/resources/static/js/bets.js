@@ -1,17 +1,14 @@
-import { MyUser, createUser } from "./myUser.js";
-import { Bet, createBet, getAllUserBetsDate } from "./bet.js";
+import { createUser } from "./myUser.js";
+import { getAllUserBetsDate } from "./bet.js";
 import { calculateProfit } from "./calculatorUtil.js";
 import {
   formatDateOnly,
-  formatDateAndTime,
-  getCurrentDateString,
   getCurrentDateTimeString,
   getStartAndEndOfWeek,
   getStartAndEndOfMonth,
   getDateString,
   apiRequest,
   baseUrl,
-  getAllUserStats,
   getCurrentUser,
 } from "./util.js";
 import { setStats } from "./navbar.js";
@@ -59,12 +56,6 @@ function setPendingRequest(value) {
     itemList.push(document.getElementById("previousListItem"));
     itemList.push(document.getElementById("nextListItem"));
   }
-  // const dayItem =
-  // const weekItem =
-  // const monthItem =
-
-  // const previousItem = document.getElementById("previousListItem");
-  // const nextItem = document.getElementById("nextListItem");
 
   if (value == true) {
     itemList.forEach((item) => {
@@ -82,75 +73,12 @@ function setBetFilterText(text) {
   document.getElementById("currentDateFilter").textContent = text;
 }
 
-{
-  /* <script>
-        
-      </script> */
-}
-
-// document.getElementById("currentDateFilter").addEventListener(
-//   "click",
-//   () => {
-//     $('a[id="currentDateFilter"]').daterangepicker(
-//       {
-//         opens: "left",
-//       },
-//       function (start, end, label) {
-//         console.log(
-//           "A new date selection was made: " +
-//             start.format("YYYY-MM-DD") +
-//             " to " +
-//             end.format("YYYY-MM-DD")
-//         );
-//       }
-//     );
-//   },
-//   false
-// );
-
-// let text;
-// let startDate;
-// let endDate;
-// if (betFilterStatus === "day") {
-//   startFilter.setDate(startFilter.getDate() + changeAmount);
-//   endFilter.setDate(endFilter.getDate() + changeAmount);
-//   text = formatDateOnly(startFilter);
-
-//   endDate = null;
-// } else if (betFilterStatus === "week") {
-//   changeAmount *= 7;
-//   startFilter.setDate(startFilter.getDate() + changeAmount);
-//   endFilter.setDate(endFilter.getDate() + changeAmount);
-//   text = `${formatDateOnly(startFilter)} - ${formatDateOnly(endFilter)}`;
-//   endDate = getDateString(endFilter);
-// } else if (betFilterStatus === "month") {
-//   startFilter.setMonth(startFilter.getMonth() + changeAmount);
-//   endFilter = new Date(
-//     startFilter.getFullYear(),
-//     startFilter.getMonth() + 1,
-//     0
-//   );
-
-//   text = `${formatDateOnly(startFilter)} - ${formatDateOnly(endFilter)}`;
-//   endDate = getDateString(endFilter);
-// }
-// startDate = getDateString(startFilter);
-// setBetFilterText(text);
-// clearTable();
-// sortBetsAndAdd(await getAllUserBetsDate(startDate, endDate));
-
 $(function () {
   $('a[id="currentDateFilter"]').daterangepicker(
     {
       opens: "left",
     },
     async function (start, end, label) {
-      console.log(
-        "A new date selection was made: " +
-          start.format("YYYY-MM-DD") +
-          " to " +
-          end.format("YYYY-MM-DD")
-      );
       setPendingRequest(true);
       let text;
       let filterStatus;
@@ -167,10 +95,7 @@ $(function () {
         endDate = getDateString(endFilter);
         filterStatus = "custom";
       }
-      console.log("startfilter", startFilter);
-      console.log("start format", start.format("YYYY-MM-DD"));
-      console.log("enddate", endDate);
-      console.log();
+
       changeFilterStatus(filterStatus);
       setBetFilterText(text);
       clearTable();
@@ -343,30 +268,6 @@ async function changeFilteredBet(changeAmount) {
   sortBetsAndAdd(await getAllUserBetsDate(startDate, endDate));
 }
 
-// async function getCurrentUser() {
-//   return await apiRequest(baseUrl + "current_user")
-//     .then((result) => {
-//       console.log(result);
-//       if (result.status == 200) {
-//         console.log("successfull?");
-//         return result.json();
-//       }
-//     })
-//     .then((json) => {
-//       console.log(json);
-//       // currentUser = createUser(json["currentUser"]);
-//       // userSettings = json["settings"];
-//       // styleMode = userSettings["theme"];
-//       return {
-//         userSettings: createUser(json["currentUser"]),
-//         currentUser: json["settings"],
-//       };
-//     })
-//     .catch((error) => {
-//       console.error("Error getting current user:", error);
-//     });
-// }
-
 function createBetRow(bet) {
   function createColumn(
     row,
@@ -378,7 +279,6 @@ function createBetRow(bet) {
     cell.setAttribute("style", "text-align: center;");
     cell.classList.add(cellClass);
     cell.classList.add(betClass);
-    // cell.style.borderColor = borderColor;
 
     values.forEach((value) => {
       const text = document.createElement("div");
@@ -399,40 +299,29 @@ function createBetRow(bet) {
   let bootStrapColor = "open";
   let betClass = "diy-bet-open";
   if (bet.status === "won") {
-    // backgroundColor = "#c2ffc2";
     textColor = styleMode == "dark" ? "#00ff00" : "green";
     bootStrapColor = "won";
     betClass = "diy-bet-won";
   } else if (bet.status === "void") {
-    // backgroundColor = "#ffffa7";
     textColor = styleMode == "dark" ? "#ffe783" : "#bf9f1a";
     bootStrapColor = "void";
     betClass = "diy-bet-void";
   } else if (bet.status === "lost") {
-    // backgroundColor = "#ff8590";
     textColor = styleMode == "dark" ? "#ff4343" : "#b10000";
     bootStrapColor = "lost";
     betClass = "diy-bet-lost";
   }
-  // row.style.color = borderColor; //TODO: change this to test
-  // row.style.borderColor = borderColor;
   row.classList.add(betClass);
-
-  // createColumn(row, item.id);
   createColumn(row, [bet.sportsbook], betClass, "diy-cell-first");
   const legList = [];
   let currentText = "";
   bet.legs.forEach((leg) => {
-    console.log(leg, currentText.length, leg.length);
     if (currentText === "") {
-      console.log("blank");
       currentText += leg;
     } else if (currentText.length + leg.length > 40) {
-      console.log("over 200");
       legList.push(currentText);
       currentText = leg;
     } else {
-      console.log("just add");
       currentText += ", " + leg;
     }
   });
@@ -449,15 +338,7 @@ function createBetRow(bet) {
   } else {
     stakeList.push("F.B. Stake: $" + bet.freeBetStake.toFixed(2));
   }
-  createColumn(row, [stakeList], betClass); //todo: add free bet
-  // const cell = row.insertCell(-1);
-  // cell.setAttribute("style", "text-align: center;");
-
-  // const text = document.createElement("div");
-  // text.textContent = bet.freeBetStake;
-  // text.setAttribute("class", "itemText");
-
-  // cell.appendChild(text);
+  createColumn(row, [stakeList], betClass);
   if (bet.profit == 0) {
     createColumn(row, [""], betClass);
   } else {
@@ -474,8 +355,6 @@ function createBetRow(bet) {
 
   selectElement.style.backgroundImage = imageUrl;
   selectElement.classList.add(betClass);
-  // selectElement.style.color = textColor;
-  // selectElement.style.borderColor = textColor;
 
   const statusList = ["Open", "Lost", "Won", "Void"];
 
@@ -484,14 +363,12 @@ function createBetRow(bet) {
     option.setAttribute("value", status);
     option.textContent = status;
     if (status.toLowerCase() === bet.status.toLowerCase()) {
-      console.log(status, "is selected");
       option.selected = true;
     }
 
     selectElement.appendChild(option);
   });
   selectElement.addEventListener("change", (event) => {
-    console.log("selected changed?", event.target.value);
     bet.status = event.target.value.toLowerCase();
     switch (event.target.value) {
       case "Won":
@@ -515,7 +392,6 @@ function createBetRow(bet) {
   statusCell.appendChild(selectElement);
   statusCell.classList.add("diy-cell");
   statusCell.classList.add(betClass);
-  // statusCell.style.borderColor = borderColor;
 
   const actionCell = row.insertCell(-1);
   actionCell.setAttribute("style", "text-align: center;");
@@ -543,8 +419,6 @@ function createBetRow(bet) {
       document.getElementById("freeBetStakeInput").value = bet.freeBetStake;
       document.getElementById("profitInput").value = bet.profit;
       document.getElementById("eventDateInput").value = bet.eventDate;
-      // document.getElementById("betTags").textContent =
-      //   "Tags: " + bet.tags;
       betTags = bet.tags;
       setTags();
       document.getElementById("evPercentInput").value = bet.evPercent;
@@ -553,7 +427,6 @@ function createBetRow(bet) {
         bet.freeBetAmountRecieved;
       document.getElementById("freeBeReceivedCheckbox").check =
         bet.freeBetWasRecieved;
-      console.log(bet.legs);
 
       const legRow = document.getElementById("legRow");
       const legInputs = legRow.querySelectorAll("input");
@@ -585,19 +458,15 @@ function createBetRow(bet) {
     async () => {
       apiRequest(baseUrl + "bets/" + bet.id, "DELETE")
         .then((result) => {
-          console.log(result.status);
-          console.log(result.status != 200 || result.status != 201);
           if (result.status != 200 && result.status != 201) {
             createAlert(
               "Could not delete bet. Please reload and try again.",
               "danger"
             );
+          } else {
+            createAlert("Bet deleted.", "success");
+            row.remove();
           }
-        })
-        .then(() => {
-          console.log("betDelete successfully");
-          createAlert("Bet deleted.", "success");
-          row.remove();
         })
         .catch((error) => {
           console.error(error);
@@ -637,40 +506,6 @@ function createBetRow(bet) {
   checkboxCell.appendChild(hiddenLabel);
   checkboxCell.classList.add("diy-cell-last");
   checkboxCell.classList.add(betClass);
-  // checkboxCell.style.borderColor = borderColor;
-}
-
-async function getUserBets() {
-  await apiRequest(baseUrl + "bets")
-    .then((result) => {
-      console.log(result);
-      if (result.status == 200) {
-        console.log("successfull?");
-        return result.json();
-      }
-    })
-    .then((json) => {
-      console.log(json);
-      json.forEach((bet) => {
-        bets.push(createBet(bet));
-      });
-    })
-    .then(() => {
-      console.log("Sort bets");
-      bets.sort((a, b) => {
-        const dateComparison = new Date(b.eventDate) - new Date(a.eventDate);
-        if (dateComparison !== 0) {
-          return dateComparison;
-        }
-        if (b.status === "open" && a.status !== "open") {
-          return 1;
-        }
-        return -1;
-      });
-      bets.forEach((bet) => {
-        createBetRow(bet);
-      });
-    });
 }
 
 async function main() {
@@ -782,13 +617,11 @@ function checkProfit() {
 
   const odds = document.getElementById("oddsInput").value;
   if (odds === "") {
-    console.log("checkProfit - odds blank");
     return;
   }
   let stake = document.getElementById("stakeInput").value;
   let freeBetStake = document.getElementById("freeBetStakeInput").value;
   if (freeBetStake < 0.01 && stake < 0.01) {
-    console.log("freeBetStake and stake both cannot be less than 0.01");
     return;
   }
   if (freeBetStake === "") {
@@ -823,8 +656,6 @@ profitCheckList.forEach((element) => {
 document.getElementById("saveBetButton").addEventListener(
   "click",
   async () => {
-    console.log("Save bet clicked");
-
     const sportsbook = document.getElementById("sportsbookInput").value;
     const odds = document.getElementById("oddsInput").value;
     const stake = document.getElementById("stakeInput").value;
@@ -849,7 +680,6 @@ document.getElementById("saveBetButton").addEventListener(
     if (
       !validateBetFields(sportsbook, odds, stake, freeBetStake, eventDate, legs)
     ) {
-      console.log("a field isnt valid");
       return;
     }
     const profit = document.getElementById("profitInput").value;
@@ -890,18 +720,14 @@ document.getElementById("saveBetButton").addEventListener(
           createAlert("Could not save bet. Please try again.", "danger");
         } else {
           betSaved = true;
+          createAlert("Bet saved successfully", "success");
         }
       }
     );
     if (!betSaved) {
       return;
     }
-    console.log(saveBetRequest);
-    //removed because it is not used and patch does not return json
-    // const betJson = await saveBetRequest.json();
-    // console.log(betJson);
 
-    // console.log("end of save");
     const keepSportsbook = document.getElementById(
       "keepSportsbookCheckbox"
     ).checked;
@@ -965,7 +791,6 @@ function setTags() {
 document.getElementById("addTagDropdown").addEventListener(
   "click",
   () => {
-    console.log("add tag");
     addTag(document.getElementById("tagInput").value);
     document.getElementById("tagInput").value = "";
   },
@@ -974,7 +799,6 @@ document.getElementById("addTagDropdown").addEventListener(
 document.getElementById("removeTagDropdown").addEventListener(
   "click",
   () => {
-    console.log("removetag");
     removeTag(document.getElementById("tagInput").value);
     document.getElementById("tagInput").value = "";
   },
@@ -983,7 +807,6 @@ document.getElementById("removeTagDropdown").addEventListener(
 document.getElementById("clearTagsDropdown").addEventListener(
   "click",
   () => {
-    console.log("clear tags");
     clearTags();
     document.getElementById("tagInput").value = "";
   },
@@ -1019,6 +842,8 @@ function updateBet(bet) {
   apiRequest(baseUrl + "bets/" + bet.id, "PATCH", bet).then((result) => {
     if (result.status != 200) {
       createAlert("Could not update bet, please try again.", "danger");
+    } else {
+      createAlert("Bet updated successfully", "success");
     }
   });
 }
@@ -1090,15 +915,11 @@ const sportsbookSuggestionDiv = document.getElementById(
 
 sportsbookInput.addEventListener("input", () => {
   let filter = sportsbookInput.value.toUpperCase();
-  // let suggestionContainer = document.getElementById(
-  //   "customerSuggestionContainer"
-  // );
   sportsbookSuggestionDiv.innerHTML = "";
   let inputWidth = sportsbookInput.offsetWidth;
   sportsbookSuggestionDiv.style.width = inputWidth + "px";
 
   if (!filter) return;
-  // const productNames = products.map((product) => product.productName);
 
   for (let i = 0; i < sportsbooksList.length; i++) {
     if (sportsbooksList[i].toUpperCase().indexOf(filter) > -1) {
@@ -1107,14 +928,7 @@ sportsbookInput.addEventListener("input", () => {
 
       div.addEventListener("click", function () {
         sportsbookInput.value = this.innerText;
-        console.log("other child prolly", this.innerText);
         sportsbookSuggestionDiv.innerHTML = "";
-        // const findProduct = findProductByName(products, inputBox.value);
-        // if (findProduct === -1) {
-        //   return;
-        // }
-        // console.log(findProduct);
-        // setColor(row, findProduct.colors);
       });
 
       sportsbookSuggestionDiv.appendChild(div);
@@ -1127,14 +941,11 @@ const filterContainer = document.getElementById("filterContainer");
 const tagFilters = document.getElementById("tagFilters");
 const sportsbookFilters = document.getElementById("sportsbookFilters");
 document.addEventListener("click", (event) => {
-  // let filterDo = document.getElementById('myDiv');
-  console.log(event);
   let inFilterContainer = filterContainer.contains(event.target);
   let inFilterButton = filterButton.contains(event.target);
   let inTagFilters = tagFilters.contains(event.target);
 
   if (!inFilterButton && !inFilterContainer && !inTagFilters && filterShown) {
-    console.log("You clicked outside the div!");
     filterContainer.style.display = "none";
     filterShown = false;
   }
@@ -1149,9 +960,7 @@ function setFilterTags() {
     const inputCheckbox = document.createElement("input");
     inputCheckbox.setAttribute("type", "checkbox");
     inputCheckbox.className = "form-check-input mt-0";
-    inputCheckbox.addEventListener("click", () => {
-      console.log(thisTag);
-    });
+
     inputGroupText.appendChild(inputCheckbox);
 
     const spanText = document.createElement("span");
@@ -1161,8 +970,6 @@ function setFilterTags() {
 
     groupDiv.appendChild(inputGroupText);
     groupDiv.appendChild(spanText);
-
-    // div.innerHTML = tagsList[i];
     tagFilters.appendChild(groupDiv);
   }
 }
@@ -1176,9 +983,7 @@ function setFilterSportsbooks() {
     const inputCheckbox = document.createElement("input");
     inputCheckbox.setAttribute("type", "checkbox");
     inputCheckbox.className = "form-check-input mt-0";
-    inputCheckbox.addEventListener("click", () => {
-      console.log(thisTag);
-    });
+
     inputGroupText.appendChild(inputCheckbox);
 
     const spanText = document.createElement("span");
@@ -1188,8 +993,6 @@ function setFilterSportsbooks() {
 
     groupDiv.appendChild(inputGroupText);
     groupDiv.appendChild(spanText);
-
-    // div.innerHTML = tagsList[i];
     sportsbookFilters.appendChild(groupDiv);
   }
 }
@@ -1207,7 +1010,7 @@ function getAppliedTagFilters() {
   tagFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {
     const inputChecked = group.querySelector("input").checked;
     const spanText = group.querySelector("span").textContent;
-    console.log(inputChecked, spanText);
+
     if (inputChecked) {
       appliedTagFilters.push(spanText);
     }
@@ -1218,7 +1021,7 @@ function getAppliedSportsbookFilters() {
   sportsbookFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {
     const inputChecked = group.querySelector("input").checked;
     const spanText = group.querySelector("span").textContent;
-    console.log(inputChecked, spanText);
+
     if (inputChecked) {
       appliedSportsbookFilters.push(spanText);
     }
@@ -1232,7 +1035,7 @@ function getAppliedStatusFilters() {
     .forEach((group) => {
       const inputChecked = group.querySelector("input").checked;
       const spanText = group.querySelector("span").textContent;
-      console.log(inputChecked, spanText);
+
       if (inputChecked) {
         appliedStatusFilters.push(spanText);
       }
@@ -1259,29 +1062,6 @@ function clearStatusFilters() {
       group.querySelector("input").checked = false;
     });
 }
-async function getFilteredBets() {
-  let text;
-  let filterStatus;
-
-  // startFilter = new Date(start);
-  // endFilter = new Date(end);
-  // let endDate = null;
-  // if (start.format("YYYY-MM-DD") == end.format("YYYY-MM-DD")) {
-  //   text = `${formatDateOnly(startFilter)}`;
-  //   filterStatus = "day";
-  //   // set filter to day
-  // } else {
-  //   text = `${formatDateOnly(startFilter)} - ${formatDateOnly(endFilter)}`;
-  //   endDate = getDateString(endFilter);
-  //   filterStatus = "custom";
-  // }
-  // console.log("startfilter", startFilter);
-  // console.log("start format", start.format("YYYY-MM-DD"));
-  // console.log("enddate", endDate);
-  // console.log();
-  // changeFilterStatus(filterStatus);
-  // setBetFilterText(text);
-}
 
 document.getElementById("applyFilterButton").addEventListener(
   "click",
@@ -1293,13 +1073,7 @@ document.getElementById("applyFilterButton").addEventListener(
     appliedMinOdds = document.getElementById("minOddsFilter").value;
     appliedMaxStake = document.getElementById("maxStakeFilter").value;
     appliedMinStake = document.getElementById("minStakeFilter").value;
-    console.log(appliedTagFilters);
-    console.log(appliedSportsbookFilters);
-    console.log(appliedStatusFilters);
-    console.log(appliedMaxOdds);
-    console.log(appliedMinOdds);
-    console.log(appliedMaxStake);
-    console.log(appliedMinStake);
+
     setPendingRequest(true);
     clearTable();
     sortBetsAndAdd(
@@ -1323,9 +1097,6 @@ document.getElementById("applyFilterButton").addEventListener(
 document.getElementById("clearFilterButton").addEventListener(
   "click",
   () => {
-    // appliedStatusFilters = [];
-    // appliedStatusFilters = [];
-    // appliedSportsbookFilters = [];
     clearTagFilters();
     clearSportsbookFilters();
     clearStatusFilters();
@@ -1337,13 +1108,6 @@ document.getElementById("clearFilterButton").addEventListener(
     appliedMinOdds = "";
     appliedMaxStake = "";
     appliedMinStake = "";
-    console.log(appliedTagFilters);
-    console.log(appliedSportsbookFilters);
-    console.log(appliedStatusFilters);
-    console.log(appliedMaxOdds);
-    console.log(appliedMinOdds);
-    console.log(appliedMaxStake);
-    console.log(appliedMinStake);
   },
   false
 );
@@ -1353,15 +1117,11 @@ const tagSuggestionDiv = document.getElementById("tagSuggestionContainer");
 
 tagInput.addEventListener("input", () => {
   let filter = tagInput.value.toUpperCase();
-  // let suggestionContainer = document.getElementById(
-  //   "customerSuggestionContainer"
-  // );
   tagSuggestionDiv.innerHTML = "";
   let inputWidth = tagInput.offsetWidth;
   tagSuggestionDiv.style.width = inputWidth + "px";
 
   if (!filter) return;
-  // const productNames = products.map((product) => product.productName);
 
   for (let i = 0; i < tagsList.length; i++) {
     if (tagsList[i].toUpperCase().indexOf(filter) > -1) {
@@ -1370,31 +1130,10 @@ tagInput.addEventListener("input", () => {
 
       div.addEventListener("click", function () {
         tagInput.value = this.innerText;
-        console.log("other child prolly", this.innerText);
         tagSuggestionDiv.innerHTML = "";
-        // const findProduct = findProductByName(products, inputBox.value);
-        // if (findProduct === -1) {
-        //   return;
-        // }
-        // console.log(findProduct);
-        // setColor(row, findProduct.colors);
       });
 
       tagSuggestionDiv.appendChild(div);
     }
   }
 });
-
-// await apiRequest(
-//   baseUrl + "bets?startDate=2023-08-26&endDate=2023-08-27&tags=Sam,Token"
-// )
-//   .then((result) => {
-//     console.log(result);
-//     if (result.status == 200) {
-//       console.log("successfull?");
-//       return result.json();
-//     }
-//   })
-//   .then((json) => {
-//     console.log(json);
-//   });

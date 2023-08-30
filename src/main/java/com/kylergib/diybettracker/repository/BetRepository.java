@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -23,7 +22,6 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
     Bet save(@Param("bet") Bet bet);
 
     @Override
-//    @PreAuthorize("#bet.myUser.name == authentication.name")
     void deleteById(@Param("id") Long id);
 
     @Override
@@ -39,14 +37,6 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
     List<Bet> findBetsByMyUserAndEventDate(MyUser myUser, LocalDate date);
     List<Bet> findBetsByMyUserAndEventDateBetween(MyUser myUser, LocalDate startDate, LocalDate endDate);
 
-//    @Query("SELECT b FROM Bet b WHERE b.myUser = :myUser AND" +
-//            "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
-//            "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
-//            "(COALESCE(:status, NULL) IS NULL OR b.tags IN :status)")
-//    List<Bet> findBetsWithParams(@Param("startDate") LocalDate startDate,
-//                       @Param("endDate") LocalDate endDate,
-//                       @Param("status") String status,
-//                        @Param("myUser") MyUser myUser);
 
     @Query("SELECT DISTINCT b FROM Bet b " +
             "JOIN b.tags bt " +
@@ -278,9 +268,6 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
     @Query("SELECT COALESCE(SUM(profit), 0.0) FROM Bet WHERE eventDate = :date AND myUser = :myUser")
     Double getProfitForDate(LocalDate date, MyUser myUser);
 
-//    @Query("SELECT COALESCE(SUM(profit), 0.0) FROM Bet WHERE eventDate = :date AND myUser = :myUser")
-//    Double getProfitForDateAndTag(LocalDate date, MyUser myUser);
-
     @Query("SELECT COALESCE(SUM(stake), 0.0) FROM Bet WHERE eventDate = :date AND myUser = :myUser")
     Double getStakeForDate(LocalDate date, MyUser myUser);
 
@@ -315,18 +302,11 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
             "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate)  AND b.myUser = :myUser")
     Double getFreeBetStakeBetweenDate(LocalDate startDate, LocalDate endDate, MyUser myUser);
 
-//    @Query("SELECT COALESCE(COUNT(*), 0) FROM Bet WHERE MONTH(eventDate) = :month AND YEAR(eventDate) = :year AND status = :status AND myUser = :myUser")
     @Query("SELECT COALESCE(COUNT(*), 0) FROM Bet b WHERE " +
             "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
             "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate)  " +
             "AND b.status = :status AND b.myUser = :myUser")
     Integer getStatusCountBetweenDate(LocalDate startDate, LocalDate endDate, String status, MyUser myUser);
-
-    //TODO: leftoff
-
-
-
-
 
     //below is used if sportsbook list, status list and tags list have data
     @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
@@ -449,7 +429,7 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
                                  @Param("maxOdds") Integer maxOdds,
                                  @Param("minOdds") Integer minOdds,
                                  @Param("myUser") MyUser myUser);
-    //////
+
 
     @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
             "LEFT JOIN b.tags tag " +

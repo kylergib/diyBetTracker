@@ -5,13 +5,8 @@ import com.kylergib.diybettracker.entity.BetStats;
 import com.kylergib.diybettracker.entity.MyUser;
 import com.kylergib.diybettracker.entity.Role;
 import com.kylergib.diybettracker.repository.BetRepository;
-import com.kylergib.diybettracker.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.json.JSONObject;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -27,29 +22,18 @@ public class BetService {
     @Autowired
     private BetRepository betRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
-    private MyUser getUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        return userRepository.findByName(username);
-
-    }
     @Transactional
     public boolean deleteBet(Long betId) {
         Bet bet = findById(betId);
-        MyUser currentUser = getUser();
+        MyUser currentUser = myUserDetailsService.getUser();
         System.out.println(currentUser.getRoles());
-        for (Role role: getUser().getRoles()) {
+        for (Role role: currentUser.getRoles()) {
             System.out.println(role.getName());
             if (role.getName().equals("TEST")) {
                 return false;
             }
         }
-//        if (currentUser.getRoles().contains("TEST")) {
-//            return false;
-//        }
         if (bet.getMyUser().getId() == currentUser.getId()) {
             betRepository.deleteById(betId);
             return true;
@@ -59,11 +43,12 @@ public class BetService {
     }
     public Map<String, Object> getDailyBetStats(LocalDate startDate, LocalDate endDate) {
         Map<String, Object> map = new HashMap<>();
+        MyUser myUser = myUserDetailsService.getUser();
 
         int newDay = startDate.getDayOfMonth();
         while (newDay < endDate.getDayOfMonth()) {
             LocalDate newDate = LocalDate.of(startDate.getYear(),startDate.getMonthValue(),newDay);
-            double profit = betRepository.getProfitForDate(newDate, getUser());
+            double profit = betRepository.getProfitForDate(newDate, myUser);
             map.put("day" +String.valueOf(newDay),profit);
             newDay++;
         }
@@ -72,10 +57,10 @@ public class BetService {
     }
     public Map<String, Object> getMonthlyBetStats(int year) {
         Map<String, Object> map = new HashMap<>();
-
+        MyUser myUser = myUserDetailsService.getUser();
         int month = 1;
         while (month <= 12) {
-            double profit = betRepository.getProfitForMonth(month, year, getUser());
+            double profit = betRepository.getProfitForMonth(month, year, myUser);
             map.put("month" +String.valueOf(month),profit);
             month++;
         }
@@ -86,18 +71,12 @@ public class BetService {
     public Map<String, Object> getDashboardStats(LocalDate date,
                                                  List<String> tags, List<String> sportsbooks) {
 
-        MyUser currentUser = getUser();
+        MyUser currentUser = myUserDetailsService.getUser();
         Map<String, Object> map = new HashMap<>();
         if (currentUser == null) {
             return map;
         }
         LocalDate now = LocalDate.now();
-//        Double sumStake;
-//        Double sumProfit;
-
-//        map.put("totalOpenBets", betRepository.getTotalStatusCount("open",currentUser));
-//        map.put("todayOpenBets", betRepository.getTodayStatusCount(now,"open",currentUser));
-//        map.put("monthOpenBets", betRepository.getMonthStatusCount(now.getMonthValue(), now.getYear(),"open",currentUser));
         map.put("pendingStake", betRepository.findStakeOfBets(null,null,null,null,currentUser));
         for (String tag : tags) {
             map.put(tag,betRepository.findProfitOfBets(null,null,null,null,List.of(tag),currentUser));
@@ -124,10 +103,8 @@ public class BetService {
     public Map<String, Object> getExtraBetStats(LocalDate startDate, LocalDate endDate,
                                            List<String> tags, List<String> sportsbooks, List<String> statusList,
                                            Integer maxOdds, Integer minOdds, List<String> types) {
-        //types are for what data you want
-        // open bets
-        //
-        MyUser currentUser = getUser();
+        //todo: finish getting extra stats
+        MyUser currentUser = myUserDetailsService.getUser();
         Map<String, Object> map = new HashMap<>();
         if (currentUser == null) {
             return map;
@@ -145,11 +122,6 @@ public class BetService {
             map.put("todayOpenBets", todayOpenBets);
             map.put("monthOpenBets", monthOpenBets);
         }
-
-
-
-
-
 
         if (tags != null && sportsbooks != null && statusList != null) { //all three not null
             sumStake = types.contains("sumStake") ? null : betRepository.findStakeOfBets(startDate, endDate, tags, sportsbooks,
@@ -206,7 +178,7 @@ public class BetService {
 
     public List<BetStats> getBetStats() {
         List<BetStats> stats = new ArrayList<>();
-        MyUser currentUser = getUser();
+        MyUser currentUser = myUserDetailsService.getUser();
 
         double totalProfit = betRepository.getTotalProfit(currentUser);
         double totalStake = betRepository.getTotalStake(currentUser);
@@ -337,26 +309,14 @@ public class BetService {
     }
 
     public List<Bet> getUserBets() {
-        MyUser currentUser = getUser();
+        MyUser currentUser = myUserDetailsService.getUser();
 
         if (currentUser != null) {
             return betRepository.findByMyUser(currentUser);
         }
 
         return new ArrayList<>();
-    }
-//    public List<Bet> getBetsWithParams(LocalDate startDate, LocalDate endDate, List<String> tags) {
-//        MyUser currentUser = getUser();
-//        System.out.println("PARAMS");
-//        System.out.println(startDate);
-//        System.out.println(endDate);
-//        System.out.println(tags);
-//        System.out.println();
-//        if (currentUser != null) {
-//            return betRepository.findBetsWithTag(startDate,endDate,tags, currentUser);
-//        }
-//
-//        return new ArrayList<>();
+    };
 //    }
 
     public List<Bet> getUserBets(LocalDate startDate, LocalDate endDate,
@@ -364,7 +324,7 @@ public class BetService {
                                  Integer maxOdds, Integer minOdds, Integer maxStake, Integer minStake,
                                  Integer freeBetMaxStake, Integer freeBetMinStake) {
 
-        MyUser currentUser = getUser();
+        MyUser currentUser = myUserDetailsService.getUser();
         if (currentUser == null) {
             return new ArrayList<>();
         }
@@ -418,7 +378,7 @@ public class BetService {
 
     public List<Bet> getUserBets(LocalDate date) {
 
-        MyUser currentUser = getUser();
+        MyUser currentUser = myUserDetailsService.getUser();
 
         if (currentUser != null) {
             return betRepository.findBetsByMyUserAndEventDate(currentUser, date);
@@ -429,7 +389,7 @@ public class BetService {
 
     public List<Bet> getUserBets(LocalDate startDate, LocalDate endDate) {
 
-        MyUser currentUser = getUser();
+        MyUser currentUser = myUserDetailsService.getUser();
 
         if (currentUser != null) {
             return betRepository.findBetsByMyUserAndEventDateBetween(currentUser, startDate, endDate);
@@ -439,19 +399,16 @@ public class BetService {
     }
 
     public Bet findById(Long betId) {
-        for (Role role: getUser().getRoles()) {
+        MyUser currentUser = myUserDetailsService.getUser();
+        for (Role role: currentUser.getRoles()) {
             if (role.getName().equals("TEST")) {
                 return new Bet();
             }
         }
-//        if (getUser().getRoles().contains("test")) {
-//            return new Bet();
-//        }
         Optional<Bet> betOptional = betRepository.findById(betId);
         if(betOptional.isPresent()) {
             Bet bet = betOptional.get();
-            // Now you can call methods on bet
-            if (bet.getMyUser().getId() != getUser().getId()) {
+            if (bet.getMyUser().getId() != currentUser.getId()) {
                 return null;
             }
         }
@@ -471,21 +428,16 @@ public class BetService {
         return new ArrayList<>(allSportsbooks);
     }
     public List<String> getAllTags() {
-        MyUser currentUser = getUser();
+        MyUser currentUser = myUserDetailsService.getUser();
         List<String> tags = betRepository.findDistinctTagsByUserId(currentUser.getId());
         return tags;
     }
     public Double getProfitOfTags(List<String> tags, List<String> sportsbooks,
                                   List<String> statuses) {
+        //todo: get profits of tags/sportsbooks/status collectively, ran into issue if one was null it would through an error.
         MyUser myUser = myUserDetailsService.getUser();
 
         return betRepository.findProfitAllTags(tags,tags.size(), myUser);
     }
-
-//    public List<String> getAllSportbooks() {
-//        MyUser currentUser = getUser();
-//        List<String> tags = betRepository.findDistinctTagsByUserId(currentUser.getId());
-//        return tags;
-//    }
 
 }

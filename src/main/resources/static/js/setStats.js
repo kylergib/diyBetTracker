@@ -1,5 +1,3 @@
-// import { getAllUserStats } from "./util.js";
-
 export class Stats {
   constructor(profit, stake, fbStake, ROI, wins, loses, voids) {
     (this.profit = profit),

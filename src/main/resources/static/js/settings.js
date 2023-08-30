@@ -1,6 +1,6 @@
 import { setStats } from "./navbar.js";
 import { setTheme } from "./theme.js";
-import { getCurrentUser, apiRequest, baseUrl } from "./util.js";
+import { getCurrentUser } from "./util.js";
 import { clearAllFilters, getAppliedFilters } from "./base-filter.js";
 import { TagTracker } from "./tagTracker.js";
 import { saveTracker, getTrackers, deleteTracker } from "./tracker.js";
@@ -18,10 +18,9 @@ async function main() {
   userSettings = temp["userSettings"];
   // currentUser = createUser(temp["currentUser"]);
   theme = userSettings["theme"];
-  // console.log("theme1", theme, userSettings["theme"], temp);
+
   setTheme(theme);
   setStats(theme);
-  //   document.getElementById("filterContainer").className = "scrollable-div";
   document.getElementById("stakeRange").remove();
   document.getElementById("oddsRange").remove();
   document.getElementById("applyFilterButton").remove();
@@ -37,7 +36,6 @@ let numSelected = 0;
 let trackerIndex = -1;
 
 document.getElementById("emptyFilterButton").addEventListener("click", () => {
-  console.log("test clear");
   clearAllFilters();
 });
 
@@ -65,7 +63,6 @@ function addToTracker(tagObj, from = "add") {
   hiddenIndex.value = tagObj.id;
   div.appendChild(hiddenIndex);
   div.addEventListener("click", function () {
-    console.log(divClicked);
     divClicked = !divClicked;
     if (divClicked) {
       div.classList.add("diy-tracker-clicked");
@@ -84,11 +81,6 @@ function addToTracker(tagObj, from = "add") {
       numSelected--;
     }
     checkRemoveButton();
-    console.log(divClicked);
-    console.log(tagObj.tags);
-    console.log(tagObj.sportsbooks);
-    console.log(tagObj.statuses);
-    // div.classList.add();
   });
 
   function addBadge(text, type) {
@@ -159,13 +151,11 @@ document.getElementById("removeFilterButton").addEventListener(
         const indexToRemove = addedTrackers.findIndex(
           (obj) => obj.id == trackerId
         );
-        console.log("index to remove", indexToRemove);
         if (indexToRemove !== -1) {
           addedTrackers.splice(indexToRemove, 1);
           delSuccessful = true;
         }
       } else {
-        console.log("need to delete tracker:", trackerId);
         delSuccessful = await deleteTracker(trackerId);
       }
       if (delSuccessful) {
@@ -187,7 +177,6 @@ document.getElementById("saveSettings").addEventListener(
         sportsbooks: tracker.sportsbooks,
         statuses: tracker.statuses,
       };
-      console.log(newTracker);
       saveTracker(newTracker);
     });
   },

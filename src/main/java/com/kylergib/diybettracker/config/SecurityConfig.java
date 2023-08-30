@@ -10,9 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
@@ -34,12 +32,9 @@ public class SecurityConfig {
                         .requestMatchers(antMatcher("/api/current_user")).authenticated()
                         .anyRequest().authenticated()
                 )
-//                .csrf((csrf) -> csrf.disable()) //todo fix eventually
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults())
                 .logout(withDefaults())
-
-                //testing persistence
                 .securityContext((securityContext) -> securityContext
                         .requireExplicitSave(true)
                 );

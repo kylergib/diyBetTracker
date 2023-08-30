@@ -2,7 +2,6 @@ package com.kylergib.diybettracker.service;
 
 
 import com.kylergib.diybettracker.dto.TrackerDTO;
-import com.kylergib.diybettracker.entity.Bet;
 import com.kylergib.diybettracker.entity.MyUser;
 import com.kylergib.diybettracker.entity.Role;
 import com.kylergib.diybettracker.entity.Tracker;
@@ -52,7 +51,6 @@ public class TrackerService {
         Optional<Tracker> trackerOptional = trackerRepository.findById(trackerId);
         if(trackerOptional.isPresent()) {
             Tracker tracker = trackerOptional.get();
-            // Now you can call methods on bet
             if (tracker.getMyUser().getId() != currentUser.getId()) {
                 return null;
             }
@@ -61,6 +59,7 @@ public class TrackerService {
     }
 
     public Tracker updateTracker(Long trackerId, Map<String, Object> updates) {
+        //todo: possibly remove, as this is not being used. only adding and deleting are available through website
         MyUser currentUser = myUserDetailsService.getUser();
 
         for (Role role: currentUser.getRoles()) {
@@ -73,37 +72,15 @@ public class TrackerService {
             return null;
         }
         if (updates.containsKey(("tags"))) {
-            System.out.println("TRACKING TAGS");
-            System.out.println(updates.get("tags"));
-            System.out.println(updates.get("tags").getClass());
 
 
-//            LinkedHashMap<String, Object> tracking = (LinkedHashMap<String, Object>) updates.get("tracking");
-//            userSettings.setTracking(tracking.toString());
-//            System.out.println(tracking.toString());
-            //TODO: left off getting errors
         }
         if (updates.containsKey(("sportsbooks"))) {
-            System.out.println("TRACKING sportsbooks");
-            System.out.println(updates.get("sportsbooks"));
-            System.out.println(updates.get("sportsbooks").getClass());
 
-
-//            LinkedHashMap<String, Object> tracking = (LinkedHashMap<String, Object>) updates.get("tracking");
-//            userSettings.setTracking(tracking.toString());
-//            System.out.println(tracking.toString());
-            //TODO: left off getting errors
         }
         if (updates.containsKey(("statuses"))) {
-            System.out.println("TRACKING statuses");
-            System.out.println(updates.get("statuses"));
-            System.out.println(updates.get("statuses").getClass());
 
 
-//            LinkedHashMap<String, Object> tracking = (LinkedHashMap<String, Object>) updates.get("tracking");
-//            userSettings.setTracking(tracking.toString());
-//            System.out.println(tracking.toString());
-            //TODO: left off getting errors
         }
 //        trackerRepository.save(tracker);
         return tracker;
@@ -132,12 +109,7 @@ public class TrackerService {
         List<Tracker> trackers = getTrackerByMyUser();
 
         trackers.forEach(tracker -> {
-            System.out.println(tracker.getTags());
             if (tracker != null) {
-                System.out.println(tracker.getSportsbooks());
-                System.out.println(tracker.getStatuses());
-
-
                 Double profit = betService.getProfitOfTags(tracker.getTags(),null,null);
                 trackersProfit.add(new TrackerDTO(profit, tracker.getTags(),tracker.getSportsbooks(),tracker.getStatuses()));
             }

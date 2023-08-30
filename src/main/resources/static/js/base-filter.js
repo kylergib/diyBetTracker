@@ -1,4 +1,4 @@
-import { getCurrentUser, apiRequest, baseUrl } from "./util.js";
+import { apiRequest, baseUrl } from "./util.js";
 
 let sportsbooksList = [];
 let tagsList = [];
@@ -41,9 +41,7 @@ function setFilterTags() {
     const inputCheckbox = document.createElement("input");
     inputCheckbox.setAttribute("type", "checkbox");
     inputCheckbox.className = "form-check-input mt-0";
-    inputCheckbox.addEventListener("click", () => {
-      console.log(thisTag);
-    });
+
     inputGroupText.appendChild(inputCheckbox);
 
     const spanText = document.createElement("span");
@@ -53,8 +51,6 @@ function setFilterTags() {
 
     groupDiv.appendChild(inputGroupText);
     groupDiv.appendChild(spanText);
-
-    // div.innerHTML = tagsList[i];
     tagFilters.appendChild(groupDiv);
     tagsFinished = true;
   }
@@ -70,9 +66,7 @@ function setFilterSportsbooks() {
     const inputCheckbox = document.createElement("input");
     inputCheckbox.setAttribute("type", "checkbox");
     inputCheckbox.className = "form-check-input mt-0";
-    inputCheckbox.addEventListener("click", () => {
-      console.log(thisTag);
-    });
+
     inputGroupText.appendChild(inputCheckbox);
 
     const spanText = document.createElement("span");
@@ -82,8 +76,6 @@ function setFilterSportsbooks() {
 
     groupDiv.appendChild(inputGroupText);
     groupDiv.appendChild(spanText);
-
-    // div.innerHTML = tagsList[i];
     sportsbookFilters.appendChild(groupDiv);
     sportsbooksFinished = true;
   }
@@ -102,7 +94,7 @@ function getAppliedTagFilters() {
   tagFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {
     const inputChecked = group.querySelector("input").checked;
     const spanText = group.querySelector("span").textContent;
-    console.log(inputChecked, spanText);
+
     if (inputChecked) {
       appliedTagFilters.push(spanText);
     }
@@ -114,7 +106,7 @@ function getAppliedSportsbookFilters() {
   sportsbookFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {
     const inputChecked = group.querySelector("input").checked;
     const spanText = group.querySelector("span").textContent;
-    console.log(inputChecked, spanText);
+
     if (inputChecked) {
       appliedSportsbookFilters.push(spanText);
     }
@@ -129,7 +121,7 @@ function getAppliedStatusFilters() {
     .forEach((group) => {
       const inputChecked = group.querySelector("input").checked;
       const spanText = group.querySelector("span").textContent;
-      console.log(inputChecked, spanText);
+
       if (inputChecked) {
         appliedStatusFilters.push(spanText);
       }

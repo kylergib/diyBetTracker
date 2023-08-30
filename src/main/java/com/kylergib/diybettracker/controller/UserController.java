@@ -5,8 +5,6 @@ import com.kylergib.diybettracker.entity.MyUser;
 import com.kylergib.diybettracker.entity.Tracker;
 import com.kylergib.diybettracker.entity.UserSettings;
 import com.kylergib.diybettracker.repository.UserRepository;
-import com.kylergib.diybettracker.repository.UserSettingsRepository;
-import com.kylergib.diybettracker.service.MyUserDetailsService;
 import com.kylergib.diybettracker.service.TrackerService;
 import com.kylergib.diybettracker.service.UserSettingsService;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,12 +65,6 @@ public class UserController {
     @PatchMapping("/currentUser/tracker/{trackerId}")
     public ResponseEntity<?> updateTracker(@PathVariable Long trackerId,@RequestBody Map<String, Object> updates) {
 
-//        UserSettings updatedSettings = userSettingsService.updateSettings(updates);
-//        if (updatedSettings != null) {
-//            return new ResponseEntity<>(updatedSettings, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
         Tracker updatedTracker = trackerService.updateTracker(trackerId,updates);
         if (updatedTracker != null) {
             return new ResponseEntity<>(updatedTracker, HttpStatus.OK);

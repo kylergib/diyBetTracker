@@ -91,14 +91,11 @@ export async function getAllUserBetsDate(
 
   await apiRequest(url)
     .then((result) => {
-      console.log(result);
       if (result.status == 200) {
-        console.log("successfull?");
         return result.json();
       }
     })
     .then((json) => {
-      console.log(json);
       json.forEach((bet) => {
         bets.push(createBet(bet));
       });

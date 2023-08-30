@@ -9,14 +9,12 @@ import {
 import { createUser } from "./myUser.js";
 import { setTheme } from "./theme.js";
 import { getTrackersProfit } from "./tracker.js";
-//sets navbar stats
+
 let theme;
 let yearJson;
 
 let currentUser;
 let userSettings;
-
-// setStats();
 
 let dailyMap;
 let monthStartDate;
@@ -32,9 +30,7 @@ async function getDailyProfits(startDate, endDate) {
       "&endDate=" +
       getDateString(endDate)
   ).then((result) => {
-    console.log(result);
     if (result.status == 200) {
-      console.log("successfull?");
       return result.json();
     }
   });
@@ -48,24 +44,19 @@ async function setDailyWidgets() {
   let monthProfitUnitDataSet = [];
   let monthProfit = 0;
   function createCalendarColumn(row, day = null, profit = null) {
-    // const insideDiv = document.createElement("div");
-    // insideDiv.appendChild(insideDiv);
-
     const col = document.createElement("div");
     col.classList.add("col");
     col.classList.add("col-fixed-width");
     col.classList.add("diy-calendar-day");
     row.appendChild(col);
-    // const insideDiv = document.createElement("div");
-    // col.appendChild(insideDiv);
     if (day) {
       const spanDay = document.createElement("div");
       spanDay.textContent = day;
-      // spanDay.classList.add("col-fixed-width");
+
       col.appendChild(spanDay);
       col.style.borderColor = theme == "dark" ? "white" : "black";
     }
-    // profit = 99999;
+
     let profitExtension = "";
     let fixedNumbers = 0;
     if (profit > 99999) {
@@ -88,7 +79,6 @@ async function setDailyWidgets() {
         "$" + profit.toFixed(fixedNumbers) + profitExtension;
       spanProfit.style.display = "flex";
       spanProfit.style.justifyContent = "center";
-      // spanProfit.classList.add("col-fixed-width");
       col.appendChild(spanProfit);
       if (profit > 0) {
         spanProfit.style.color = theme == "dark" ? "#00ff00" : "green";
@@ -110,7 +100,6 @@ async function setDailyWidgets() {
     monthProfitUnitDataSet.push(monthUnits);
   }
   function setDailyChartData() {
-    console.log(theme, "THEME");
     let fontColor = theme == "dark" ? "white" : "black";
     let ctx = document.getElementById("monthProfitChart").getContext("2d");
     let myChart = new Chart(ctx, {
@@ -155,7 +144,7 @@ async function setDailyWidgets() {
           yAxes: [
             {
               ticks: {
-                fontColor: fontColor, // Change this color as needed for y-axis values
+                fontColor: fontColor,
               },
             },
           ],
@@ -247,9 +236,6 @@ async function setDailyWidgets() {
     }
   }
   while (columnNum < 7) {
-    // const col = document.createElement("div");
-    // col.classList.add("col");
-    // row.appendChild(col);
     createCalendarColumn(row);
     columnNum++;
   }
@@ -261,7 +247,6 @@ async function main() {
   userSettings = temp["userSettings"];
   currentUser = createUser(temp["currentUser"]);
   theme = userSettings["theme"];
-  // console.log("theme1", theme, userSettings["theme"], temp);
   setTheme(theme);
   setStats(theme);
   let date = new Date();
@@ -273,23 +258,12 @@ main();
 
 function unhideAll() {
   if (yearlyDone && dailyDone) {
-    console.log("all done will unhide.");
-
     document.getElementById("veryTopRow").removeAttribute("style");
     document.getElementById("topRow").removeAttribute("style");
     document.getElementById("secondRow").removeAttribute("style");
     document.getElementById("thirdRow").removeAttribute("style");
   }
 }
-// function adjustCharts() {
-//   if (window.innerWidth < 1200) {
-//   } else {
-//   }
-// }
-
-// window.addEventListener("resize", function () {
-//   adjustCharts();
-// });
 
 async function allDaily(date) {
   const startAndEnd = getStartAndEndOfMonth(date);
@@ -311,9 +285,7 @@ async function allYear(date) {
 async function getMonthlyProfits(year) {
   return await apiRequest(baseUrl + "bets/stats?year=" + year).then(
     (result) => {
-      console.log(result);
       if (result.status == 200) {
-        console.log("successfull?");
         return result.json();
       }
     }
@@ -426,14 +398,10 @@ apiRequest(baseUrl + "bets/userTags")
   })
   .then((json) => {
     tagsList = json;
-    console.log(tagsList);
   })
   .then(() => {
     receivedTags = true;
     getDashboardStats();
-    // tagsList.forEach((tag) => {
-    //   createTagProfitBadge(tag, "tagProfit");
-    // });
   })
   .catch((error) => {
     console.error(error);
@@ -448,9 +416,6 @@ apiRequest(baseUrl + "bets/userSportsbooks")
   })
   .then(() => {
     getDashboardStats();
-    // sportsbooksList.forEach((sportsbook) => {
-    //   createTagProfitBadge(sportsbook, "sportsbookProfit");
-    // });
   })
   .catch((error) => {
     console.error(error);
@@ -490,7 +455,6 @@ async function getDashboardStats() {
     console.log("did not receive sportsbooks or tags yet.");
     return;
   }
-  console.log("got both");
   let newTags = [];
   tagsList.forEach((tag) => {
     newTags.push(encodeURIComponent(tag));
@@ -512,24 +476,16 @@ async function getDashboardStats() {
       return result.json();
     })
     .then((json) => {
-      console.log(json);
       sportsbooksList.forEach((sportsbook) => {
         createTagProfitBadge(sportsbook, "sportsbookProfit", json[sportsbook]);
       });
       tagsList.forEach((tag) => {
         createTagProfitBadge(tag, "tagProfit", json[tag]);
       });
-      // const pendingBadge = document.getElementById("pendingBadge");
       const pendingAmount = parseFloat(json["pendingStake"]);
-      // if (pendingAmount > 0) {
-      //   pendingBadge.style.backgroundColor = "green";
-      // } else if (pendingAmount < 0) {
-      //   pendingBadge.style.backgroundColor = "red";
-      // }
       document.getElementById(
         "pendingStake"
       ).textContent = `$${pendingAmount.toFixed(2)}`;
-      //setting badges for top row
 
       let todayStats = json["todayStats"];
       let yesterdayStats = json["yesterdayStats"];
@@ -590,7 +546,6 @@ function setBadge(type, json) {
   let wins = json["wonBets"];
   let losses = json["lostBets"];
   let voids = json["voidBets"];
-  console.log(wins + "-" + losses + "-" + voids);
   document.getElementById(type + "RecordBadge").textContent =
     wins + "-" + losses + "-" + voids;
 }
@@ -600,7 +555,6 @@ trackers.forEach((tracker) => {
 });
 document.getElementById("tagTracker").style.display = "";
 function createTagTrackerBadge(tags, profit) {
-  console.log(tags);
   function addBadge(text, type = "tag") {
     const header = document.createElement("div");
 
@@ -637,7 +591,6 @@ function createTagTrackerBadge(tags, profit) {
     addBadge(tag);
     characterCount += tag.length;
   });
-  console.log(characterCount, tags); //every 20 the card should be 80
   let charCountMultiplier = Math.ceil(characterCount / 20);
   let numItemsMultiplier = Math.ceil(tags.length / 2);
   let finalMulti =

@@ -5,12 +5,7 @@ import com.kylergib.diybettracker.entity.Role;
 import com.kylergib.diybettracker.entity.UserSettings;
 import com.kylergib.diybettracker.repository.UserSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -26,9 +21,6 @@ public class UserSettingsService {
         return userSettingsRepository.findByMyUser(myUser);
 
     }
-//    public UserSettings save(UserSettings userSettings) {
-//
-//    }
     public UserSettings updateSettings(Map<String, Object> updates) {
         MyUser currentUser = myUserDetailsService.getUser();
 
@@ -41,21 +33,13 @@ public class UserSettingsService {
 
         UserSettings userSettings = getSettingsByMyUser(currentUser);
 
-
+        //todo: add settings later
         if (userSettings == null) {
             return null;
         }
         if (updates.containsKey("theme")) {
             userSettings.setTheme((String) updates.get("theme"));
         }
-//        if (updates.containsKey(("tracking"))) {
-//            System.out.println("TRACKING");
-//
-//            LinkedHashMap<String, Object> tracking = (LinkedHashMap<String, Object>) updates.get("tracking");
-//            userSettings.setTracking(tracking.toString());
-//            System.out.println(tracking.toString());
-//            //TODO: left off getting errors
-//        }
         if (updates.containsKey("unit")) {
             userSettings.setUnit(Double.parseDouble((String) updates.get("tracking")));//monitor?
         }

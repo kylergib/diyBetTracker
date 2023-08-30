@@ -28,7 +28,7 @@ async function main() {
   document.getElementById("clearFilterButton").remove();
   document.getElementById("sportsbookFilters").remove();
   document.getElementById("statusFilters").remove();
-  document.getElementById("filterDiv").style.display = "";
+  document.getElementById("filterDiv").style.visibility = "";
 }
 main();
 

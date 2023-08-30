@@ -27,10 +27,10 @@ public class HomeController {
     @RequestMapping(value = {"/","/home"})
     public String index(Model model) {
         MyUser currentUser = getUser();
-        UserSettings settingsTest = userSettingsService.getSettingsByMyUser(currentUser);
+        UserSettings userSettings = userSettingsService.getSettingsByMyUser(currentUser);
         String cssSheet = "/diy-light.css";
         String navClass = "navbar navbar-expand-lg navbar-light bg-light";
-        if (settingsTest.getTheme().equals("dark")) {
+        if (userSettings != null && userSettings.getTheme().equals("dark")) {
             cssSheet = "/diy-dark.css";
             navClass = "navbar navbar-expand-lg navbar-dark bg-dark";
         }

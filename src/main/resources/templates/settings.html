@@ -17,11 +17,12 @@
 
 <body>
     <div th:insert="navbar :: navbar"></div>
-    <button type="button" class="btn btn-primary" id="saveSettings">Save</button>
+
     <div class="row diy-flex-md-row text-center mx-1" id="topRow">
-        <div class="col-6 col-sm-3 col-md-3 col-lg-3 mt-3">
+        <div class="col-12 col-sm-6 col-lg-3 mt-3">
             <div class="card diy-card">
-                <div class="scrollable-div mt-2" style="padding: 5px; max-height: 500px; height: auto; display: none;"
+                <div class="scrollable-div mt-2"
+                    style="padding: 5px; padding-left: 15px; padding-right: 15px; height: 500px; visibility: hidden;"
                     id="filterDiv" th:insert=" base-filter :: filterContainer">
                 </div>
                 <div class="mt-2 mb-2">
@@ -31,15 +32,20 @@
             </div>
         </div>
 
-        <div class="col-6 col-md-6 col-lg-2 mt-3">
+        <div class="col-12 col-sm-6 col-md-6 col-lg-2 mt-3">
             <div class="card diy-card">
-                <div class="scrollable-div mt-2" id="tagTracker" style="padding: 5px; max-height: 500px; height: auto;">
+                <div class="scrollable-div mt-2" id="tagTracker" style="padding: 5px; height: 500px;">
 
                 </div>
                 <div class="mt-2 mb-2">
                     <button type="button" class="btn btn-primary disabled" id="removeFilterButton">Remove</button>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row mt-2" style="justify-content: center;">
+        <div style="width: fit-content;">
+            <button type="button" class="btn btn-primary" id="saveSettings">Save</button>
         </div>
     </div>
 

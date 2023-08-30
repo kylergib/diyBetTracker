@@ -258,6 +258,7 @@ td {
 @media (min-width: 768px) { 
     .diy-flex-md-row {
         display: flex;
+        justify-content: center;
     }
 }
 .flex-md-row {
@@ -355,14 +356,18 @@ td {
     --bs-table-active-bg: rgba(0, 0, 0, 0.1); 
     --bs-table-hover-color: #212529; 
     --bs-table-hover-bg: rgba(0, 0, 0, 0.075);  */
-    width: 100%; 
     margin-bottom: 1rem; 
     /* color: #212529;  */
     vertical-align: top;
     border-color: transparent;
-    margin-left: 25px;
-    margin-right: 25px;
-    padding-right: 50px;
+    /* margin-left: 25px;
+    margin-right: 25px; */
+    /* padding-right: 50px; */
+    border-radius: 10px;
+    text-align: center;
+    padding: 20px;
+    width: 98%;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
 }
 .diy-cell {
     border: 3px solid transparent;
@@ -488,10 +493,14 @@ td {
 
 .scrollable-div {
     height: 100%; 
-
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
     overflow-y: auto;
     /* border: 1px solid #ccc;  */
 }
+.scrollable-div::-webkit-scrollbar {
+    display: none;
+  }
 .scrollable-div-x {
     /* height: 100%;  */
     width: 100%;
@@ -513,7 +522,7 @@ td {
 .diy-calendar-day {
     border: 1px solid transparent;
     border-radius: 10px;
-    margin: 5px;
+    margin: 1px;
 }
 .diy-tracker {
     display: flex;
@@ -554,3 +563,7 @@ td {
     display: flex;
     padding-bottom: 10px;
 }
+.card {
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+}
+

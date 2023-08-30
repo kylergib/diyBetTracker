@@ -708,6 +708,7 @@ function sortBetsAndAdd(bets) {
   bets.forEach((bet) => {
     createBetRow(bet);
   });
+  document.getElementById("filterNav").style.display = "";
   document.getElementById("betTable").style.display = "";
 }
 function clearTable() {

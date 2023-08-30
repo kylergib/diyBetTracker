@@ -274,6 +274,8 @@ main();
 function unhideAll() {
   if (yearlyDone && dailyDone) {
     console.log("all done will unhide.");
+
+    document.getElementById("veryTopRow").removeAttribute("style");
     document.getElementById("topRow").removeAttribute("style");
     document.getElementById("secondRow").removeAttribute("style");
     document.getElementById("thirdRow").removeAttribute("style");

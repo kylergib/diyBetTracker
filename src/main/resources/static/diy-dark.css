@@ -125,7 +125,9 @@ body {
     --bs-table-active-bg: rgba(0, 0, 0, 0.1); 
     --bs-table-hover-color: #212529; 
     --bs-table-hover-bg: rgba(0, 0, 0, 0.075); 
-    color: #0d6efd; 
+    color: #ffffff; 
+    background: #424549;
+    
 }
 .diy-table-header {
     border-bottom: 4px solid white;
@@ -138,8 +140,8 @@ body {
 }
 .diy-bet-lost {
     /* background-color: "#ff8590"!important; */
-    border-color:  #ff4343!important;
-    color: #ff4343!important;
+    border-color:  #ff7676!important;
+    color: #ff7676!important;
 }
 .diy-bet-void {
     /* background-color: "#ffffa7"!important; */
@@ -192,8 +194,8 @@ body {
     border-color: #dbdbdb!important;
 }
 .btn-outline-lost {
-    color: #ff4343!important;
-    border-color: #ff4343!important;
+    color: #ff7676!important;
+    border-color: #ff7676!important;
 }
 .btn-check:active+.btn-outline-lost:hover, 
 .btn-check:checked+.btn-outline-lost:hover, 
@@ -201,8 +203,8 @@ body {
 .btn-outline-lost:hover.dropdown-toggle.show, 
 .btn-outline-lost:hover:active, .btn-outline-lost:hover {
     color: #1e2124!important;
-    background-color: #ff4343!important;
-    border-color: #ff4343;
+    background-color: #ff7676!important;
+    border-color: #ff7676;
 }
 .diy-bg-won {
     background-color: #00ff00!important;

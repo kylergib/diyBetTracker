@@ -92,8 +92,8 @@ function setFilterSportsbooks() {
 export function getAppliedFilters() {
   return {
     appliedTagFilters: getAppliedTagFilters(),
-    appliedSportsbookFilters: getAppliedSportsbookFilters(),
-    appliedStatusFilters: getAppliedStatusFilters(),
+    appliedSportsbookFilters: [],
+    appliedStatusFilters: [],
   };
 }
 
@@ -139,8 +139,8 @@ function getAppliedStatusFilters() {
 
 export function clearAllFilters() {
   clearTagFilters();
-  clearSportsbookFilters();
-  clearStatusFilters();
+  // clearSportsbookFilters();
+  // clearStatusFilters();
 }
 function clearTagFilters() {
   tagFilters.querySelectorAll(".input-group.mb-3").forEach((group) => {

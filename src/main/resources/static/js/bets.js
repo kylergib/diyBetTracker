@@ -385,6 +385,7 @@ function createBetRow(bet) {
         updateBet(bet); //todo: update bet function
         break;
     }
+    setStats(styleMode);
   });
   const statusCell = row.insertCell(-1);
   statusCell.style.textAlign = "center";

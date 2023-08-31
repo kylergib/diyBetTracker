@@ -1,4 +1,4 @@
-export const baseUrl = "https://" + window.location.host + "/api/";
+export const baseUrl = "http://" + window.location.host + "/api/";
 const csrfToken = document
   .querySelector('meta[name="csrf-token"]')
   .getAttribute("content");

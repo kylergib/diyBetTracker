@@ -126,7 +126,7 @@ body {
     --bs-table-hover-color: #212529; 
     --bs-table-hover-bg: rgba(0, 0, 0, 0.075); 
     color: #ffffff; 
-    background: #424549;
+    background: transparent;
     
 }
 .diy-table-header {
@@ -336,4 +336,8 @@ body {
 .diy-tracker-clicked {
     background-color: #000;
     border-color: #357ebd;
+}
+
+.top-level-table {
+    background: #424549;
 }

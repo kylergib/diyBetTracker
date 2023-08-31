@@ -367,7 +367,7 @@ td {
     text-align: center;
     padding: 20px;
     width: 98%;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+    
 }
 .diy-cell {
     border: 3px solid transparent;
@@ -566,4 +566,28 @@ td {
 .card {
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
 }
+.top-level-table {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 98%;
+    
+}
+
+.scrollable-table {
+    height: 70vh;
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+    overflow-y: auto;
+}
+.scrollable-div::-webkit-scrollbar, .scrollable-table::-webkit-scrollbar {
+    display: none;
+  }
 

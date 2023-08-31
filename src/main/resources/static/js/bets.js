@@ -547,6 +547,7 @@ function sortBetsAndAdd(bets) {
   document.getElementById("betTable").style.display = "";
 }
 function clearTable() {
+  console.log("clearing table?");
   document.getElementById("betTable").style.display = "none";
   let table = document.getElementById("betBody");
   table.querySelectorAll("tr").forEach((row) => {
@@ -756,7 +757,19 @@ document.getElementById("saveBetButton").addEventListener(
       clearInputs(keepList);
       return;
     }
-    window.location.reload();
+    if (bet.profit != 0) {
+      setStats(styleMode);
+    }
+    let endDate = null;
+    if (betFilterStatus !== "day") {
+      endDate = getDateString(endFilter);
+    }
+    let startDate = getDateString(startFilter);
+
+    clearTable();
+    sortBetsAndAdd(await getAllUserBetsDate(startDate, endDate));
+    console.log("Should be reloading bets?");
+    // window.location.reload();
   },
   false
 );

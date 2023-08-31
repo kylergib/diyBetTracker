@@ -367,6 +367,7 @@ td {
     text-align: center;
     padding: 20px;
     width: 98%;
+    height: fit-content;
     
 }
 .diy-cell {

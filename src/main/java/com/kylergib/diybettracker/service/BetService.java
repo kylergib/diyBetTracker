@@ -46,7 +46,7 @@ public class BetService {
         MyUser myUser = myUserDetailsService.getUser();
 
         int newDay = startDate.getDayOfMonth();
-        while (newDay < endDate.getDayOfMonth()) {
+        while (newDay <= endDate.getDayOfMonth()) {
             LocalDate newDate = LocalDate.of(startDate.getYear(),startDate.getMonthValue(),newDay);
             double profit = betRepository.getProfitForDate(newDate, myUser);
             map.put("day" +String.valueOf(newDay),profit);

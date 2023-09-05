@@ -212,9 +212,10 @@ async function setDailyWidgets() {
   row.classList.add("row");
   row.classList.add("flex-nowrap");
   calendarWidget.appendChild(row);
-  for (let i = 1; i < monthEndDate.getDate(); ) {
+  for (let i = 1; i <= monthEndDate.getDate(); ) {
     let profit = dailyMap["day" + i];
-    if (monthStartDate.getDate() + 1 > columnNum && !startFinished) {
+
+    if (monthStartDate.getDay() > columnNum && !startFinished) {
       createCalendarColumn(row);
       columnNum++;
     } else if (columnNum < 7) {

@@ -344,7 +344,12 @@ function createBetRow(bet) {
   } else {
     createColumn(row, ["$" + bet.profit.toFixed(2)], betClass);
   }
-  createColumn(row, [bet.tags], betClass);
+  let formatTags = "";
+  bet.tags.forEach((tag) => {
+    if (formatTags === "") formatTags = tag;
+    else formatTags += ", " + tag;
+  });
+  createColumn(row, [formatTags], betClass);
   const selectElement = document.createElement("select");
   selectElement.setAttribute("class", "form-select");
   selectElement.setAttribute("aria-label", "Default select example");
@@ -757,6 +762,11 @@ document.getElementById("saveBetButton").addEventListener(
     if (keepBool) {
       clearInputs(keepList);
       return;
+    } else {
+      //tODO: close window
+      document.getElementById("addBetDiv").style.display = "none";
+      document.getElementById("overlay").style.display = "none";
+      clearInputs();
     }
     if (bet.profit != 0) {
       setStats(styleMode);

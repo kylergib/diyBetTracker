@@ -4,6 +4,7 @@ import com.kylergib.diybettracker.entity.MyUser;
 import com.kylergib.diybettracker.entity.UserSettings;
 import com.kylergib.diybettracker.repository.UserRepository;
 import com.kylergib.diybettracker.service.UserSettingsService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +38,11 @@ public class HomeController {
         model.addAttribute("cssSheet", cssSheet);
         model.addAttribute("navClass", navClass);
         return "index";
+    }
+    @RequestMapping("/invalidate-session")
+    public void invalidateSession(HttpServletRequest request) {
+        request.getSession().invalidate();
+//        return "redirect:/login";
     }
 
 }

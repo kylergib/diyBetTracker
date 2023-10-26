@@ -7,14 +7,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.RememberMeConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+
+import java.time.Duration;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
@@ -38,13 +42,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(withDefaults())
-                .httpBasic(withDefaults())
                 .logout(withDefaults())
-                .rememberMe()
-                    .rememberMeServices(rememberMeServices())
-//                .securityContext((securityContext) -> securityContext
-//                        .requireExplicitSave(true)
-//                )
+
+                .rememberMe(Customizer.withDefaults())
         ;
 
 
@@ -60,11 +60,5 @@ public class SecurityConfig {
         auth.authenticationProvider(daoAuthenticationProvider);
     }
 
-    @Bean
-    public RememberMeServices rememberMeServices() {
-        TokenBasedRememberMeServices rememberMeServices = new TokenBasedRememberMeServices("uniqueAndSecret", userDetailsService);
-        rememberMeServices.setTokenValiditySeconds(86400 * 30);  // Set token validity to one day
-        return rememberMeServices;
-    }
 
 }

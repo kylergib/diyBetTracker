@@ -10,13 +10,13 @@ import {
   apiRequest,
   baseUrl,
   getCurrentUser,
+  checkSession,
 } from "./util.js";
 import { setStats } from "./navbar.js";
 import { createAlert } from "./diyAlerts.js";
 import { setTheme } from "./theme.js";
 
 // export const baseUrl = "http://" + window.location.host + "/api/";
-
 const bets = [];
 let betTags = [];
 let todaysDate = new Date();
@@ -845,7 +845,8 @@ function openNewBet() {
 
 document.getElementById("addBetButton").addEventListener(
   "click",
-  () => {
+  async () => {
+    await checkSession();
     openNewBet();
     document.getElementById("betTypeInput").value = "addBet";
   },
@@ -860,6 +861,7 @@ document.getElementById("closeBetButton").addEventListener(
   },
   false
 );
+
 
 function updateBet(bet) {
   bet.myUser = { id: currentUser.id };

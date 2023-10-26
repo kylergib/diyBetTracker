@@ -163,3 +163,18 @@ function monthIntToString(monthInt) {
 
   return monthString;
 }
+export async function checkSession() {
+  apiRequest(baseUrl + "session").then((result) => {
+
+    if (result.status != 200 || result.redirected == true) {
+      window.location.reload();
+    }
+  });
+}
+
+export async function checkThirtySeconds() {
+  setInterval(async function() {
+    await checkSession();
+  }, 30000);
+
+}

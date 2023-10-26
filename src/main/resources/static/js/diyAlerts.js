@@ -15,7 +15,7 @@ export async function createAlert(text, type = "primary") {
   dismissAlert(div);
 }
 
-async function dismissAlert(div, time = 10000) {
+async function dismissAlert(div, time = 3000) {
   setTimeout(() => {
     div.remove();
   }, time);

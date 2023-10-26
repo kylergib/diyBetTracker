@@ -42,7 +42,9 @@ public class BetApiController {
 
     @PostMapping("/addBet")
     public ResponseEntity<Bet> createBet(@RequestBody Bet bet) {
+        System.out.println("Trying to save. post0");
         Bet savedBet = betService.saveBet(bet);
+        System.out.println("Trying to save. post1");
         return new ResponseEntity<>(savedBet, HttpStatus.CREATED);
     }
 
@@ -116,8 +118,7 @@ public class BetApiController {
     public ResponseEntity<?> getUserSportsbooks() {
         try {
             List<String> allSportsbooks = betService.getAllSportsbooks();
-            System.out.println("after getting sportsbooks");
-            System.out.println(allSportsbooks);
+
             return ResponseEntity.ok(allSportsbooks);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();

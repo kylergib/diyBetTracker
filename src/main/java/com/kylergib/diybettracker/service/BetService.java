@@ -46,7 +46,7 @@ public class BetService {
         MyUser myUser = myUserDetailsService.getUser();
 
         int newDay = startDate.getDayOfMonth();
-        while (newDay < endDate.getDayOfMonth()) {
+        while (newDay <= endDate.getDayOfMonth()) {
             LocalDate newDate = LocalDate.of(startDate.getYear(),startDate.getMonthValue(),newDay);
             double profit = betRepository.getProfitForDate(newDate, myUser);
             map.put("day" +String.valueOf(newDay),profit);
@@ -295,16 +295,23 @@ public class BetService {
                 return new Bet();
             }
         }
+        System.out.println("Trying to save. 0");
 
-        if (bet.getMyUser().getId() != null) {
-            System.out.println();
-            if (myUser.getId() != bet.getMyUser().getId()) {
-                return null;
-            }
+        if (myUser.getId() != null) {
 
+            System.out.println("Trying to save. 1");
+            System.out.println(myUser.getId());
+            System.out.println(bet.getMyUser().getId());
+
+//            if (myUser.getId() != bet.getMyUser().getId()) {
+//                System.out.println("Trying to save. 2");
+//                return null;
+//            }
+            System.out.println("Trying to save. 4");
             bet.setMyUser(myUser);
+            System.out.println("Trying to save. 5");
         }
-
+        System.out.println("Trying to save. 6");
         return betRepository.save(bet);
     }
 

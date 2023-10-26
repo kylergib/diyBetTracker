@@ -29,7 +29,7 @@
     <div class="row diy-flex-md-row text-center mx-1" style="display:none;" id="topRow">
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-3 mt-2" style="display: flex; justify-content: center;">
 
-            <div class="card">
+            <div class="card" style="width: 100%">
 
 
                 <div class="text-center" style="padding: 15px; word-wrap: normal; font-size: .9em;" id="calendarWidget">
@@ -73,13 +73,25 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-12 col-md-4 col-lg-2 mt-2">
+
+        <div class="col-6 col-md-4 col-lg-2 mt-2">
+            <div class="scrollable-div card diy-card" id="tagProfit" style="padding: 5px;">
+
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2 mt-2">
+            <div class="scrollable-div card diy-card" id="sportsbookProfit" style="padding: 5px;">
+
+
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 mt-2">
             <div class="card" style="padding: 5px; height: 100%; display: grid; flex-grow: 1;">
                 <div style="display: flex; margin-top: 5px">
 
                     <div class="diy-card-badge">
                         <span class="badge bg-secondary" id="pendingBadge"
-                            style="width: 100%; font-size: 1em; display: flex;">
+                              style="width: 100%; font-size: 1em; display: inline-flex; width: 100%;">
 
                             <div>Pending</div>
                             <div style="flex: 1; text-align: right;" id="pendingStake"></div>
@@ -90,7 +102,7 @@
 
                     <div class="diy-card-badge">
                         <span class="badge bg-secondary" id="todayBadge"
-                            style="width: 100%; font-size: 1em; display: flex;">
+                              style="width: 100%; font-size: 1em; display: inline-flex; width: 100%;">
                             <div>Today Open</div>
                             <div style="flex: 1; text-align: right;" id="todayOpen"></div>
                         </span>
@@ -100,7 +112,7 @@
 
                     <div class="diy-card-badge">
                         <span class="badge bg-secondary" id="weekBadge"
-                            style="width: 100%; font-size: 1em; display: flex;">
+                              style="width: 100%; font-size: 1em; display: inline-flex; width: 100%;">
                             <div>Week Open</div>
                             <div style="flex: 1; text-align: right;" id="weekOpen"></div>
                         </span>
@@ -110,7 +122,7 @@
 
                     <div class="diy-card-badge">
                         <span class="badge bg-secondary" id="monthBadge"
-                            style="width: 100%; font-size: 1em; display: flex;">
+                              style="width: 100%; font-size: 1em; display: inline-flex; width: 100%;">
                             <div>Month Open</div>
                             <div style="flex: 1; text-align: right;" id="monthOpen"></div>
                         </span>
@@ -120,23 +132,12 @@
 
                     <div class="diy-card-badge">
                         <span class="badge bg-secondary" id="totalBadge"
-                            style="width: 100%; font-size: 1em; display: flex;">
+                              style="width: 100%; font-size: 1em; display: inline-flex; width: 100%;">
                             <div>All Open</div>
                             <div style="flex: 1; text-align: right;" id="totalOpen"></div>
                         </span>
                     </div>
                 </div>
-
-            </div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-2 mt-2">
-            <div class="scrollable-div card diy-card" id="tagProfit" style="padding: 5px;">
-
-            </div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-2 mt-2">
-            <div class="scrollable-div card diy-card" id="sportsbookProfit" style="padding: 5px;">
-
 
             </div>
         </div>

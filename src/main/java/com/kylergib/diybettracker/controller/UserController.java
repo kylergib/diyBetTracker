@@ -34,21 +34,17 @@ public class UserController {
     @GetMapping("/current_user")
     public ResponseEntity<?> getCurrentUser(Authentication authentication) {
         Map<String, Object> currentUser = new HashMap<>();
-        System.out.println("currentUSER: beginning" );
 
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
             MyUser myUser = userRepository.findByName(userDetails.getUsername());
             if (myUser == null) {
-                System.out.println("currentUSER: null");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
             }
             currentUser.put("currentUser", myUser);
             UserSettings settingsTest = userSettingsService.getSettingsByMyUser(myUser);
             currentUser.put("settings", userSettingsService.getSettingsByMyUser(myUser));
-            System.out.println("currentUSER: " + settingsTest.getDefaultBetFilter());
             return ResponseEntity.ok(currentUser);
         }
-        System.out.println("currentUSER: end" );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 

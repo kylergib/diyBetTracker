@@ -344,7 +344,12 @@ function createBetRow(bet) {
   } else {
     createColumn(row, ["$" + bet.profit.toFixed(2)], betClass);
   }
-  createColumn(row, [bet.tags], betClass);
+  let formatTags = "";
+  bet.tags.forEach((tag) => {
+    if (formatTags === "") formatTags = tag;
+    else formatTags += ", " + tag;
+  });
+  createColumn(row, [formatTags], betClass);
   const selectElement = document.createElement("select");
   selectElement.setAttribute("class", "form-select");
   selectElement.setAttribute("aria-label", "Default select example");
@@ -385,6 +390,7 @@ function createBetRow(bet) {
         updateBet(bet); //todo: update bet function
         break;
     }
+    setStats(styleMode);
   });
   const statusCell = row.insertCell(-1);
   statusCell.style.textAlign = "center";
@@ -547,6 +553,7 @@ function sortBetsAndAdd(bets) {
   document.getElementById("betTable").style.display = "";
 }
 function clearTable() {
+  console.log("clearing table?");
   document.getElementById("betTable").style.display = "none";
   let table = document.getElementById("betBody");
   table.querySelectorAll("tr").forEach((row) => {
@@ -755,8 +762,25 @@ document.getElementById("saveBetButton").addEventListener(
     if (keepBool) {
       clearInputs(keepList);
       return;
+    } else {
+      //tODO: close window
+      document.getElementById("addBetDiv").style.display = "none";
+      document.getElementById("overlay").style.display = "none";
+      clearInputs();
     }
-    window.location.reload();
+    if (bet.profit != 0) {
+      setStats(styleMode);
+    }
+    let endDate = null;
+    if (betFilterStatus !== "day") {
+      endDate = getDateString(endFilter);
+    }
+    let startDate = getDateString(startFilter);
+
+    clearTable();
+    sortBetsAndAdd(await getAllUserBetsDate(startDate, endDate));
+    console.log("Should be reloading bets?");
+    // window.location.reload();
   },
   false
 );
@@ -1129,7 +1153,9 @@ tagInput.addEventListener("input", () => {
       div.innerHTML = tagsList[i];
 
       div.addEventListener("click", function () {
-        tagInput.value = this.innerText;
+        // tagInput.value = this.innerText;
+        addTag(this.innerText);
+        document.getElementById("tagInput").value = "";
         tagSuggestionDiv.innerHTML = "";
       });
 

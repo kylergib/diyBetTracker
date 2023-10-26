@@ -265,11 +265,16 @@ td {
     display: flex;
 
 }
-
 .fixed-bottom {
     position: fixed;
-    right: 25px!important;
-    left: auto!important;
+    left: 25px!important;
+    z-index: 1030;
+    bottom: 0;
+}
+
+.fixed-bottom-diy {
+    position: fixed;
+    left: 25px!important;
     z-index: 1030;
     bottom: 0;
 }
@@ -367,7 +372,8 @@ td {
     text-align: center;
     padding: 20px;
     width: 98%;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+    height: fit-content;
+    
 }
 .diy-cell {
     border: 3px solid transparent;
@@ -566,4 +572,28 @@ td {
 .card {
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
 }
+.top-level-table {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 98%;
+    
+}
+
+.scrollable-table {
+    height: 70vh;
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+    overflow-y: auto;
+}
+.scrollable-div::-webkit-scrollbar, .scrollable-table::-webkit-scrollbar {
+    display: none;
+  }
 

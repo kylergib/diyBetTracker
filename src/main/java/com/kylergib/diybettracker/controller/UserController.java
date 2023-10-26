@@ -8,6 +8,8 @@ import com.kylergib.diybettracker.repository.UserRepository;
 import com.kylergib.diybettracker.service.TrackerService;
 import com.kylergib.diybettracker.service.UserSettingsService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -110,6 +112,18 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
+
+    }
+    @GetMapping("/session")
+    public ResponseEntity<?> getSessionDetails(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Session invalid or expired");
+        }
+
+        return ResponseEntity.ok("Session valid");
 
     }
 

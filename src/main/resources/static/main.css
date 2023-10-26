@@ -265,11 +265,16 @@ td {
     display: flex;
 
 }
-
 .fixed-bottom {
     position: fixed;
-    right: 25px!important;
-    left: auto!important;
+    left: 25px!important;
+    z-index: 1030;
+    bottom: 0;
+}
+
+.fixed-bottom-diy {
+    position: fixed;
+    left: 25px!important;
     z-index: 1030;
     bottom: 0;
 }

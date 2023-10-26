@@ -5,12 +5,16 @@ import com.kylergib.diybettracker.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
@@ -26,6 +30,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+
                 .csrf(withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers(antMatcher("/built/**"),antMatcher("/main.css")).permitAll()
@@ -35,9 +40,12 @@ public class SecurityConfig {
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults())
                 .logout(withDefaults())
-                .securityContext((securityContext) -> securityContext
-                        .requireExplicitSave(true)
-                );
+                .rememberMe()
+                    .rememberMeServices(rememberMeServices())
+//                .securityContext((securityContext) -> securityContext
+//                        .requireExplicitSave(true)
+//                )
+        ;
 
 
 
@@ -50,6 +58,13 @@ public class SecurityConfig {
         daoAuthenticationProvider.setUserDetailsService(this.userDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(MyUser.PASSWORD_ENCODER);
         auth.authenticationProvider(daoAuthenticationProvider);
+    }
+
+    @Bean
+    public RememberMeServices rememberMeServices() {
+        TokenBasedRememberMeServices rememberMeServices = new TokenBasedRememberMeServices("uniqueAndSecret", userDetailsService);
+        rememberMeServices.setTokenValiditySeconds(86400 * 30);  // Set token validity to one day
+        return rememberMeServices;
     }
 
 }

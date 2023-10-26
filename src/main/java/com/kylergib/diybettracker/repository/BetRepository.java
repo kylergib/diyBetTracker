@@ -355,8 +355,9 @@ public interface BetRepository extends PagingAndSortingRepository<Bet, Long>, Cr
                                  @Param("minOdds") Integer minOdds,
                                  @Param("myUser") MyUser myUser);
     //the below is used if sportsbook list, status list and tags list are null
-    @Query("SELECT COALESCE(SUM(b.profit),0.0) FROM Bet b " +
+    @Query("SELECT COALESCE(SUM(b.stake),0.0) FROM Bet b " +
             "WHERE b.myUser = :myUser AND " +
+            "b.status = 'Open' AND " +
             "(COALESCE(:startDate, NULL) IS NULL OR b.eventDate >= :startDate) AND " +
             "(COALESCE(:endDate, NULL) IS NULL OR b.eventDate <= :endDate) AND " +
             "(COALESCE(:minOdds, NULL) IS NULL OR b.odds >= :minOdds) AND " +

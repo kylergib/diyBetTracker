@@ -1155,8 +1155,14 @@ tagInput.addEventListener("input", () => {
       div.innerHTML = tagsList[i];
 
       div.addEventListener("click", function () {
-        // tagInput.value = this.innerText;
-        addTag(this.innerText);
+
+        let tag = this.innerText;
+
+        if (!betTags.includes(tag)) {
+          addTag(tag);
+        } else {
+          removeTag(tag);
+        }
         document.getElementById("tagInput").value = "";
         tagSuggestionDiv.innerHTML = "";
       });

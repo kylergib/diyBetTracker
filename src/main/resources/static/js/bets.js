@@ -1163,6 +1163,7 @@ tagInput.addEventListener("input", () => {
         } else {
           removeTag(tag);
         }
+
         document.getElementById("tagInput").value = "";
         tagSuggestionDiv.innerHTML = "";
       });

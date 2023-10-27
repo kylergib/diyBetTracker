@@ -849,6 +849,7 @@ document.getElementById("addBetButton").addEventListener(
     await checkSession();
     openNewBet();
     document.getElementById("betTypeInput").value = "addBet";
+
   },
   false
 );
@@ -940,6 +941,7 @@ const sportsbookSuggestionDiv = document.getElementById(
 );
 
 sportsbookInput.addEventListener("input", () => {
+  document.getElementById("sportsbookSuggestionContainer").style.display = "block";
   let filter = sportsbookInput.value.toUpperCase();
   sportsbookSuggestionDiv.innerHTML = "";
   let inputWidth = sportsbookInput.offsetWidth;
@@ -1142,6 +1144,7 @@ const tagInput = document.getElementById("tagInput");
 const tagSuggestionDiv = document.getElementById("tagSuggestionContainer");
 
 tagInput.addEventListener("input", () => {
+  tagSuggestionDiv.style.display = "block";
   let filter = tagInput.value.toUpperCase();
   tagSuggestionDiv.innerHTML = "";
   let inputWidth = tagInput.offsetWidth;
@@ -1172,3 +1175,31 @@ tagInput.addEventListener("input", () => {
     }
   }
 });
+
+document.addEventListener("click", function(event) {
+  checkTagInFocus(event);
+  checkSportsbookInFocus(event);
+
+});
+
+function checkSportsbookInFocus(event) {
+  let sportsbook = document.getElementById("sportsbookInput");
+  let sportsbookSuggestion = document.getElementById("sportsbookSuggestionContainer");
+  if (!sportsbook.contains(event.target) && !sportsbookSuggestion.contains(event.target)) {
+
+    sportsbookSuggestion.style.display = "none";
+  } else {
+
+    sportsbookSuggestion.style.display = "block";
+  }
+}
+
+function checkTagInFocus(event) {
+  if (!tagInput.contains(event.target) && !tagSuggestionDiv.contains(event.target)) {
+
+    tagSuggestionDiv.style.display = "none";
+  } else {
+
+    tagSuggestionDiv.style.display = "block";
+  }
+}

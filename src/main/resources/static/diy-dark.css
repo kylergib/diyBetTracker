@@ -341,3 +341,18 @@ body {
 .top-level-table {
     background: #424549;
 }
+
+
+.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    color: white;
+    pointer-events: auto;
+    background-color: #424549;
+    background-clip: padding-box;
+    /*border: var(--bs-modal-border-width) solid var(--bs-modal-border-color);*/
+    /*border-radius: var(--bs-modal-border-radius);*/
+    outline: 0;
+}

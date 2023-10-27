@@ -1,20 +1,20 @@
-import { createUser } from "./myUser.js";
-import { getAllUserBetsDate } from "./bet.js";
-import { calculateProfit } from "./calculatorUtil.js";
+import {createUser} from "./myUser.js";
+import {getAllUserBetsDate} from "./bet.js";
+import {calculateProfit} from "./calculatorUtil.js";
 import {
-  formatDateOnly,
-  getCurrentDateTimeString,
-  getStartAndEndOfWeek,
-  getStartAndEndOfMonth,
-  getDateString,
   apiRequest,
   baseUrl,
-  getCurrentUser,
   checkSession,
+  formatDateOnly,
+  getCurrentDateTimeString,
+  getCurrentUser,
+  getDateString,
+  getStartAndEndOfMonth,
+  getStartAndEndOfWeek,
 } from "./util.js";
-import { setStats } from "./navbar.js";
-import { createAlert } from "./diyAlerts.js";
-import { setTheme } from "./theme.js";
+import {setStats} from "./navbar.js";
+import {createAlert} from "./diyAlerts.js";
+import {setTheme} from "./theme.js";
 
 // export const baseUrl = "http://" + window.location.host + "/api/";
 const bets = [];
@@ -37,6 +37,8 @@ let styleMode;
 let currentUser;
 let userSettings;
 let temp = await getCurrentUser();
+let overrideBet = null;
+let overrideRow = null;
 userSettings = temp["userSettings"];
 currentUser = createUser(temp["currentUser"]);
 styleMode = userSettings["theme"];
@@ -361,7 +363,7 @@ function createBetRow(bet) {
   selectElement.style.backgroundImage = imageUrl;
   selectElement.classList.add(betClass);
 
-  const statusList = ["Open", "Lost", "Won", "Void"];
+  const statusList = ["Open", "Lost", "Won", "Void", "Override"];
 
   statusList.forEach((status) => {
     const option = document.createElement("option");
@@ -373,24 +375,34 @@ function createBetRow(bet) {
 
     selectElement.appendChild(option);
   });
-  selectElement.addEventListener("change", (event) => {
-    bet.status = event.target.value.toLowerCase();
+  selectElement.addEventListener("change", async (event) => {
+    // bet.status = event.target.value.toLowerCase();
+    const status = event.target.value.toLowerCase();
     switch (event.target.value) {
       case "Won":
+        bet.status = status;
         bet.profit = calculateProfit(bet.odds, bet.stake, bet.freeBetStake);
-        updateBet(bet); //todo: update bet function
+        await updateBet(bet, row); //todo: update bet function
         break;
       case "Lost":
+        bet.status = status;
         bet.profit = bet.stake * -1;
-        updateBet(bet); //todo: update bet function
+        await updateBet(bet, row); //todo: update bet function
         break;
       case "Void":
       case "Open":
+        bet.status = status;
         bet.profit = 0;
-        updateBet(bet); //todo: update bet function
+        await updateBet(bet, row); //todo: update bet function
+        break;
+      case "Override":
+        //TODO: add override logic
+        overrideBet = bet;
+        overrideRow = row;
+        $("#inputModal").modal("show");
         break;
     }
-    setStats(styleMode);
+    // setStats(styleMode);
   });
   const statusCell = row.insertCell(-1);
   statusCell.style.textAlign = "center";
@@ -864,15 +876,68 @@ document.getElementById("closeBetButton").addEventListener(
 );
 
 
-function updateBet(bet) {
+async function updateBet(bet, row) {
   bet.myUser = { id: currentUser.id };
-  apiRequest(baseUrl + "bets/" + bet.id, "PATCH", bet).then((result) => {
+  await apiRequest(baseUrl + "bets/" + bet.id, "PATCH", bet).then((result) => {
     if (result.status != 200) {
       createAlert("Could not update bet, please try again.", "danger");
     } else {
       createAlert("Bet updated successfully", "success");
+      row.className = "diy-bet-row " + "diy-bet-" + bet.status;
+      let children = row.children;
+
+      for (let i = 0; i < children.length; i++) {
+        children[i].classList.remove("diy-bet-open");
+        children[i].classList.remove("diy-bet-void");
+        children[i].classList.remove("diy-bet-lost");
+        children[i].classList.remove("diy-bet-won");
+        children[i].classList.add("diy-bet-" + bet.status);
+        let textColor = styleMode === "dark" ? "#dbdbdb" : "grey";
+        if (bet.status === "won") {
+          textColor = styleMode === "dark" ? "#00ff00" : "green";
+        } else if (bet.status === "void") {
+          textColor = styleMode === "dark" ? "#ffe783" : "#bf9f1a";
+        } else if (bet.status === "lost") {
+          textColor = styleMode === "dark" ? "#ff4343" : "#b10000";
+        }
+        if (i === 5 ) {
+          let div = children[i].querySelector("div");
+          div.innerText = bet.profit != 0 ? "$" + bet.profit.toFixed(2) : "";
+        } else if (i === 7) {
+          let select = children[i].querySelector("select");
+          select.value = bet.status.charAt(0).toUpperCase() + bet.status.slice(1);;
+          select.classList.remove("diy-bet-open");
+          select.classList.remove("diy-bet-void");
+          select.classList.remove("diy-bet-lost");
+          select.classList.remove("diy-bet-won");
+          select.classList.add("diy-bet-" + bet.status);
+          select.style.backgroundImage = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='${encodeURIComponent(
+              textColor
+          )}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`;
+        } else if (i === 8) {
+          let buttons = children[i].querySelectorAll("button");
+          for (let z = 0; z < buttons.length; z++) {
+            buttons[z].classList.remove("btn-outline-lost");
+            buttons[z].classList.remove("btn-outline-void");
+            buttons[z].classList.remove("btn-outline-won");
+            buttons[z].classList.remove("btn-outline-open");
+            buttons[z].classList.add("btn-outline-" + bet.status);
+          }
+        } else if (i === 9) {
+          // console.log(children[i]);
+          let label = children[i].querySelector("label");
+          // console.log(label);
+          label.classList.remove("btn-outline-lost");
+          label.classList.remove("btn-outline-void");
+          label.classList.remove("btn-outline-won");
+          label.classList.remove("btn-outline-open");
+          label.classList.add("btn-outline-" + bet.status);
+        }
+      }
+
     }
   });
+  setStats(styleMode);
 }
 function clearInputs(keepList = []) {
   document.getElementById("betTypeInput").value = "addBet";
@@ -1203,3 +1268,28 @@ function checkTagInFocus(event) {
     tagSuggestionDiv.style.display = "block";
   }
 }
+document.getElementById("overrideCloseButton").addEventListener("click",() => {
+  //todo: add close logic
+  // document.getElementById("overrideStatusInput").value = "";
+  document.getElementById("overrideProfitInput").value = "";
+  $("#inputModal").modal("hide");
+},false)
+
+document.getElementById("overrideSaveButton").addEventListener("click",async () => {
+
+  // console.log(document.getElementById("overrideStatusInput").value);
+  // console.log(document.getElementById("overrideProfitInput").value);
+  let status = document.getElementById("overrideStatusInput").value;
+  let profit = document.getElementById("overrideProfitInput").value;
+
+  if (overrideBet != null) {
+    overrideBet.profit = parseFloat(profit);
+    overrideBet.status = status.toLowerCase();
+    await updateBet(overrideBet, overrideRow);
+    overrideBet = null;
+    overrideRow = null;
+  }
+  document.getElementById("overrideStatusInput").value = "Open";
+  document.getElementById("overrideProfitInput").value = "";
+  $("#inputModal").modal("hide");
+},false)

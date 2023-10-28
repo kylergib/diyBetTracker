@@ -121,6 +121,8 @@ td {
     /* background-color: rgb(255, 255, 255); */
     left: 15px;
     border-radius: 10px;
+    max-height: 100%;
+    overflow-y: auto;
     /* border: 3px solid transparent; */
 }
 .form-popup > div {
@@ -622,5 +624,10 @@ td {
     }
     .diy-nav-filter {
         margin-top: 10px;
+    }
+}
+@media (max-width: 600px) {
+    .form-popup {
+        top: 0;
     }
 }

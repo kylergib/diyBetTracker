@@ -597,3 +597,30 @@ td {
     display: none;
   }
 
+@media (max-width: 950px) {
+    tr {
+        display: grid;
+
+    }
+    thead {
+        display: none;
+    }
+    td.diy-bet-open, td.diy-bet-lost, td.diy-bet-won, td.diy-bet-void {
+        border: none;
+    }
+    .diy-bet-row {
+        border-left: 3px solid transparent;
+        margin-bottom: 10px;
+        border-radius: 10px;
+    }
+
+}
+@media (max-width: 700px) {
+    .diy-filter-nav {
+        text-align: center;
+        display: block;
+    }
+    .diy-nav-filter {
+        margin-top: 10px;
+    }
+}

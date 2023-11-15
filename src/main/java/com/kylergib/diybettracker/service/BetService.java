@@ -68,8 +68,7 @@ public class BetService {
         return map;
     }
 
-    public Map<String, Object> getDashboardStats(LocalDate date,
-                                                 List<String> tags, List<String> sportsbooks) {
+    public Map<String, Object> getDashboardStats(List<String> tags, List<String> sportsbooks, LocalDate startDate, LocalDate endDate, String type) {
 
         MyUser currentUser = myUserDetailsService.getUser();
         Map<String, Object> map = new HashMap<>();
@@ -77,23 +76,29 @@ public class BetService {
             return map;
         }
         LocalDate now = LocalDate.now();
-        map.put("pendingStake", betRepository.findStakeOfBets(null,null,null,null,currentUser));
+
         for (String tag : tags) {
-            map.put(tag,betRepository.findProfitOfBets(null,null,null,null,List.of(tag),currentUser));
+            //TODO: add additional map for pending ?
+            map.put(tag,betRepository.findProfitOfBets(startDate,endDate,null,null,List.of(tag),currentUser));
         }
         for (String sportsbook : sportsbooks) {
-            map.put(sportsbook,betRepository.findProfitOfBets(null,null,List.of(sportsbook),null,null,currentUser));
+            //TODO: add additional map for pending ?
+            map.put(sportsbook,betRepository.findProfitOfBets(startDate,endDate,List.of(sportsbook),null,null,currentUser));
+        }
+        if (type == null) {
+
+            map.put("pendingStake", betRepository.findStakeOfBets(null,null,null,null,currentUser));
+            LocalDate startOfWeek = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            LocalDate endOfWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+            map.put("weekStats", betweenDateStats(startOfWeek,endOfWeek,currentUser));
+            map.put("yearStats", betweenDateStats(LocalDate.of(now.getYear(),1,1),LocalDate.of(now.getYear(),12,31),currentUser));
+            map.put("totalStats", totalStats(currentUser));
+            map.put("monthStats", monthStats(now,currentUser));
+            map.put("todayStats", dayStats(now,currentUser));
+            map.put("yesterdayStats", dayStats(now.plusDays(-1),currentUser));
         }
 
-        LocalDate startOfWeek = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate endOfWeek = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        map.put("weekStats", betweenDateStats(startOfWeek,endOfWeek,currentUser));
-        map.put("yearStats", betweenDateStats(LocalDate.of(now.getYear(),1,1),LocalDate.of(now.getYear(),12,31),currentUser));
-        map.put("totalStats", totalStats(currentUser));
-        map.put("monthStats", monthStats(now,currentUser));
-        map.put("todayStats", dayStats(now,currentUser));
-        map.put("yesterdayStats", dayStats(now.plusDays(-1),currentUser));
 
 
 

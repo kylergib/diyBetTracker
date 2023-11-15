@@ -9,7 +9,20 @@ import {
 import { createUser } from "./myUser.js";
 import { setTheme } from "./theme.js";
 import { getTrackersProfit } from "./tracker.js";
-
+import {
+  setPendingRequest,
+  changeFilter,
+  setBetFilterText,
+  setTotalFilter,
+  initializeDateFilter,
+  setFilterListeners,
+  changeFilterStatus,
+  getStartAndEnd,
+  startFilter,
+  endFilter,
+  betFilterStatus,
+  previousRequestPending, setMonthFiilter, setWeekFilter, setDayFilter
+} from "./filter.js";
 let theme;
 let yearJson;
 
@@ -21,6 +34,9 @@ let monthStartDate;
 let monthEndDate;
 let dailyDone = false;
 let yearlyDone = false;
+
+let encodedTags = []
+let encodedSportsbooks = []
 
 async function getDailyProfits(startDate, endDate) {
   return await apiRequest(
@@ -253,6 +269,8 @@ async function main() {
   let date = new Date();
   allDaily(date);
   allYear(date);
+  initializeDateFilter(updateTagsProfits);
+
 }
 
 main();
@@ -393,6 +411,9 @@ let sportsbooksList = [];
 let tagsList = [];
 let receivedSportbooks = false;
 let receivedTags = false;
+function getUserTags() {
+
+}
 apiRequest(baseUrl + "bets/userTags")
   .then((result) => {
     return result.json();
@@ -451,38 +472,93 @@ function createTagProfitBadge(tag, elementId, profit = 0.0) {
   div.appendChild(badgeDiv);
   document.getElementById(elementId).appendChild(div);
 }
+
+async function updateTagsProfits(startDate = null, endDate = null) {
+  clearTags();
+  let url =
+      baseUrl +
+      "bets/stats/dashboard?" +
+      "tags=" +
+      encodedTags +
+      "&sportsbooks=" +
+      encodedSportsbooks +
+  "&type=custom";
+  if (startDate != null) url += "&startDate=" + startDate;
+  if (endDate != null) url += "&endDate=" + endDate;
+
+
+  apiRequest(url)
+      .then((result) => {
+        return result.json();
+      })
+      .then((json) => {
+        let emptySportsbook = true;
+        sportsbooksList.forEach((sportsbook) => {
+          let profit = json[sportsbook];
+          if (profit > 0.0 || profit < 0.0) {
+            createTagProfitBadge(sportsbook, "sportsbookProfit", json[sportsbook]);
+            emptySportsbook = false;
+          }
+        });
+        if (emptySportsbook) {
+          //add div that says no negative or positive profits for any sportsbook
+          let sportsbookDiv = document.getElementById("sportsbookProfit");
+          let emptySportsbookSpan = document.createElement("span");
+          emptySportsbookSpan.innerText = "No negative or positive profit in sportsbooks."
+          sportsbookDiv.appendChild(emptySportsbookSpan);
+        }
+        let emptyTag = true;
+        tagsList.forEach((tag) => {
+          let profit = json[tag];
+          if (profit > 0.0 || profit < 0.0) {
+            createTagProfitBadge(tag, "tagProfit", json[tag]);
+            emptyTag = false;
+          }
+
+        });
+        if (emptyTag) {
+          //add div that says no negative or positive profits for any sportsbook
+          let tagDiv = document.getElementById("tagProfit");
+          let emptyTagSpan = document.createElement("span");
+          emptyTagSpan.innerText = "No negative or positive profit in tags."
+          tagDiv.appendChild(emptyTagSpan);
+        }
+
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+}
+
+
 async function getDashboardStats() {
   if (sportsbooksList.length == 0 || tagsList.length == 0) {
     console.log("did not receive sportsbooks or tags yet.");
     return;
   }
-  let newTags = [];
+  // let newTags = [];
   tagsList.forEach((tag) => {
-    newTags.push(encodeURIComponent(tag));
+    encodedTags.push(encodeURIComponent(tag));
   });
-  let newSportsbooks = [];
+  // let newSportsbooks = [];
   sportsbooksList.forEach((sportsbook) => {
-    newSportsbooks.push(encodeURIComponent(sportsbook));
+    encodedSportsbooks.push(encodeURIComponent(sportsbook));
   });
+
   let url =
     baseUrl +
     "bets/stats/dashboard?" +
     "tags=" +
-    newTags +
+      encodedTags +
     "&sportsbooks=" +
-    newSportsbooks;
+      encodedSportsbooks;
 
   apiRequest(url)
     .then((result) => {
       return result.json();
     })
     .then((json) => {
-      sportsbooksList.forEach((sportsbook) => {
-        createTagProfitBadge(sportsbook, "sportsbookProfit", json[sportsbook]);
-      });
-      tagsList.forEach((tag) => {
-        createTagProfitBadge(tag, "tagProfit", json[tag]);
-      });
       const pendingAmount = parseFloat(json["pendingStake"]);
       document.getElementById(
         "pendingStake"
@@ -617,4 +693,71 @@ function createTagTrackerBadge(tags, profit) {
   div.appendChild(badgeDiv);
 
   tagTracker.appendChild(div);
+}
+
+
+
+document.getElementById("dayFilter").addEventListener(
+    "click",
+    async () => {
+      setDayFilter(updateTagsProfits);
+    },
+    false
+);
+
+document.getElementById("weekFilter").addEventListener(
+    "click",
+    async () => {
+      setWeekFilter(updateTagsProfits);
+    },
+    false
+);
+document.getElementById("monthFilter").addEventListener(
+    "click",
+    async () => {
+      setMonthFiilter(updateTagsProfits);
+    },
+    false
+);
+
+document.getElementById("totalFilter").addEventListener(
+    "click",
+    async () => {
+      setTotalFilter(updateTagsProfits);
+    },
+    false
+);
+
+document.getElementById("previousFilter").addEventListener(
+    "click",
+    async () => {
+      console.log("previous clicked");
+      setPendingRequest(true);
+      await changeFilter(-1, updateTagsProfits);
+      setPendingRequest(false);
+    },
+    false
+);
+
+document.getElementById("nextFilter").addEventListener(
+    "click",
+    async () => {
+      console.log("next clicked");
+      setPendingRequest(true);
+
+      await changeFilter(1, updateTagsProfits);
+      setPendingRequest(false);
+    },
+    false
+);
+
+function clearTags() {
+  let tagElement = document.getElementById("tagProfit");sportsbookProfit
+  let sportsbookElement = document.getElementById("sportsbookProfit");
+  while (tagElement.firstChild) {
+    tagElement.removeChild(tagElement.firstChild);
+  }
+  while (sportsbookElement.firstChild) {
+    sportsbookElement.removeChild(sportsbookElement.firstChild);
+  }
 }

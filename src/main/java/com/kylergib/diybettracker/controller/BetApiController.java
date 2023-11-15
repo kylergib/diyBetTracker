@@ -79,11 +79,14 @@ public class BetApiController {
 
         return ResponseEntity.ok(betStats);
     }
+
     @GetMapping("/stats/dashboard")
-    public  ResponseEntity<Object> getDashboardStats(@RequestParam(name = "date", required = false) LocalDate date,
-                                                     @RequestParam(name="tags", required = false) List<String> tags,
-                                                     @RequestParam(name="sportsbooks", required = false) List<String> sportsbooks){
-        return ResponseEntity.ok(betService.getDashboardStats(date, tags, sportsbooks));
+    public  ResponseEntity<Object> getDashboardStats(@RequestParam(name="tags", required = false) List<String> tags,
+                                                     @RequestParam(name="sportsbooks", required = false) List<String> sportsbooks,
+                                                     @RequestParam(name = "startDate", required = false) LocalDate startDate,
+                                                     @RequestParam(name = "endDate", required = false) LocalDate endDate,
+                                                    @RequestParam(name = "type", required = false) String type ){
+        return ResponseEntity.ok(betService.getDashboardStats(tags, sportsbooks, startDate, endDate, type));
     }
 
     @DeleteMapping("/{betId}")

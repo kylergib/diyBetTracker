@@ -1,4 +1,8 @@
-export const baseUrl = "https://" + window.location.host + "/api/";
+
+
+const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+export const baseUrl = (isLocalhost ? "http://" : "https://") + window.location.host + "/api/";
+
 const csrfToken = document
   .querySelector('meta[name="csrf-token"]')
   .getAttribute("content");

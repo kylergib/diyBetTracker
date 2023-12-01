@@ -220,6 +220,14 @@ async function setDailyWidgets() {
     );
   }
   const calendarWidget = document.getElementById("calendarWidget");
+  let children = calendarWidget.childNodes;
+  for (let i = children.length - 1; i > 1; i--) {
+    if (children[i].nodeType === 1) {
+      // Check if the node is an element (nodeType 1)
+      console.log(children[i]);
+      calendarWidget.removeChild(children[i]);
+    }
+  }
   let columnNum = 0;
   let rowNum = 0;
   let row = document.createElement("div");
@@ -286,8 +294,11 @@ function unhideAll() {
 
 async function allDaily(date) {
   const startAndEnd = getStartAndEndOfMonth(date);
+  console.log(monthStartDate, monthEndDate, startAndEnd.startOfMonth, startAndEnd.endOfMonth)
+  if (startAndEnd.startOfMonth == monthStartDate && startAndEnd.endOfMonth == monthEndDate) return;
   monthStartDate = startAndEnd.startOfMonth;
   monthEndDate = startAndEnd.endOfMonth;
+
   dailyMap = await getDailyProfits(monthStartDate, monthEndDate);
   setDailyWidgets();
   getMonthlyProfits(date.getFullYear());
@@ -700,7 +711,7 @@ function createTagTrackerBadge(tags, profit) {
 document.getElementById("dayFilter").addEventListener(
     "click",
     async () => {
-      setDayFilter(updateTagsProfits);
+      setDayFilter(updateTagsProfits,allDaily);
     },
     false
 );
@@ -715,7 +726,7 @@ document.getElementById("weekFilter").addEventListener(
 document.getElementById("monthFilter").addEventListener(
     "click",
     async () => {
-      setMonthFiilter(updateTagsProfits);
+      setMonthFiilter(updateTagsProfits, allDaily);
     },
     false
 );
@@ -733,7 +744,7 @@ document.getElementById("previousFilter").addEventListener(
     async () => {
       console.log("previous clicked");
       setPendingRequest(true);
-      await changeFilter(-1, updateTagsProfits);
+      await changeFilter(-1, updateTagsProfits,allDaily);
       setPendingRequest(false);
     },
     false
@@ -745,14 +756,14 @@ document.getElementById("nextFilter").addEventListener(
       console.log("next clicked");
       setPendingRequest(true);
 
-      await changeFilter(1, updateTagsProfits);
+      await changeFilter(1, updateTagsProfits,allDaily);
       setPendingRequest(false);
     },
     false
 );
 
 function clearTags() {
-  let tagElement = document.getElementById("tagProfit");sportsbookProfit
+  let tagElement = document.getElementById("tagProfit");
   let sportsbookElement = document.getElementById("sportsbookProfit");
   while (tagElement.firstChild) {
     tagElement.removeChild(tagElement.firstChild);

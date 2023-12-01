@@ -228,7 +228,7 @@ export function changeFilterStatus(filter) {
     }
 }
 
-export async function changeFilter(changeAmount, additionalFunc = null) {
+export async function changeFilter(changeAmount, additionalFunc = null, allDailyFunc = null) {
     let text;
     let startDate;
     let endDate;
@@ -260,6 +260,9 @@ export async function changeFilter(changeAmount, additionalFunc = null) {
     if (additionalFunc != null) {
         additionalFunc(getDateString(startFilter), getDateString(endFilter));
     }
+    if (allDailyFunc != null) {
+        allDailyFunc(startFilter);
+    }
     // clearTable();
     // sortBetsAndAdd(await getAllUserBetsDate(startDate, endDate));
 }
@@ -268,7 +271,7 @@ export function getStartAndEnd() {
     return {"filterStatus": betFilterStatus,"start": getDateString(startFilter), "end": getDateString(endFilter)};
 }
 
-export function setMonthFiilter(additionalFunc = null) {
+export function setMonthFiilter(additionalFunc = null, allDailyFunc = null) {
     console.log("month clicked");
     if (betFilterStatus !== "month") {
         setPendingRequest(true);
@@ -282,6 +285,9 @@ export function setMonthFiilter(additionalFunc = null) {
         if (additionalFunc != null) {
             additionalFunc(getDateString(startFilter), getDateString(endFilter));
         }
+        if (allDailyFunc != null) {
+            allDailyFunc(startFilter);
+        }
         // clearTable();
         // sortBetsAndAdd(
         //     await getAllUserBetsDate(
@@ -292,7 +298,7 @@ export function setMonthFiilter(additionalFunc = null) {
         setPendingRequest(false);
     }
 }
-export function setWeekFilter(additionalFunc = null) {
+export function setWeekFilter(additionalFunc = null, allDailyFunc = null) {
     console.log("week clicked");
     if (betFilterStatus !== "week" && previousRequestPending == false) {
         setPendingRequest(true);
@@ -306,6 +312,9 @@ export function setWeekFilter(additionalFunc = null) {
         if (additionalFunc != null) {
             additionalFunc(getDateString(startFilter), getDateString(endFilter));
         }
+        if (allDailyFunc != null) {
+            allDailyFunc(startFilter);
+        }
         // clearTable();
         // sortBetsAndAdd(
         //     await getAllUserBetsDate(
@@ -316,7 +325,7 @@ export function setWeekFilter(additionalFunc = null) {
         setPendingRequest(false);
     }
 }
-export function setDayFilter(additionalFunc = null) {
+export function setDayFilter(additionalFunc = null, allDailyFunc = null) {
     console.log("day clicked");
     if (betFilterStatus !== "day" && previousRequestPending == false) {
         setPendingRequest(true);
@@ -326,12 +335,15 @@ export function setDayFilter(additionalFunc = null) {
         if (additionalFunc != null) {
             additionalFunc(getDateString(startFilter), getDateString(endFilter));
         }
+        if (allDailyFunc != null) {
+            allDailyFunc(startFilter);
+        }
         // clearTable();
         // sortBetsAndAdd(await getAllUserBetsDate(getDateString(startFilter)));
         setPendingRequest(false);
     }
 }
-export function setTotalFilter(additionalFunc = null) {
+export function setTotalFilter(additionalFunc = null, allDailyFunc = null) {
     console.log("total clicked");
     if (betFilterStatus !== "total" && previousRequestPending == false) {
         setPendingRequest(true);
@@ -342,6 +354,9 @@ export function setTotalFilter(additionalFunc = null) {
 
         if (additionalFunc != null) {
             additionalFunc();
+        }
+        if (allDailyFunc != null) {
+            allDailyFunc(startFilter);
         }
         // clearTable();
         // sortBetsAndAdd(await getAllUserBetsDate(getDateString(startFilter)));

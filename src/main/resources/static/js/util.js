@@ -121,7 +121,7 @@ export function formatDateOnly(dateString) {
   return `${monthIntToString(month)} ${day}, ${year}`;
 }
 
-function monthIntToString(monthInt) {
+export function monthIntToString(monthInt) {
   let monthString;
 
   switch (monthInt) {

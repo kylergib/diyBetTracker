@@ -23,6 +23,7 @@ import {
   betFilterStatus,
   previousRequestPending, setMonthFiilter, setWeekFilter, setDayFilter
 } from "./filter.js";
+import { monthIntToString } from "./util.js";
 let theme;
 let yearJson;
 
@@ -220,13 +221,15 @@ async function setDailyWidgets() {
     );
   }
   const calendarWidget = document.getElementById("calendarWidget");
-  let children = calendarWidget.childNodes;
+  let children = calendarWidget.children;
+  console.log(children.length);
   for (let i = children.length - 1; i > 1; i--) {
-    if (children[i].nodeType === 1) {
+
+
       // Check if the node is an element (nodeType 1)
-      console.log(children[i]);
+      console.log("type 1 " + children[i]);
       calendarWidget.removeChild(children[i]);
-    }
+
   }
   let columnNum = 0;
   let rowNum = 0;
@@ -236,6 +239,7 @@ async function setDailyWidgets() {
   row.classList.add("row");
   row.classList.add("flex-nowrap");
   calendarWidget.appendChild(row);
+  let calendarMonthProfit = 0;
   for (let i = 1; i <= monthEndDate.getDate(); ) {
     let profit = dailyMap["day" + i];
 
@@ -246,6 +250,7 @@ async function setDailyWidgets() {
       startFinished = true;
       createCalendarColumn(row, i, profit);
       addForDailyChart(i, profit);
+      calendarMonthProfit += profit;
       i++;
       columnNum++;
     } else {
@@ -255,6 +260,7 @@ async function setDailyWidgets() {
       calendarWidget.appendChild(row);
       createCalendarColumn(row, i, profit);
       addForDailyChart(i, profit);
+      calendarMonthProfit += profit;
       i++;
       columnNum = 1;
       rowNum++;
@@ -263,6 +269,13 @@ async function setDailyWidgets() {
   while (columnNum < 7) {
     createCalendarColumn(row);
     columnNum++;
+  }
+  let calTotal =  document.getElementById("calendarTotal");
+  calTotal.innerText = "$" + monthProfit.toFixed(2);
+  if (monthProfit > 0) {
+    calTotal.style.color = theme == "dark" ? "#00ff00" : "green";
+  } else if (monthProfit < 0) {
+    calTotal.style.color = theme == "dark" ? "#ff4343" : "red";
   }
   setDailyChartData();
 }
@@ -298,7 +311,7 @@ async function allDaily(date) {
   if (startAndEnd.startOfMonth == monthStartDate && startAndEnd.endOfMonth == monthEndDate) return;
   monthStartDate = startAndEnd.startOfMonth;
   monthEndDate = startAndEnd.endOfMonth;
-
+  document.getElementById("monthName").innerText = monthIntToString(monthStartDate.getMonth() + 1);
   dailyMap = await getDailyProfits(monthStartDate, monthEndDate);
   setDailyWidgets();
   getMonthlyProfits(date.getFullYear());

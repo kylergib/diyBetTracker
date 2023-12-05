@@ -812,16 +812,63 @@ function clearTags() {
   betTags.length = 0;
   setTags();
 }
+document.getElementById("showHideTagsButton").addEventListener(
+    "click",
+    (event) => {
+    console.log(event.target.textContent);
+    console.log(event.target.textContent == "Hide Tags");
+    if (event.target.textContent == "Hide Tags") {
+
+      document.getElementById("tagRow").style.display = "none";
+      event.target.textContent = "Show Tags";
+    } else {
+
+      document.getElementById("tagRow").style.display = "block";
+      event.target.textContent = "Hide Tags";
+    }
+    },
+    false
+);
+function showHideTags() {
+
+}
 function setTags() {
   let tagContent = "";
+  let betTagListDiv = document.getElementById("betTagList");
+  betTagListDiv.innerHTML = "";
+  let div = document.createElement("div");
+  div.innerText = "Tags:";
+  div.className = "tagList"
+  betTagListDiv.appendChild(div);
   betTags.forEach((tag) => {
-    if (tagContent === "") {
-      tagContent = tag;
-    } else {
-      tagContent += ", " + tag;
-    }
+
+
+    div = document.createElement("div");
+    div.innerText = tag;
+    div.className = "tagList"
+
+    div.addEventListener(
+        "click",
+        () => {
+          console.log("add to tag - " + tag);
+          // addTag(tag);
+          removeTag(tag);
+        },
+        false
+    );
+
+    // secondDiv.appendChild(div);
+    // mainDiv.appendChild(secondDiv);
+    betTagListDiv.appendChild(div);
+
+
+    // if (tagContent === "") {
+    //   tagContent = tag;
+    // } else {
+    //   tagContent += ", " + tag;
+    // }
   });
-  document.getElementById("betTags").textContent = "Tags: " + tagContent;
+  // document.getElementById("betTags").textContent = "Tags: " + tagContent;
 }
 
 document.getElementById("addTagDropdown").addEventListener(
@@ -984,6 +1031,7 @@ apiRequest(baseUrl + "bets/userTags")
   })
   .then((json) => {
     tagsList = json;
+    setFilterTags();
   })
   .catch((error) => {
     console.error(error);
@@ -994,7 +1042,7 @@ apiRequest(baseUrl + "bets/userSportsbooks")
   })
   .then((json) => {
     sportsbooksList = json;
-    setFilterTags();
+
     setFilterSportsbooks();
   })
   .catch((error) => {
@@ -1064,8 +1112,30 @@ function setFilterTags() {
     groupDiv.appendChild(inputGroupText);
     groupDiv.appendChild(spanText);
     tagFilters.appendChild(groupDiv);
+    addTagToDiv(thisTag);
   }
 }
+
+function addTagToDiv(tag) {
+  let mainDiv = document.createElement("div");
+  let secondDiv = document.createElement("div");
+  let div = document.createElement("div");
+  div.innerText = tag;
+  div.className = "tagList"
+  div.addEventListener(
+      "click",
+      () => {
+        console.log("add to tag - " + tag);
+        addTag(tag);
+      },
+      false
+  );
+
+  // secondDiv.appendChild(div);
+  // mainDiv.appendChild(secondDiv);
+  document.getElementById("tagRow").appendChild(div);
+}
+
 function setFilterSportsbooks() {
   for (let i = 0; i < sportsbooksList.length; i++) {
     const thisTag = sportsbooksList[i];

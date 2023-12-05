@@ -67,6 +67,17 @@ export async function getCurrentUser() {
       console.error("Error getting current user:", error);
     });
 }
+export async function getPresets() {
+  return await apiRequest(baseUrl + "presets")
+      .then((result) => {
+        if (result.status == 200) {
+          return result.json();
+        }
+      })
+      .catch((error) => {
+        console.error("Error getting current user:", error);
+      });
+}
 export async function getAllUserStats() {
   return await apiRequest(baseUrl + "bets/stats").then((result) => {
     if (result.status == 200) {

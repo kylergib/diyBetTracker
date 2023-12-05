@@ -1,6 +1,6 @@
 import { setStats } from "./navbar.js";
 import { setTheme } from "./theme.js";
-import { getCurrentUser } from "./util.js";
+import { getCurrentUser, getPresets } from "./util.js";
 import { clearAllFilters, getAppliedFilters } from "./base-filter.js";
 import { TagTracker } from "./tagTracker.js";
 import { saveTracker, getTrackers, deleteTracker } from "./tracker.js";
@@ -18,7 +18,8 @@ async function main() {
   userSettings = temp["userSettings"];
   // currentUser = createUser(temp["currentUser"]);
   theme = userSettings["theme"];
-
+  let presets = await getPresets();
+  console.log(presets);
   setTheme(theme);
   setStats(theme);
   document.getElementById("stakeRange").remove();

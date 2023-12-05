@@ -631,3 +631,22 @@ td {
         top: 0;
     }
 }
+.tagList {
+    display: inline-block;
+    margin-right: 10px;
+    margin-left: 10px;
+    cursor: default;
+}
+.topTagRow {
+    position: relative;
+    padding-top: 10px;
+}
+.topTagRow::before {
+    content: '';
+    position: absolute;
+    top: 0;  /* Align to the top of the parent element */
+    left: 25%; /* Start from 25% to center the border */
+    width: 50%; /* Width of the border */
+    height: 0; /* Make it a line */
+    border-top: 2px solid white; /* Adjust the thickness and color as needed */
+}

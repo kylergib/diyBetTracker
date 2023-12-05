@@ -5,6 +5,7 @@ import com.kylergib.diybettracker.entity.MyUser;
 import com.kylergib.diybettracker.entity.Tracker;
 import com.kylergib.diybettracker.entity.UserSettings;
 import com.kylergib.diybettracker.repository.UserRepository;
+import com.kylergib.diybettracker.service.PresetService;
 import com.kylergib.diybettracker.service.TrackerService;
 import com.kylergib.diybettracker.service.UserSettingsService;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.kylergib.diybettracker.entity.Preset;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,8 @@ public class UserController {
     private UserSettingsService userSettingsService;
     @Autowired
     private TrackerService trackerService;
+    @Autowired
+    private PresetService presetService;
 
     @GetMapping("/current_user")
     public ResponseEntity<?> getCurrentUser(Authentication authentication) {
@@ -43,11 +47,38 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
             }
             currentUser.put("currentUser", myUser);
-            UserSettings settingsTest = userSettingsService.getSettingsByMyUser(myUser);
+//            UserSettings settingsTest = userSettingsService.getSettingsByMyUser(myUser);
             currentUser.put("settings", userSettingsService.getSettingsByMyUser(myUser));
             return ResponseEntity.ok(currentUser);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    @GetMapping("/presets")
+    public ResponseEntity<List<Preset>> getUserPresets() {
+        return ResponseEntity.ok(presetService.getUserPresets());
+    }
+    @PostMapping("/addPreset")
+    public ResponseEntity<Preset> createPreset(@RequestBody Preset preset) {
+        Preset savedPreset = presetService.savePreset(preset);
+        return new ResponseEntity<>(savedPreset, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{presetId}")
+    public ResponseEntity<?> deletePreset(@PathVariable Long presetId) {
+
+        try {
+            boolean delete = presetService.deletePreset(presetId);
+            if (delete) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized request");
+            }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PatchMapping("/settings")

@@ -42,9 +42,8 @@ public class BetApiController {
 
     @PostMapping("/addBet")
     public ResponseEntity<Bet> createBet(@RequestBody Bet bet) {
-        System.out.println("Trying to save. post0");
+
         Bet savedBet = betService.saveBet(bet);
-        System.out.println("Trying to save. post1");
         return new ResponseEntity<>(savedBet, HttpStatus.CREATED);
     }
 

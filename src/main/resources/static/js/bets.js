@@ -381,7 +381,9 @@ function createBetRow(bet) {
     switch (event.target.value) {
       case "Won":
         bet.status = status;
-        bet.profit = calculateProfit(bet.odds, bet.stake, bet.freeBetStake);
+        console.log(bet);
+        bet.profit = bet.tokenPercent > 0 ? calculateProfit(bet.odds, bet.stake, bet.freeBetStake) * (1 + (bet.tokenPercent/100)) : calculateProfit(bet.odds, bet.stake, bet.freeBetStake);
+        console.log(bet);
         await updateBet(bet, row); //todo: update bet function
         break;
       case "Lost":
@@ -433,6 +435,8 @@ function createBetRow(bet) {
       document.getElementById("sportsbookInput").value = bet.sportsbook;
       document.getElementById("statusSelect").value = bet.status;
       document.getElementById("oddsInput").value = bet.odds;
+      // console.log(bet.tokenPercent);
+      document.getElementById("tokenPercentInput").value = bet.tokenPercent;
       document.getElementById("stakeInput").value = bet.stake;
       document.getElementById("freeBetStakeInput").value = bet.freeBetStake;
       document.getElementById("profitInput").value = bet.profit;
@@ -627,6 +631,7 @@ function validateBetFields(
 
 function checkProfit() {
   const profitInput = document.getElementById("profitInput");
+  const tokenInput = document.getElementById("tokenPercentInput");
 
   const status = document.getElementById("statusSelect").value;
   if (status === "open" || status === "void") {
@@ -652,7 +657,8 @@ function checkProfit() {
   if (status === "lost") {
     profitInput.value = stake * -1;
   } else if (status === "won") {
-    profitInput.value = calculateProfit(odds, stake, freeBetStake);
+    profitInput.value = tokenInput.value > 0 ? calculateProfit(odds, stake, freeBetStake) * (1 + (tokenInput.value/100)) : calculateProfit(odds, stake, freeBetStake);
+
   }
 }
 
@@ -702,6 +708,7 @@ document.getElementById("saveBetButton").addEventListener(
       return;
     }
     const profit = document.getElementById("profitInput").value;
+    const tokenPercent = document.getElementById("tokenPercentInput").value;
 
     const bet = {
       sportsbook: sportsbook,
@@ -718,6 +725,7 @@ document.getElementById("saveBetButton").addEventListener(
       expectedProfit: parseFloat(expectedProfit),
       freeBetAmountRecieved: parseFloat(freeBetAmountRecieved),
       freeBetWasRecieved: freeBetWasRecieved === "true",
+      tokenPercent: parseFloat(tokenPercent) * 1.00,
     };
     let method;
     let betUrl;
@@ -989,6 +997,7 @@ async function updateBet(bet, row) {
 function clearInputs(keepList = []) {
   document.getElementById("betTypeInput").value = "addBet";
   document.getElementById("betIdInput").value = "";
+  document.getElementById("tokenPercentInput").value = "";
 
   if (!keepList.includes("sportsbook")) {
     document.getElementById("sportsbookInput").value = "";

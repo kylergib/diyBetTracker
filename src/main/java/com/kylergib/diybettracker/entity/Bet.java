@@ -27,6 +27,7 @@ public class Bet {
     private String status;
     private double stake;
     private double profit;
+    private double tokenPercent;
     @ElementCollection
     @CollectionTable(name = "bet_tags", joinColumns = @JoinColumn(name = "bet_id"))
     @Column(name = "tag")
@@ -52,12 +53,12 @@ public class Bet {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, sportsbook, eventDate, dateAdded, legs, odds, status, stake, profit, tags, freeBetStake, evPercent, expectedProfit, freeBetAmountReceived, freeBetWasReceived, myUser, version);
+        return Objects.hash(id, sportsbook, eventDate, dateAdded, legs, odds, status, stake, profit, tags, freeBetStake, evPercent, expectedProfit, freeBetAmountReceived, freeBetWasReceived, myUser, version, tokenPercent);
     }
 
     public Bet() {}
 
-    public Bet(String sportsbook, LocalDate eventDate, LocalDateTime dateAdded, List<String> legs, int odds, String status, double stake, double profit, List<String> tags, double freeBetStake, double evPercent, double expectedProfit, double freeBetAmountReceived, boolean freeBetWasReceived, MyUser myUser) {
+    public Bet(String sportsbook, LocalDate eventDate, LocalDateTime dateAdded, List<String> legs, int odds, String status, double stake, double profit, List<String> tags, double freeBetStake, double evPercent, double expectedProfit, double freeBetAmountReceived, boolean freeBetWasReceived, MyUser myUser, double tokenPercent) {
         this.sportsbook = sportsbook;
         this.eventDate = eventDate;
         this.dateAdded = dateAdded;
@@ -73,6 +74,7 @@ public class Bet {
         this.freeBetAmountReceived = freeBetAmountReceived;
         this.freeBetWasReceived = freeBetWasReceived;
         this.myUser = myUser;
+        this.tokenPercent = tokenPercent;
     }
 
     public Long getId() {
@@ -164,7 +166,13 @@ public class Bet {
         this.profit = profit;
     }
 
+    public double getTokenPercent() {
+        return tokenPercent;
+    }
 
+    public void setTokenPercent(double tokenPercent) {
+        this.tokenPercent = tokenPercent;
+    }
 
     public double getFreeBetStake() {
         return freeBetStake;
@@ -214,4 +222,6 @@ public class Bet {
     public void setVersion(Long version) {
         this.version = version;
     }
+
+
 }

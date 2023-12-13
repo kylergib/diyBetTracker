@@ -124,6 +124,7 @@
   <div id="overlay"></div>
   <div class="form-popup" id="addBetDiv">
     <div style="margin-top: 20px">
+
       <div class="row g-3 mb-3 diy-row-bet">
         <input type="hidden" id="betTypeInput">
         <input type="hidden" id="betIdInput">
@@ -146,9 +147,6 @@
             <option value="void">Void</option>
           </select>
         </div>
-
-
-
         <div class="col-auto">
           <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
             <input type="checkbox" class="btn-check" id="keepSportsbookCheckbox" autocomplete="off" tabindex="-1">
@@ -164,33 +162,45 @@
           </div>
         </div>
 
+
+
+
+
+
       </div>
       <div class="row g-3 mb-3 diy-row-bet">
 
         <div class="col-auto">
           <label for="oddsInput" class="col-form-label">Odds:</label>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3 col-md-2 col-lg-2">
           <input type="number" class="form-control" id="oddsInput">
+        </div>
+        <div class="col-auto">
+          <label for="tokenPercentInput" class="col-form-label">Token:</label>
+        </div>
+        <div class="col-sm-3 col-md-2 col-lg-1">
+          <input type="number" step="0.01" class="form-control" id="tokenPercentInput">
         </div>
         <div class="col-auto">
           <label for="stakeInput" class="col-form-label">Stake:</label>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3 col-md-2 col-lg-2">
           <input type="number" step="0.01" class="form-control" id="stakeInput">
         </div>
         <div class="col-auto">
           <label for="freeBetStakeInput" class="col-form-label">F.B. Stake:</label>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3 col-md-2 col-lg-2">
           <input type="number" step="0.01" class="form-control" id="freeBetStakeInput">
         </div>
         <div class="col-auto">
           <label for="profitInput" class="col-form-label">Profit:</label>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3 col-md-2 col-lg-1">
           <input type="number" step="0.01" readonly class="form-control" id="profitInput" value="0.00" tabindex="-1">
         </div>
+
       </div>
       <div class="row g-3 mb-3 diy-row-bet">
         <div class="col-auto">
@@ -216,7 +226,7 @@
           <div class="suggestion-container" id="tagSuggestionContainer"></div>
         </div>
         <div class="col-auto">
-          <button class="btn btn-primary" id="showHideTagsButton">Hide Tags</button>
+          <button class="btn btn-primary" id="showHideTagsButton">Show Tags</button>
         </div>
         <div class="col-auto">
 
@@ -228,7 +238,7 @@
 
       </div>
       <div class="row g-3 mb-3">
-        <div class="topTagRow" id="tagRow" style="">
+        <div class="topTagRow" id="tagRow" style="display: none;">
         </div>
       </div>
       <div class="row g-3 mb-3 diy-row-bet">

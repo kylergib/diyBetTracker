@@ -216,6 +216,15 @@ public class BetApiController {
         if (updates.containsKey("freeBetWasReceived")) {
             existingBet.setFreeBetWasReceived((boolean) updates.get("freeBetWasReceived"));
         }
+        if (updates.containsKey("tokenPercent")) {
+            Double value = 0.00;
+            if (updates.get("tokenPercent") instanceof Double) {
+                value = (Double) updates.get("tokenPercent");
+            } else if (updates.get("tokenPercent") instanceof Integer) {
+                value = (int) updates.get("tokenPercent") * 1.0;
+            }
+            existingBet.setTokenPercent(value);
+        }
 
         Bet updatedBet = betService.saveBet(existingBet);
         return new ResponseEntity<>(updatedBet, HttpStatus.OK);

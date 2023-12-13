@@ -16,7 +16,8 @@ export class Bet {
     evPercent,
     expectedProfit,
     freeBetRecieved,
-    freeBetWon
+    freeBetWon,
+    tokenPercent
   ) {
     this.id = id;
     this.sportsbook = sportsbook;
@@ -33,6 +34,7 @@ export class Bet {
     this.expectedProfit = expectedProfit;
     this.freeBetRecieved = freeBetRecieved;
     this.freeBetWon = freeBetWon;
+    this.tokenPercent = tokenPercent;
   }
 }
 export function createBet(betJson) {
@@ -51,7 +53,8 @@ export function createBet(betJson) {
     betJson.evPercent,
     betJson.expectedProfit,
     betJson.freeBetRecieved,
-    betJson.freeBetWon
+    betJson.freeBetWon,
+      betJson.tokenPercent,
   );
 }
 export async function getAllUserBetsDate(
@@ -97,7 +100,9 @@ export async function getAllUserBetsDate(
     })
     .then((json) => {
       json.forEach((bet) => {
-        bets.push(createBet(bet));
+        let newBet = createBet(bet);
+        // console.log(newBet);
+        bets.push(newBet);
       });
     });
   return bets;

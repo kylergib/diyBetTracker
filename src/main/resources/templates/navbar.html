@@ -20,6 +20,9 @@
                     <a class="nav-link" th:href="@{/bets}">Bets</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tools}">Tools</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" th:href="@{/settings}">Settings</a>
                 </li>
             </ul>
@@ -35,7 +38,6 @@
                     Profit:
                 </div>
             </div>
-
             <span class="navbar-text">
                 <div>
                     Hello, <span id="managername" th:text="${#authentication.name}">user</span>.

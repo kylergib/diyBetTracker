@@ -42,7 +42,6 @@ public class HomeController {
     @RequestMapping("/invalidate-session")
     public void invalidateSession(HttpServletRequest request) {
         request.getSession().invalidate();
-//        return "redirect:/login";
     }
 
 }

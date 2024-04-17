@@ -105,7 +105,6 @@ public class UserController {
     }
     @GetMapping("/currentUser/trackers/profit")
     public ResponseEntity<?> getTrackersProfit() {
-        System.out.println("GETTING TRACKERS PROFITS");
         List<TrackerDTO> trackersProfit = trackerService.getTrackersProfit();
         if (trackersProfit != null) {
             return ResponseEntity.ok(trackersProfit);

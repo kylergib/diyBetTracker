@@ -27,9 +27,7 @@ public class BetService {
     public boolean deleteBet(Long betId) {
         Bet bet = findById(betId);
         MyUser currentUser = myUserDetailsService.getUser();
-        System.out.println(currentUser.getRoles());
         for (Role role: currentUser.getRoles()) {
-            System.out.println(role.getName());
             if (role.getName().equals("TEST")) {
                 return false;
             }
@@ -300,23 +298,11 @@ public class BetService {
                 return new Bet();
             }
         }
-        System.out.println("Trying to save. 0");
+
 
         if (myUser.getId() != null) {
-
-            System.out.println("Trying to save. 1");
-            System.out.println(myUser.getId());
-            System.out.println(bet.getMyUser().getId());
-
-//            if (myUser.getId() != bet.getMyUser().getId()) {
-//                System.out.println("Trying to save. 2");
-//                return null;
-//            }
-            System.out.println("Trying to save. 4");
             bet.setMyUser(myUser);
-            System.out.println("Trying to save. 5");
         }
-        System.out.println("Trying to save. 6");
         return betRepository.save(bet);
     }
 
@@ -329,7 +315,6 @@ public class BetService {
 
         return new ArrayList<>();
     };
-//    }
 
     public List<Bet> getUserBets(LocalDate startDate, LocalDate endDate,
                                  List<String> tags, List<String> sportsbooks, List<String> statusList,
@@ -429,10 +414,8 @@ public class BetService {
     public List<String> getAllSportsbooks() {
         List<Bet> allBets = getUserBets();
         Set<String> allSportsbooks = new HashSet<>();
-        System.out.println("starting sportsbooks");
 
         for (Bet bet : allBets) {
-            System.out.println(bet.getSportsbook());
             allSportsbooks.add(bet.getSportsbook());
 
         }
